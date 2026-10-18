@@ -1,0 +1,75 @@
+name: Benchmarks
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: true
+  group: benchmarks-${{ github.event.pull_request.number || github.ref }}
+jobs:
+  benchmark:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: candidate
+      - uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          path: baseline
+          ref: ${{ github.event.pull_request.base.sha }}
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: candidate/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            baseline
+            candidate
+      - name: Build candidate
+        working-directory: candidate
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps --only-shell chromium
+          cargo build --release --locked
+          pnpm build
+          pnpm check:size
+      - name: Build baseline
+        id: baseline
+        shell: bash
+        run: |
+          if test -f baseline/bench/Run.ts; then
+            cd baseline
+            pnpm install --frozen-lockfile
+            cargo build --release --locked
+            pnpm build
+            echo 'available=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'No baseline exists yet. This run establishes a baseline and checks the size budget.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Measure baseline with candidate workloads
+        if: steps.baseline.outputs.available == 'true'
+        working-directory: candidate
+        env:
+          ASH_PROJECT_ROOT: ../baseline
+        run: node bench/Run.ts --output bench/results/baseline.json
+      - name: Measure candidate
+        working-directory: candidate
+        run: pnpm bench
+      - name: Compare on the same runner
+        if: steps.baseline.outputs.available == 'true'
+        working-directory: candidate
+        run: pnpm bench:compare bench/results/baseline.json bench/results/current.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmarks
+          path: candidate/bench/results/

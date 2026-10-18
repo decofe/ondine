@@ -1,0 +1,68 @@
+{
+  "scripts": {
+    "bench": "node bench/Run.ts",
+    "bench:compare": "node bench/Compare.ts",
+    "build": "node scripts/build.ts",
+    "build:native": "cargo build --release --locked",
+    "check": "pnpm check:types && cargo fmt --all --check && cargo clippy --workspace --all-targets -- -D warnings",
+    "check:parity": "node scripts/conformance.ts",
+    "check:size": "node scripts/size.ts",
+    "check:types": "tsc --noEmit",
+    "examples": "node scripts/examples.ts",
+    "test": "node --test src/**/*.test.ts",
+    "theme": "node scripts/theme.ts"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "esbuild": "catalog:",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "[!start-pkg]": "",
+  "name": "@ash-diagram/core",
+  "version": "0.0.0",
+  "description": "Minimal grayscale diagrams compiled from Mermaid.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "crates",
+    "themes",
+    "third-party",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "!src/**/*.test.ts",
+    "!src/**/*.test-d.ts"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./compiler": {
+      "types": "./dist/compiler/index.d.ts",
+      "default": "./dist/compiler/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite/index.d.ts",
+      "default": "./dist/vite/index.js"
+    }
+  },
+  "bin": {
+    "ash": "./dist/compiler/cli.js"
+  },
+  "dependencies": {
+    "@mermaid-js/mermaid-zenuml": "catalog:",
+    "mermaid": "catalog:",
+    "playwright": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wevm/melee.git"
+  }
+}

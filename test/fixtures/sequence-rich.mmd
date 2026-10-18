@@ -1,0 +1,12 @@
+sequenceDiagram
+  autonumber
+  participant C as Client
+  participant S as Server
+  C->>+S: Request
+  alt Allowed
+    S-->>C: Result
+  else Denied
+    S-->>C: Error
+  end
+  Note over C,S: Every request is verified
+  S-->>-C: Done

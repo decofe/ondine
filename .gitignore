@@ -1,0 +1,7 @@
+node_modules/
+dist/
+target/
+bench/results/
+examples/generated/
+examples/gallery.html
+*.tgz

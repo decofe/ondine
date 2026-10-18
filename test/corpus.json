@@ -1,0 +1,154 @@
+[
+  {
+    "family": "agentflow",
+    "file": "test/fixtures/agentflow.mmd"
+  },
+  {
+    "family": "architecture",
+    "file": "test/fixtures/architecture.mmd"
+  },
+  {
+    "family": "block",
+    "file": "test/fixtures/block.mmd"
+  },
+  {
+    "family": "c4",
+    "file": "test/fixtures/c4.mmd"
+  },
+  {
+    "family": "class",
+    "file": "test/fixtures/class.mmd"
+  },
+  {
+    "family": "cynefin",
+    "file": "test/fixtures/cynefin.mmd"
+  },
+  {
+    "family": "er",
+    "file": "test/fixtures/er.mmd"
+  },
+  {
+    "family": "eventmodeling",
+    "file": "test/fixtures/eventmodeling.mmd"
+  },
+  {
+    "family": "flowchart",
+    "file": "test/fixtures/flowchart.mmd"
+  },
+  {
+    "family": "flowchart-rich",
+    "file": "test/fixtures/flowchart-rich.mmd"
+  },
+  {
+    "family": "frontmatter",
+    "file": "test/fixtures/frontmatter.mmd"
+  },
+  {
+    "family": "gantt",
+    "file": "test/fixtures/gantt.mmd"
+  },
+  {
+    "family": "gitgraph",
+    "file": "test/fixtures/gitgraph.mmd"
+  },
+  {
+    "family": "info",
+    "file": "test/fixtures/info.mmd"
+  },
+  {
+    "family": "ishikawa",
+    "file": "test/fixtures/ishikawa.mmd"
+  },
+  {
+    "family": "journey",
+    "file": "test/fixtures/journey.mmd"
+  },
+  {
+    "family": "kanban",
+    "file": "test/fixtures/kanban.mmd"
+  },
+  {
+    "family": "mindmap",
+    "file": "test/fixtures/mindmap.mmd"
+  },
+  {
+    "family": "minimal",
+    "file": "test/fixtures/minimal.mmd"
+  },
+  {
+    "family": "packet",
+    "file": "test/fixtures/packet.mmd"
+  },
+  {
+    "family": "pie",
+    "file": "test/fixtures/pie.mmd"
+  },
+  {
+    "family": "quadrantchart",
+    "file": "test/fixtures/quadrantchart.mmd"
+  },
+  {
+    "family": "radar",
+    "file": "test/fixtures/radar.mmd"
+  },
+  {
+    "family": "railroad",
+    "file": "test/fixtures/railroad.mmd"
+  },
+  {
+    "family": "requirement",
+    "file": "test/fixtures/requirement.mmd"
+  },
+  {
+    "family": "sankey",
+    "file": "test/fixtures/sankey.mmd"
+  },
+  {
+    "family": "sequence",
+    "file": "test/fixtures/sequence.mmd"
+  },
+  {
+    "family": "sequence-rich",
+    "file": "test/fixtures/sequence-rich.mmd"
+  },
+  {
+    "family": "state",
+    "file": "test/fixtures/state.mmd"
+  },
+  {
+    "family": "swimlanes",
+    "file": "test/fixtures/swimlanes.mmd"
+  },
+  {
+    "family": "timeline",
+    "file": "test/fixtures/timeline.mmd"
+  },
+  {
+    "family": "tree-view",
+    "file": "test/fixtures/tree-view.mmd"
+  },
+  {
+    "family": "treemap",
+    "file": "test/fixtures/treemap.mmd"
+  },
+  {
+    "family": "usecase",
+    "file": "test/fixtures/usecase.mmd"
+  },
+  {
+    "family": "venn",
+    "file": "test/fixtures/venn.mmd"
+  },
+  {
+    "family": "wardley",
+    "file": "test/fixtures/wardley.mmd"
+  },
+  {
+    "family": "xychart",
+    "file": "test/fixtures/xychart.mmd"
+  },
+  {
+    "family": "zenuml",
+    "file": "test/fixtures/zenuml.mmd"
+  }
+]
