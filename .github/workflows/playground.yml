@@ -1,0 +1,80 @@
+name: Playground preview
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: true
+  group: playground-${{ github.event.pull_request.number || github.ref }}
+permissions:
+  contents: read
+jobs:
+  playground:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT || 'melee' }}
+      VITE_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: pnpm install --frozen-lockfile
+      - name: Install the matching WASM binding tool
+        shell: bash
+        run: |
+          if ! command -v wasm-bindgen >/dev/null || test "$(wasm-bindgen --version)" != 'wasm-bindgen 0.2.106'; then
+            cargo install wasm-bindgen-cli --version 0.2.106 --locked --force
+          fi
+      - name: Build the playground
+        run: pnpm playground:build
+      - name: Check the WASM compiler and runtime size
+        run: pnpm test:wasm && pnpm check:size
+      - uses: actions/upload-artifact@v4
+        with:
+          name: melee-playground-${{ github.sha }}
+          path: playground/dist/
+      - name: Check Cloudflare configuration
+        id: cloudflare
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          if test -n "$CLOUDFLARE_ACCOUNT_ID" && test -n "$CLOUDFLARE_API_TOKEN"; then
+            echo 'configured=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'Playground built. Add CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN repository secrets, then rerun this workflow to deploy.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Ensure the Pages project exists
+        if: steps.cloudflare.outputs.configured == 'true'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/cloudflare-project.ts
+      - name: Deploy playground
+        if: steps.cloudflare.outputs.configured == 'true'
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy playground/dist --project-name=${{ env.CLOUDFLARE_PAGES_PROJECT }} --branch=${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || github.ref_name }} --commit-hash=${{ github.event.pull_request.head.sha || github.sha }}
+          packageManager: pnpm
+          wranglerVersion: 4.70.0
+      - name: Report preview links
+        if: steps.cloudflare.outputs.configured == 'true'
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.deployment-url }}
+          BRANCH_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+        run: |
+          printf '### Melee playground\n\n- Deployment: %s\n- Branch: %s\n' "$PREVIEW_URL" "$BRANCH_URL" >> "$GITHUB_STEP_SUMMARY"

@@ -10,12 +10,12 @@ const args = process.argv.slice(2)
 const input = args.find(arg => !arg.startsWith('-'))
 const known = new Set(['--compat', '--dark', '--json', '--native'])
 if (!input || args.some(arg => arg.startsWith('-') && !known.has(arg)) || args.filter(arg => !arg.startsWith('-')).length !== 1) {
-  console.error('Usage: ash input.mmd [--dark] [--json] [--compat] > output.svg')
+  console.error('Usage: melee input.mmd [--dark] [--json] [--compat] > output.svg')
   process.exitCode = 2
 } else {
   let compiler: Awaited<ReturnType<typeof Compiler.create>> | undefined
   try {
-    compiler = await Compiler.create({ nativeBinary: process.env.ASH_NATIVE_BINARY ?? Path.resolve('target/release/ash-native') })
+    compiler = await Compiler.create({ nativeBinary: process.env.MELEE_NATIVE_BINARY ?? Path.resolve('target/release/melee-native') })
     const diagram = await compiler.compile(await Fs.readFile(input, 'utf8'), {
       engine: args.includes('--compat') ? 'mermaid' : 'native',
       scheme: args.includes('--dark') ? 'dark' : 'light',

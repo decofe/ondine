@@ -9,6 +9,7 @@ A minimal, attractive Mermaid alternative with complete syntax compatibility, a 
 - A native Rust compiler facade over Merman, including its built-in diagram families and ELK layout support.
 - Persistent native workers, explicit reference Mermaid compilation, grayscale light/dark themes, a browser runtime, a CLI, and a Vite adapter.
 - A raw 20,000-byte browser code gate, fixed benchmark workloads, same-runner base comparisons, and family-level conformance checks.
+- An optional browser playground compiles source using the Rust core in a WASM worker (~20 MB raw). Cloudflare previews and private GitHub prerelease tarballs are configured in CI.
 - SVG can render with zero JavaScript. The small browser runtime supports repeated inline mounts and scoped SVG references.
 
 ## Remaining Release Gates
@@ -17,7 +18,7 @@ A minimal, attractive Mermaid alternative with complete syntax compatibility, a 
 - [ ] Close the upstream baseline difference: Merman 0.9.0 targets Mermaid 12.1.0, while the explicit reference package is 12.2.0.
 - [ ] Establish visual acceptance across families, both schemes, long labels, complex clusters, edge routing, Unicode, font fallback, and responsive widths. Example-gallery inspection alone is insufficient.
 - [ ] Verify optional icon registries, external resources, interactions, and math against explicit host policies.
-- [ ] Prove a complete standalone Mermaid-source browser parser fits below 20 kB including all WASM and other assets, or explicitly adopt compiler-first deployment as the product contract. The current project implements compiler-first deployment only.
+- [ ] Prove a complete standalone Mermaid-source browser parser fits below 20 kB including all WASM and other assets, or explicitly adopt compiler-first deployment as the product contract. The small runtime uses compiler-first deployment. The optional playground source compiler is substantially above this budget.
 - [ ] Expand browser coverage beyond Chromium and native distribution beyond the locally built executable.
 - [ ] Establish a stable same-runner main benchmark baseline. Local measurements are machine-specific.
 

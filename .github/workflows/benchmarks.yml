@@ -59,7 +59,7 @@ jobs:
         if: steps.baseline.outputs.available == 'true'
         working-directory: candidate
         env:
-          ASH_PROJECT_ROOT: ../baseline
+          MELEE_PROJECT_ROOT: ../baseline
         run: node bench/Run.ts --output bench/results/baseline.json
       - name: Measure candidate
         working-directory: candidate

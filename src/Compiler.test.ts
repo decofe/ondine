@@ -8,7 +8,7 @@ import { after, before, describe, test } from 'node:test'
 import * as Compiler from './compiler/Compiler.ts'
 
 let compiler: Compiler.Compiler
-before(async () => { compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/ash-native') }) })
+before(async () => { compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/melee-native') }) })
 after(async () => { await compiler.close() })
 
 describe('compile', () => {
@@ -41,7 +41,7 @@ describe('compile', () => {
   })
 
   test('rejects an unavailable native executable without falling back', async () => {
-    const broken = await Compiler.create({ nativeBinary: '/not-an-ash-executable' })
+    const broken = await Compiler.create({ nativeBinary: '/not-an-melee-executable' })
     await Assert.rejects(broken.compile('flowchart LR\nA-->B'))
     await Assert.rejects(broken.close())
   })

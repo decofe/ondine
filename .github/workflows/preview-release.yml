@@ -1,0 +1,58 @@
+name: Preview release
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: true
+  group: preview-release-${{ github.event.pull_request.number || github.ref }}
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build && pnpm check:size
+      - name: Pack commit-specific preview
+        run: pnpm preview:pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: melee-package-${{ github.sha }}
+          path: artifacts/
+  release:
+    if: github.event_name != 'pull_request'
+    needs: package
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: melee-package-${{ github.sha }}
+          path: artifacts/
+      - name: Publish private GitHub prerelease
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          tag="$(node -p "require('./artifacts/preview.json').tag")"
+          tarball="$(node -p "require('./artifacts/preview.json').tarball")"
+          version="$(node -p "require('./artifacts/preview.json').version")"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$tarball" --clobber
+          else
+            gh release create "$tag" "$tarball" --target "$TARGET_SHA" --prerelease --title "Melee $version" --notes-file artifacts/release-notes.md
+          fi
+          gh release view "$tag" --json url --jq '.url' >> "$GITHUB_STEP_SUMMARY"

@@ -1,4 +1,4 @@
-/** @module The portable, versioned output of the Ash compiler. */
+/** @module The portable, versioned output of the Melee compiler. */
 
 /** A trusted compiler-produced diagram, suitable for caching or serialization. */
 export type Diagram = {

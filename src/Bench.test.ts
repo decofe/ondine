@@ -9,7 +9,7 @@ import { describe, test } from 'node:test'
 
 describe('benchmark comparison', () => {
   test('rejects material regressions and incompatible source hashes', async () => {
-    const directory = await Fs.mkdtemp(Path.join(Os.tmpdir(), 'ash-bench-'))
+    const directory = await Fs.mkdtemp(Path.join(Os.tmpdir(), 'melee-bench-'))
     const base = Path.join(directory, 'base.json')
     const candidate = Path.join(directory, 'candidate.json')
     try {

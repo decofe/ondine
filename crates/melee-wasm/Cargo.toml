@@ -1,0 +1,12 @@
+[package]
+name = "melee-wasm"
+version = "0.0.0"
+edition = "2024"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+melee-core = { path = "../melee-core" }
+wasm-bindgen = "=0.2.106"

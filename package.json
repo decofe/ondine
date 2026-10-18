@@ -4,22 +4,28 @@
     "bench:compare": "node bench/Compare.ts",
     "build": "node scripts/build.ts",
     "build:native": "cargo build --release --locked",
+    "build:wasm": "node scripts/build-wasm.ts",
     "check": "pnpm check:types && cargo fmt --all --check && cargo clippy --workspace --all-targets -- -D warnings",
     "check:parity": "node scripts/conformance.ts",
     "check:size": "node scripts/size.ts",
     "check:types": "tsc --noEmit",
     "examples": "node scripts/examples.ts",
+    "playground:build": "pnpm build && pnpm build:wasm && pnpm --dir playground build",
+    "playground:dev": "pnpm build && pnpm build:wasm && pnpm --dir playground dev",
+    "preview:pack": "node scripts/preview-package.ts",
     "test": "node --test src/**/*.test.ts",
+    "test:wasm": "node scripts/test-wasm.ts",
     "theme": "node scripts/theme.ts"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "esbuild": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "wrangler": "catalog:"
   },
   "packageManager": "pnpm@11.25.0",
   "[!start-pkg]": "",
-  "name": "@ash-diagram/core",
+  "name": "melee",
   "version": "0.0.0",
   "description": "Minimal grayscale diagrams compiled from Mermaid.",
   "license": "MIT",
@@ -54,7 +60,7 @@
     }
   },
   "bin": {
-    "ash": "./dist/compiler/cli.js"
+    "melee": "./dist/compiler/cli.js"
   },
   "dependencies": {
     "@mermaid-js/mermaid-zenuml": "catalog:",

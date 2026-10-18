@@ -5,7 +5,7 @@ import * as Fs from 'node:fs/promises'
 import * as Compiler from '../compiler/Compiler.ts'
 
 /** A structural Vite plugin. No Vite dependency is needed in the runtime. */
-export function ash(options: Compiler.create.Options = {}) {
+export function melee(options: Compiler.create.Options = {}) {
   let worker: ReturnType<typeof Compiler.create> | undefined
   const close = async () => {
     const current = worker
@@ -14,7 +14,7 @@ export function ash(options: Compiler.create.Options = {}) {
   }
 
   return {
-    name: 'ash',
+    name: 'melee',
     enforce: 'pre' as const,
     configureServer(server: { httpServer: { once: (event: string, callback: () => void) => void } | null }) {
       server.httpServer?.once('close', () => { void close() })

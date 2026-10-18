@@ -10,7 +10,7 @@ import * as Compiler from '../src/compiler/Compiler.ts'
 type Fixture = { family: string; file: string }
 type Result = { error?: string; family: string; native: boolean; reference: boolean }
 const corpus = JSON.parse(await Fs.readFile('test/corpus.json', 'utf8')) as readonly Fixture[]
-const compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/ash-native') })
+const compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/melee-native') })
 const browser = await chromium.launch()
 const page = await browser.newPage()
 const results: Result[] = []

@@ -5,3 +5,6 @@ bench/results/
 examples/generated/
 examples/gallery.html
 *.tgz
+playground/src/generated/
+playground/dist/
+artifacts/

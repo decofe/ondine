@@ -1,13 +1,13 @@
 [package]
-name = "ash-cli"
+name = "melee-cli"
 version = "0.0.0"
 edition = "2024"
 license = "MIT"
 
 [[bin]]
-name = "ash-native"
+name = "melee-native"
 path = "src/main.rs"
 
 [dependencies]
-ash-core = { path = "../ash-core" }
+melee-core = { path = "../melee-core" }
 serde_json = "=1.0.154"

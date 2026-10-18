@@ -1,9 +1,9 @@
-# Ash
+# Melee
 
 Minimal grayscale diagrams from Mermaid source. A native Rust compiler produces SVG. A tiny browser runtime mounts the result without shipping a parser, layout engine, fonts, or WASM.
 
 > [!NOTE]
-> This is a compiler-first implementation. The under-20-kB budget applies to the complete browser runtime for **precompiled diagrams**. It does not include a standalone Mermaid-source parser. Full independent syntax parity is a release target, not an established claim.
+> This is a compiler-first implementation. The under-20-kB budget applies to the complete browser runtime for **precompiled diagrams**. The optional playground downloads a separate, much larger Rust/WASM compiler for live source editing. Full independent syntax parity is a release target, not an established claim.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -14,11 +14,25 @@ pnpm build
 
 Node 24, pnpm 11.25, and Rust 1.95 or newer are required. Chromium is used by reference verification, browser tests, and benchmarks. The native compiler itself does not require Node or Chromium.
 
+## Playground and Previews
+
+```sh
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli --version 0.2.106 --locked
+pnpm playground:dev
+```
+
+The playground runs Rust compilation in a browser worker, with editable source, 38 examples, both themes, zoom, SVG export, and shareable links. The optional compiler is approximately **20 MB raw / 6.7 MB gzip**, separate from the tiny SVG mounting runtime.
+
+The **Playground preview** GitHub Action deploys main and pull request previews to Cloudflare Pages. Add `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` (Cloudflare Pages Edit) as repository secrets, then run the workflow. The project defaults to `melee`; override it with the `CLOUDFLARE_PAGES_PROJECT` repository variable. Deployment links appear in the workflow summary.
+
+The **Preview release** action attaches a commit-versioned package to a private GitHub prerelease on main. Pull requests receive package artifacts. Nothing publishes to npm. See [playground setup](playground/README.md) for deployment and installation details.
+
 ## Compile
 
 ```sh
 # Entire compilation runs in Rust.
-cargo run --release --bin ash-native < test/fixtures/minimal.mmd > diagram.svg
+cargo run --release --bin melee-native < test/fixtures/minimal.mmd > diagram.svg
 
 # Node CLI, using the built native executable by default.
 node dist/compiler/cli.js test/fixtures/minimal.mmd > diagram.svg
@@ -37,10 +51,10 @@ An SVG can be used directly as an image with **zero browser JavaScript**.
 ## Use from Node
 
 ```ts
-import { Compiler } from '@ash-diagram/core/compiler'
+import { Compiler } from 'melee/compiler'
 
 const compiler = await Compiler.create({
-  nativeBinary: '/absolute/path/to/ash-native',
+  nativeBinary: '/absolute/path/to/melee-native',
 })
 
 try {
@@ -59,7 +73,7 @@ Reuse one compiler for a build. Native processes persist across diagrams. Light 
 ## Mount in a Browser
 
 ```ts
-import { Render } from '@ash-diagram/core'
+import { Render } from 'melee'
 
 // This artifact was produced during a build or by a trusted compiler service.
 const diagram = await fetch('/diagram.json').then(response => response.json())
@@ -78,11 +92,11 @@ Artifacts must come from a trusted compiler. Envelope validation is not SVG sani
 ## Vite
 
 ```ts
-import { ash } from '@ash-diagram/core/vite'
+import { melee } from 'melee/vite'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  plugins: [ash({ nativeBinary: '/absolute/path/to/ash-native' })],
+  plugins: [melee({ nativeBinary: '/absolute/path/to/melee-native' })],
 })
 ```
 
@@ -90,7 +104,7 @@ Importing `./diagram.mmd` produces a versioned `Diagram` artifact during the bui
 
 ```ts
 import diagram from './diagram.mmd'
-import { Render } from '@ash-diagram/core'
+import { Render } from 'melee'
 
 Render.mount(document.querySelector('#diagram')!, { diagram })
 ```
@@ -112,7 +126,8 @@ const diagram = await compiler.compile(source, { scheme: 'dark' })
 | Complete browser runtime | Less than 20,000 raw minified bytes |
 | Transitive browser imports, WASM, workers, fonts | Counted if introduced. None currently required |
 | Diagram SVG or JSON | Content, measured separately from library code |
-| Rust compiler and its dependencies | Build-time tooling, outside browser budget |
+| Rust compiler and its dependencies | Build-time tooling, outside runtime budget |
+| Optional playground Rust/WASM compiler | Separate ~20 MB source-editing tool; not a runtime dependency |
 | Mermaid, ZenUML, Playwright, Chromium | Explicit reference tooling, outside browser budget |
 
 `pnpm check:size` records raw, gzip, and Brotli sizes and rejects runtime builds with external imports. The native binary is substantially larger than 20 kB. No claim is made that a complete standalone Mermaid browser parser currently fits the budget.
@@ -143,7 +158,8 @@ The module layout, namespace APIs, strict TypeScript conventions, catalog depend
 - `src/`: portable artifact and browser renderer modules
 - `src/compiler/`: Node facade, native process transport, and reference worker
 - `src/vite/`: bundler adapter
-- `crates/`: native compiler facade and CLI
+- `crates/`: compiler facade, native CLI, and optional WASM wrapper
+- `playground/`: editable browser playground with a worker compiler
 - `test/fixtures/`: Mermaid conformance inputs
 - `bench/`: workloads and regression comparison
 - `docs/api/`: public contracts
@@ -151,4 +167,4 @@ The module layout, namespace APIs, strict TypeScript conventions, catalog depend
 
 ## License
 
-Ash's original code is MIT licensed. Merman provides the native parser and renderer under MIT OR Apache-2.0. Its ELK implementation is EPL-2.0. Third-party source provenance, fixture attribution, and retained notices are in `THIRD_PARTY_NOTICES.md` and `third-party/`.
+Melee's original code is MIT licensed. Merman provides the native parser and renderer under MIT OR Apache-2.0. Its ELK implementation is EPL-2.0. Third-party source provenance, fixture attribution, and retained notices are in `THIRD_PARTY_NOTICES.md` and `third-party/`.

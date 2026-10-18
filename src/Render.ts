@@ -15,7 +15,7 @@ export function mount(target: Element, options: mount.Options): mount.ReturnType
 
   const svg = document.importNode(root, true) as unknown as SVGSVGElement
   const random = (document.defaultView?.crypto ?? globalThis.crypto).getRandomValues(new Uint32Array(4))
-  const prefix = `ash-${[...random].map(value => value.toString(36)).join('-')}`
+  const prefix = `melee-${[...random].map(value => value.toString(36)).join('-')}`
   const ids = new Map<string, string>()
   const elements = [svg, ...svg.querySelectorAll('*')]
 
@@ -47,7 +47,7 @@ export function mount(target: Element, options: mount.Options): mount.ReturnType
     }
   }
 
-  svg.dataset.ash = options.diagram.engine
+  svg.dataset.melee = options.diagram.engine
   svg.style.maxWidth = '100%'
   svg.style.height = 'auto'
   if (options.label) {

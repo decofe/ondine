@@ -1,6 +1,6 @@
 //! Compile stdin to SVG, with an optional JSON-line protocol for persistent hosts.
 
-use ash_core::{Compiler, Scheme};
+use melee_core::{Compiler, Scheme};
 use std::io::{BufRead, Read, Write};
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -9,7 +9,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         .iter()
         .any(|arg| !matches!(arg.as_str(), "--dark" | "--stdio"))
     {
-        return Err("Usage: ash-native [--dark] [--stdio] < diagram.mmd".into());
+        return Err("Usage: melee-native [--dark] [--stdio] < diagram.mmd".into());
     }
     let compiler = Compiler::new(if args.iter().any(|arg| arg == "--dark") {
         Scheme::Dark
@@ -42,7 +42,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
 fn main() {
     if let Err(error) = run() {
-        eprintln!("ash-native: {error}");
+        eprintln!("melee-native: {error}");
         std::process::exit(2);
     }
 }

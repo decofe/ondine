@@ -2,12 +2,12 @@
 
 | Entrypoint | Export | Purpose |
 | --- | --- | --- |
-| `@ash-diagram/core` | `Diagram` | Versioned trusted artifact shape and envelope check |
-| `@ash-diagram/core` | `Render` | Browser mounting and instance cleanup |
-| `@ash-diagram/core/compiler` | `Compiler` | Persistent native and reference compilation |
-| `@ash-diagram/core/compiler` | `Native` | Native JSON-line worker transport |
-| `@ash-diagram/core/compiler` | `Theme` | Shared grayscale configuration |
-| `@ash-diagram/core/vite` | `ash` | Build-time `.mmd` imports |
+| `melee` | `Diagram` | Versioned trusted artifact shape and envelope check |
+| `melee` | `Render` | Browser mounting and instance cleanup |
+| `melee/compiler` | `Compiler` | Persistent native and reference compilation |
+| `melee/compiler` | `Native` | Native JSON-line worker transport |
+| `melee/compiler` | `Theme` | Shared grayscale configuration |
+| `melee/vite` | `melee` | Build-time `.mmd` imports |
 
 ## Compiler.create
 
@@ -31,6 +31,6 @@ The portable artifact is `{ engine: 'native' | 'mermaid', svg: string, version: 
 
 ## Rust
 
-`ash_core::Compiler::new(Scheme::Light | Scheme::Dark)` constructs a reusable headless renderer. `compile(&self, source: &str)` returns a standalone SVG or a diagnostic error. The core performs no ambient I/O.
+`melee_core::Compiler::new(Scheme::Light | Scheme::Dark)` constructs a reusable headless renderer. `compile(&self, source: &str)` returns a standalone SVG or a diagnostic error. The core performs no ambient I/O.
 
-`ash-native` accepts Mermaid from stdin. `--dark` selects the scheme. `--stdio` accepts one JSON string per line and emits one `{ "svg": "..." }` or `{ "error": "..." }` response per line. Invalid diagrams do not terminate the worker. The source limit is 1 MB.
+`melee-native` accepts Mermaid from stdin. `--dark` selects the scheme. `--stdio` accepts one JSON string per line and emits one `{ "svg": "..." }` or `{ "error": "..." }` response per line. Invalid diagrams do not terminate the worker. The source limit is 1 MB.

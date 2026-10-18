@@ -1,5 +1,6 @@
 /** @module Measure complete warm compilation and browser mounting on fixed workloads. */
 
+import * as ChildProcess from 'node:child_process'
 import * as Crypto from 'node:crypto'
 import * as Fs from 'node:fs/promises'
 import * as Os from 'node:os'
@@ -13,10 +14,13 @@ import type * as Diagram from '../src/Diagram.ts'
 
 type Sample = { id: string; median: number; p95: number; samples: readonly number[]; unit: 'ms' }
 type Workload = { id: string; source: string }
-const project = Path.resolve(process.env.ASH_PROJECT_ROOT ?? '.')
+const project = Path.resolve(process.env.MELEE_PROJECT_ROOT ?? '.')
 const path = Url.pathToFileURL(Path.join(project, 'dist/compiler/index.js')).href
 const module = await import(path) as { Compiler: typeof CompilerTypes }
-const compiler = await module.Compiler.create({ nativeBinary: Path.join(project, 'target/release/ash-native') })
+const metadata = JSON.parse(ChildProcess.execFileSync('cargo', ['metadata', '--manifest-path', Path.join(project, 'Cargo.toml'), '--no-deps', '--format-version', '1'], { encoding: 'utf8' })) as { packages: readonly { targets: readonly { kind: readonly string[]; name: string }[] }[] }
+const binaries = metadata.packages.flatMap(value => value.targets).filter(value => value.kind.includes('bin'))
+if (binaries.length !== 1) throw new Error('Benchmark requires exactly one native CLI target')
+const compiler = await module.Compiler.create({ nativeBinary: Path.join(project, 'target/release', binaries[0]!.name) })
 const runtime = (await Fs.readFile(Path.join(project, 'dist/index.js'))).toString('base64')
 const output = process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'bench/results/current.json'
 if (!output) throw new Error('--output requires a path')

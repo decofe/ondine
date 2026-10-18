@@ -2,11 +2,11 @@
 
 ## Principles
 
-- Ash compiles Mermaid to SVG. The browser runtime mounts trusted compiled artifacts and never imports the compiler.
+- Melee compiles Mermaid to SVG. The browser runtime mounts trusted compiled artifacts and never imports the compiler.
 - Keep the complete minified browser entrypoint below 20,000 raw bytes. Count every transitive asset, worker, stylesheet, font, and WASM module required by runtime code. Diagram SVG is content, report its size separately.
 - Prefer Rust for parsing, layout, and SVG generation. The native compiler uses Merman with an exact version pin. Do not reimplement its grammar in TypeScript.
 - Treat complete Mermaid syntax parity as an acceptance target. Family smoke tests are evidence of family coverage, not proof of full syntax or visual parity. Never market incomplete coverage as complete.
-- Keep the Mermaid reference backend explicit. Never silently fall back on errors, ship Mermaid to browsers, hide downloads behind lazy imports, or count a loader as the full renderer.
+- Keep the Mermaid reference backend explicit. Never silently fall back on errors, add Mermaid as a runtime dependency, hide downloads behind lazy imports, or count a loader as the full renderer.
 - Keep output responsive, accessible, deterministic where the backend supports it, and safe under the strict upstream security policy. Compiler artifacts are trusted SVG. Runtime shape checks do not sanitize arbitrary SVG.
 - Preserve source semantics, labels, ordering, and authored overrides. The default appearance uses grayscale surfaces, subtle borders, and restrained typography inspired by Geist. No mandatory external fonts.
 - Before changing pinned Mermaid or Merman versions, run all fixtures against both backends and record their baseline versions.
@@ -14,7 +14,8 @@
 ## Layout
 
 - Flat PascalCase conceptual modules live under `src/`. Keep Node APIs in `src/compiler/` and bundler code in its adapter entrypoint.
-- `crates/ash-core/` owns the Rust compiler facade. `crates/ash-cli/` owns filesystem/process I/O and the JSON-line protocol.
+- `crates/melee-core/` owns the Rust compiler facade. `crates/melee-cli/` owns filesystem/process I/O and the JSON-line protocol.
+- `crates/melee-wasm/` exposes the core to the optional playground worker. `playground/` owns the editor UI. Its entire compiler payload is reported separately and never treated as meeting the tiny runtime budget.
 - `src/index.ts` is browser safe. `src/compiler/index.ts` and `src/vite/index.ts` are separate entrypoints.
 - Colocate integration tests with their module. Store Mermaid fixtures in `test/fixtures/`, acceptance state in `.agents/plan.md`, API contracts in `docs/api/`, and benchmark methodology under `bench/`.
 - `themes/` is generated from `src/compiler/Theme.ts`. Run `node scripts/theme.ts`. Do not edit generated themes by hand.
@@ -54,6 +55,10 @@
 - `pnpm exec playwright install --with-deps --only-shell chromium`
 - `pnpm build:native` builds the native release executable.
 - `pnpm build` builds runtime, compiler, adapter, and declarations.
+- `pnpm playground:dev` builds the WASM compiler and starts the editor; install the target and binding CLI documented in `playground/README.md`.
+- `pnpm playground:build` builds static Cloudflare Pages assets.
+- `pnpm test:wasm` verifies the generated compiler in both themes.
+- `pnpm preview:pack` creates a commit-versioned tarball without publishing it.
 - `pnpm check` runs TypeScript, Rust formatting, and Rust linting.
 - `pnpm check:parity` tests the committed corpus against native and reference compilers.
 - `pnpm check:size` fails when the whole browser entrypoint reaches 20,000 raw bytes.

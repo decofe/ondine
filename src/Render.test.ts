@@ -11,7 +11,7 @@ import * as Compiler from './compiler/Compiler.ts'
 
 describe('mount', () => {
   test('isolates all SVG IDs and references across native and Mermaid instances', async () => {
-    const compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/ash-native') })
+    const compiler = await Compiler.create({ nativeBinary: Path.resolve('target/release/melee-native') })
     const browser = await chromium.launch()
     try {
       const page = await browser.newPage()

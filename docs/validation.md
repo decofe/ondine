@@ -3,13 +3,22 @@
 Local validation performed on 18 October 2026. CI workflows are configured but have not been run on GitHub for this project.
 
 - 38 of 38 committed fixtures compiled through both native and reference backends into valid, nonempty SVG.
-- Seven Node integration tests passed, including benchmark regression gates, worker recovery, backend selection, repeated mounts, ID isolation, and accessible labels.
+- Ten Node integration tests passed, including benchmark regression gates, worker recovery, backend selection, repeated mounts, ID isolation, accessible labels, and Cloudflare project reuse/create/error handling.
 - Rust compiler integration tests, rustfmt, clippy, strict TypeScript, public consumer declarations, and package structure were checked.
 - Gallery inspected at 390 px and 1360 px. No broken images or horizontal overflow.
 
-The complete browser runtime is 1,827 raw minified bytes, 1,049 gzip bytes, and 914 Brotli bytes. It mounts precompiled SVG and does not parse Mermaid source.
+The renamed browser runtime is 1,831 raw minified bytes, 1,051 gzip bytes, and 916 Brotli bytes. It mounts precompiled SVG and does not parse Mermaid source.
+
+## Playground Validation
+
+The static Vite playground build and strict TypeScript checks pass. The generated Rust/WASM compiler passes all 38 committed fixtures in both light and dark themes (76 renders), rejects invalid syntax, and recovers on the next valid request. The optional compiler asset is approximately 20 MB raw / 6.7 MB gzip and is separate from the small library runtime. UI browser inspection and Cloudflare deployment have not been performed for this playground.
+
+Preview packaging was exercised locally, including manifest restoration and inspection of the package name/version, dependencies, Rust sources, and retained notices. Workflow YAML parses locally. GitHub Actions and the secrets-dependent deployment still require a remote run.
 
 ## Warm Compilation
+
+The table retains the measurements recorded before the rename. The renamed harness was exercised again to verify native target discovery; concurrent compilation means that run is not a replacement performance baseline.
+
 
 | Workload | Rust median | Mermaid median |
 | --- | ---: | ---: |

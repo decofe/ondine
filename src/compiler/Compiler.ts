@@ -15,7 +15,7 @@ import * as Theme from './Theme.ts'
 
 declare global {
   interface Window {
-    __ashMermaid: typeof mermaid
+    __meleeMermaid: typeof mermaid
   }
 }
 
@@ -77,7 +77,7 @@ async function createReference(options: create.Options): Promise<Compiler> {
     await page.evaluate(async () => {
       const path = '/worker.mjs'
       const module = await import(path) as { default: typeof mermaid }
-      window.__ashMermaid = module.default
+      window.__meleeMermaid = module.default
     })
 
     let closed = false
@@ -94,19 +94,19 @@ async function createReference(options: create.Options): Promise<Compiler> {
         if (Buffer.byteLength(source) > 1_000_000) return Promise.reject(new Error('Compiler.compile: source exceeds 1 MB'))
 
         const job = pending.then(async (): Promise<Diagram.Diagram> => {
-          const id = `ash-${Crypto.createHash('sha256').update(source).update(compileOptions.scheme ?? 'light').digest('hex').slice(0, 16)}`
+          const id = `melee-${Crypto.createHash('sha256').update(source).update(compileOptions.scheme ?? 'light').digest('hex').slice(0, 16)}`
           const config = Theme.create({ scheme: compileOptions.scheme })
           const svg = await page.evaluate(async input => {
             document.body.replaceChildren()
-            window.__ashMermaid.initialize(input.config)
-            const result = await window.__ashMermaid.render(input.id, input.source)
+            window.__meleeMermaid.initialize(input.config)
+            const result = await window.__meleeMermaid.render(input.id, input.source)
             // HTML parsing resolves named entities and namespaces in foreignObject.
             // XMLSerializer then emits a valid standalone XML document.
             const template = document.createElement('template')
             template.innerHTML = result.svg
             const root = template.content.firstElementChild
             if (!root || root.localName !== 'svg') throw new Error('Reference renderer returned no SVG')
-            root.setAttribute('data-ash', 'mermaid')
+            root.setAttribute('data-melee', 'mermaid')
             root.setAttribute('style', `${root.getAttribute('style') ?? ''};max-width:100%;height:auto`)
             const serialized = new XMLSerializer().serializeToString(root)
             document.body.replaceChildren()
