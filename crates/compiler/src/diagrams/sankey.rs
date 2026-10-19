@@ -10,7 +10,7 @@ pub(crate) mod render;
 /// The JSON reader of the parity fixtures.
 #[cfg(test)]
 #[path = "../../tests/fixtures/json.rs"]
-mod fixture;
+pub(super) mod fixture;
 
 use super::{Diagram, Input, Rendered};
 use crate::error::Error;
