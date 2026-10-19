@@ -75,7 +75,7 @@ export function create(options: create.Options): create.ReturnType {
       const first = types[0] === undefined ? undefined : instance(types[0])
       if (first === undefined) throw new Error('Render.create needs at least one module.')
 
-      const json = JSON.stringify(renderOptions)
+      const json = serialize(renderOptions)
       const result = first.render(source, json)
       // A module reports the detected type when it does not include it.
       if (!result.ok && result.code === 'unsupported-diagram' && result.type !== undefined) {
@@ -118,7 +118,7 @@ let instance: Wasm.Instance | undefined
 export function render(source: string, options: render.Options = {}): render.ReturnType {
   instance ??= Wasm.instantiate(all)
 
-  return unwrap(instance.render(source, JSON.stringify(options)))
+  return unwrap(instance.render(source, serialize(options)))
 }
 
 export declare namespace render {
@@ -138,6 +138,8 @@ export declare namespace render {
     readonly maxEdges?: number | undefined
     /** The width available to the diagram, in pixels. */
     readonly maxWidth?: number | undefined
+    /** The time a gantt chart schedules against, in milliseconds since the epoch. Defaults to the current time. */
+    readonly now?: number | undefined
     /** The most characters of SVG to produce. Defaults to `4000000`. */
     readonly outputLimit?: number | undefined
     /** Padding around the diagram, in pixels. Defaults to `8`. */
@@ -159,6 +161,11 @@ export declare namespace render {
     /** Width in pixels. */
     readonly width: number
   }
+}
+
+/** Options as the compiler reads them. The compiler reads no clock, so the current time is passed in. */
+function serialize(options: render.Options): string {
+  return JSON.stringify({ ...options, now: options.now ?? Date.now() })
 }
 
 function unwrap(result: Wasm.Result): render.ReturnType {

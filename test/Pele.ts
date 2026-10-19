@@ -6,6 +6,9 @@
  */
 import * as Pele from 'pele'
 
+// Pele formats gantt dates in local time. Melee works in UTC, so Pele runs in UTC to match.
+process.env.TZ = 'UTC'
+
 /** Melee's monospace widths, in thousandths of an em: 600 per glyph, 1,200 wide, 0 zero-width. */
 const measurer: Pele.TextMeasurer = {
   width(text, size) {

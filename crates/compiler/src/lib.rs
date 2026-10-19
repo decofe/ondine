@@ -262,6 +262,7 @@ fn options_from_json(json: &str) -> Result<svg::root::RenderOptions, Error> {
             "links" => options.links = boolean(value),
             "maxEdges" => options.max_edges = number(value),
             "maxWidth" => options.max_width = number(value),
+            "now" => options.now = number(value),
             "outputLimit" => options.output_limit = number(value),
             "padding" => options.padding = number(value),
             "responsive" => options.responsive = boolean(value),

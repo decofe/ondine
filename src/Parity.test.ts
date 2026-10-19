@@ -3,6 +3,9 @@ import { render, RenderError } from 'melee'
 import * as Pele from '../test/Pele.js'
 import * as Vectors from '../test/Vectors.js'
 
+/** The time gantt charts schedule against, on both sides, so output does not depend on the clock. */
+const now = Date.UTC(2024, 0, 15, 12)
+
 /** Every diagram type with vectors, in Pele's names. Unported types are skipped. */
 const types = Vectors.types()
 
@@ -27,10 +30,10 @@ describe('render', () => {
     describe.skipIf(vectors[0] === undefined || !ported(vectors[0].source))(type, () => {
       for (const vector of vectors) {
         test(vector.label, () => {
-          const expected = Pele.render(vector.source)
+          const expected = Pele.render(vector.source, { now })
           const actual = (() => {
             try {
-              const result = render(vector.source)
+              const result = render(vector.source, { now })
               return {
                 height: result.height,
                 ok: true as const,

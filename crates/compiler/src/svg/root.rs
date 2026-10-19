@@ -37,6 +37,9 @@ pub(crate) struct RenderOptions {
     /// The width the host has for the diagram, in pixels. A type that can draw itself narrower
     /// does, so its text is not shrunk with it.
     pub(crate) max_width: Option<f64>,
+    /// The time a gantt chart schedules against, in milliseconds since the epoch. The epoch
+    /// when absent, since the compiler reads no clock.
+    pub(crate) now: Option<f64>,
     /// The most UTF-16 units of SVG to produce. 4,000,000 when absent.
     pub(crate) output_limit: Option<f64>,
     /// Space around a diagram. 8 when absent.
