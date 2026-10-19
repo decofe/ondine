@@ -7,7 +7,7 @@
     "check": "vp check --fix",
     "check:types": "tsc",
     "dev": "pnpm build:wasm && zile dev",
-    "test": "vp test"
+    "test": "pnpm build:wasm && vp test"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
