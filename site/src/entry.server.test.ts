@@ -227,13 +227,17 @@ describe('fetch', () => {
 
   test('answers link previewers on SVG addresses with the PNG card', async () => {
     const path = `/svg?source=${encodeURIComponent('flowchart LR\n  A --> B')}&scheme=dark`
-    const preview = await fetch(`${origin}${path}`, { headers: { 'user-agent': 'Slackbot 1.0' } })
+    const twitter = await fetch(`${origin}${path}`, { headers: { 'user-agent': 'Twitterbot/1.0' } })
+    const slack = await fetch(`${origin}${path}`, {
+      headers: { 'user-agent': 'Slackbot-LinkExpanding 1.0' },
+    })
     const image = await fetch(`${origin}${path}`)
 
-    expect(preview.headers.get('content-type')).toMatchInlineSnapshot(`"text/html; charset=utf-8"`)
-    expect((await preview.text()).match(/<meta[^>]*og:image"[^>]*>/)?.[0]).toMatchInlineSnapshot(
+    expect(twitter.headers.get('content-type')).toMatchInlineSnapshot(`"text/html; charset=utf-8"`)
+    expect((await twitter.text()).match(/<meta[^>]*og:image"[^>]*>/)?.[0]).toMatchInlineSnapshot(
       `"<meta content="http://localhost:3161/png?source=flowchart+LR%0A++A+--%3E+B" property="og:image">"`,
     )
+    expect(slack.headers.get('content-type')).toMatchInlineSnapshot(`"image/png"`)
     expect(image.headers.get('content-type')).toMatchInlineSnapshot(
       `"image/svg+xml; charset=utf-8"`,
     )

@@ -53,9 +53,13 @@ export async function respond(request: Request, options: respond.Options = {}): 
     return new Response('Method not allowed', { headers: { allow: 'GET, HEAD' }, status: 405 })
 
   const url = new URL(request.url)
-  const format = (payloadPath.exec(url.pathname) ?? sourcePath.exec(url.pathname))?.at(-1)
-  if (format !== 'png' && format !== 'svg') return new Response('Not found', { status: 404 })
-  if (format === 'svg' && options.preview) return preview(url)
+  const path = (payloadPath.exec(url.pathname) ?? sourcePath.exec(url.pathname))?.at(-1)
+  if (path !== 'png' && path !== 'svg') return new Response('Not found', { status: 404 })
+
+  // Slack and Discord show an image address at full size, but an `og:image` only as a thumbnail.
+  const unfurl = /Slackbot|Discordbot/.test(request.headers.get('user-agent') ?? '')
+  if (path === 'svg' && options.preview && !unfurl) return preview(url)
+  const format = path === 'svg' && options.preview ? 'png' : path
 
   const scheme = url.searchParams.get('scheme')
   const style = (() => {
@@ -86,7 +90,9 @@ export async function respond(request: Request, options: respond.Options = {}): 
     const cache = 'public, max-age=86400, stale-while-revalidate=604800'
 
     if (format === 'png')
-      return cached(request, async () => image(await Card.png(svg), { 'cache-control': cache }))
+      return cached(new Request(png(url), request), async () =>
+        image(await Card.png(svg), { 'cache-control': cache }),
+      )
     return image(theme(svg, style), { 'cache-control': cache, vary: 'User-Agent' })
   } catch (error) {
     if (!(error instanceof PayloadError || error instanceof RenderError)) throw error
@@ -121,11 +127,17 @@ async function cached(request: Request, fn: () => Promise<Response>): Promise<Re
   return response
 }
 
-/** Answers a link previewer with a page whose Open Graph image is the PNG card for the same diagram. */
-function preview(url: URL): Response {
+/** Returns the PNG card address for the diagram at `url`. Cards ignore the scheme. */
+function png(url: URL): URL {
   const card = new URL(url)
   card.pathname = url.pathname.replace(/svg$/, 'png')
   card.searchParams.delete('scheme')
+  return card
+}
+
+/** Answers a link previewer with a page whose Open Graph image is the PNG card for the same diagram. */
+function preview(url: URL): Response {
+  const card = png(url)
   const attribute = (value: string) => escape(value).replaceAll('"', '&quot;')
 
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Mermaid Diagram · Ondine</title><meta content="Mermaid Diagram" property="og:title"><meta content="Ondine" property="og:site_name"><meta content="${attribute(card.href)}" property="og:image"><meta content="Mermaid diagram" property="og:image:alt"><meta content="630" property="og:image:height"><meta content="image/png" property="og:image:type"><meta content="1200" property="og:image:width"><meta content="summary_large_image" name="twitter:card"><meta content="${attribute(card.href)}" name="twitter:image"></head><body><img alt="Mermaid diagram" src="${attribute(url.href)}"></body></html>`
