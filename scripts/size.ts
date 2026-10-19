@@ -10,7 +10,10 @@ import * as Zlib from 'node:zlib'
 const root = Path.resolve(import.meta.dirname, '..')
 
 /** Entrypoints and their gzip budgets in bytes. */
-const budgets = [{ entry: 'src/index.ts', gzip: 20_000, name: 'melee' }] as const
+const budgets = [
+  { entry: 'src/index.ts', gzip: 20_000, name: 'melee' },
+  { entry: 'src/runtime.ts', gzip: 20_000, name: 'melee/runtime' },
+] as const
 
 let failed = false
 

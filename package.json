@@ -8,6 +8,7 @@
     "check:size": "node scripts/size.ts",
     "check:types": "tsc && tsc -p playground",
     "dev": "pnpm build:wasm && zile dev",
+    "postinstall": "zile dev",
     "test": "pnpm build:wasm && vp test"
   },
   "devDependencies": {
@@ -18,6 +19,7 @@
     "mermaid": "catalog:",
     "pele": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vite-plus": "catalog:",
     "zile": "catalog:"
   },
@@ -33,10 +35,41 @@
     "url": "git+https://github.com/wevm/melee.git"
   },
   "sideEffects": false,
-  "main": "./src/index.ts",
+  "bin": {
+    "melee": "./dist/cli/bin.js",
+    "melee.src": "./src/cli/bin.ts"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "src": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./runtime": {
+      "src": "./src/runtime.ts",
+      "types": "./dist/runtime.d.ts",
+      "default": "./dist/runtime.js"
+    },
+    "./vite": {
+      "src": "./src/vite/index.ts",
+      "types": "./dist/vite/index.d.ts",
+      "default": "./dist/vite/index.js"
+    }
+  },
   "files": [
     "dist",
     "src"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "peerDependencies": {
+    "vite": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }
