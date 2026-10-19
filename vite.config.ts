@@ -9,7 +9,7 @@ export default defineConfig({
     globals: true,
   },
   lint: {
-    ignorePatterns: ['dist/**', 'test/vectors/**'],
+    ignorePatterns: ['crates/**/fixtures/**', 'dist/**', 'target/**', 'test/vectors/**'],
     // TypeScript runs separately through `pnpm check:types`.
     options: {
       typeAware: false,
@@ -18,7 +18,7 @@ export default defineConfig({
   },
   fmt: {
     // Vectors are copied byte for byte from their sources.
-    ignorePatterns: ['dist/**', 'test/vectors/**'],
+    ignorePatterns: ['crates/**/fixtures/**', 'dist/**', 'target/**', 'test/vectors/**'],
     printWidth: 100,
     semi: false,
     singleQuote: true,

@@ -11,7 +11,10 @@
 #![cfg_attr(target_arch = "wasm32", no_main)]
 #![cfg_attr(
     target_arch = "wasm32",
-    expect(unsafe_code, reason = "The arena allocator and the exported ABI work with raw linear memory.")
+    expect(
+        unsafe_code,
+        reason = "The arena allocator and the exported ABI work with raw linear memory."
+    )
 )]
 
 #[cfg(target_arch = "wasm32")]
@@ -98,13 +101,16 @@ mod arena {
 
         unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
             // The most recent allocation grows in place when the arena has room.
-            if ptr as usize + layout.size() == self.next.get() && ptr as usize + size <= self.end.get() {
+            if ptr as usize + layout.size() == self.next.get()
+                && ptr as usize + size <= self.end.get()
+            {
                 self.next.set(ptr as usize + size);
                 return ptr;
             }
 
             // SAFETY: the new layout has the original alignment and a nonzero size.
-            let new = unsafe { self.alloc(Layout::from_size_align_unchecked(size, layout.align())) };
+            let new =
+                unsafe { self.alloc(Layout::from_size_align_unchecked(size, layout.align())) };
             if !new.is_null() {
                 // SAFETY: both ranges are valid for the smaller size and do not overlap, since the
                 // arena never reuses live memory.
@@ -120,6 +126,7 @@ mod arena {
 static ARENA: arena::Arena = arena::Arena::new();
 
 /// Encodes a render result as the length-prefixed buffer described in the module docs.
+#[cfg(target_arch = "wasm32")]
 fn encode(result: Result<compiler::Rendered, compiler::Error>) -> Vec<u8> {
     let mut out = Vec::new();
 
@@ -129,7 +136,12 @@ fn encode(result: Result<compiler::Rendered, compiler::Error>) -> Vec<u8> {
             field(&mut out, rendered.r#type.as_bytes());
             field(&mut out, &rendered.width.to_le_bytes());
             field(&mut out, &rendered.height.to_le_bytes());
-            field(&mut out, &u32::try_from(rendered.links.len()).unwrap_or(u32::MAX).to_le_bytes());
+            field(
+                &mut out,
+                &u32::try_from(rendered.links.len())
+                    .unwrap_or(u32::MAX)
+                    .to_le_bytes(),
+            );
             for link in &rendered.links {
                 field(&mut out, link.href.as_bytes());
                 field(&mut out, link.id.as_bytes());
@@ -151,6 +163,7 @@ fn encode(result: Result<compiler::Rendered, compiler::Error>) -> Vec<u8> {
     out
 }
 
+#[cfg(target_arch = "wasm32")]
 fn field(out: &mut Vec<u8>, bytes: &[u8]) {
     out.extend_from_slice(&u32::try_from(bytes.len()).unwrap_or(u32::MAX).to_le_bytes());
     out.extend_from_slice(bytes);
@@ -194,7 +207,12 @@ mod exports {
     /// Renders the UTF-8 source and options the host wrote, and returns the result's address.
     /// The length is available from `result_len`.
     #[unsafe(no_mangle)]
-    extern "C" fn render(source: *const u8, source_len: usize, options: *const u8, options_len: usize) -> *const u8 {
+    extern "C" fn render(
+        source: *const u8,
+        source_len: usize,
+        options: *const u8,
+        options_len: usize,
+    ) -> *const u8 {
         // SAFETY: the host wrote `source_len` and `options_len` bytes at addresses from `alloc`.
         let (source, options) = unsafe {
             (

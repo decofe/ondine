@@ -16,11 +16,29 @@ pub(crate) struct RenderOptions {
     pub(crate) auto_direction: Option<bool>,
     /// The width under which a diagram may turn to run down. 640 when absent or not positive.
     pub(crate) direction_breakpoint: Option<f64>,
+    /// Font size in pixels. 16 when absent.
+    pub(crate) font_size: Option<f64>,
     /// The prefix of element IDs, so several diagrams can share a page. `pele` when absent.
     pub(crate) id_prefix: Option<String>,
+    /// Schemes an image may use besides a relative address.
+    pub(crate) image_schemes: Option<Vec<String>>,
+    /// Whether images are drawn. On unless `Some(false)`.
+    pub(crate) images: Option<bool>,
+    /// The most UTF-16 units of source to accept. 50,000 when absent.
+    pub(crate) limit: Option<f64>,
+    /// The `rel` of links. `noopener` when absent; empty omits it.
+    pub(crate) link_rel: Option<String>,
+    /// Schemes a link may use besides a relative address.
+    pub(crate) link_schemes: Option<Vec<String>>,
+    /// Whether links are drawn. On unless `Some(false)`.
+    pub(crate) links: Option<bool>,
+    /// The most edges a flowchart may have. 5,000 when absent.
+    pub(crate) max_edges: Option<f64>,
     /// The width the host has for the diagram, in pixels. A type that can draw itself narrower
     /// does, so its text is not shrunk with it.
     pub(crate) max_width: Option<f64>,
+    /// The most UTF-16 units of SVG to produce. 4,000,000 when absent.
+    pub(crate) output_limit: Option<f64>,
     /// Space around a diagram. 8 when absent.
     pub(crate) padding: Option<f64>,
     /// Whether the document scales down to its container. On unless `Some(false)`.
@@ -113,7 +131,7 @@ pub(crate) fn svg_document(
     acc: Accessible<'_>,
     content: &str,
 ) -> String {
-    let prefix = esc(options.id_prefix.as_deref().unwrap_or("pele"));
+    let prefix = esc(options.id_prefix.as_deref().unwrap_or("melee"));
     let mut head = String::new();
     let mut aria = String::new();
     if let Some(title) = acc.acc_title.filter(|title| !title.is_empty()) {
@@ -157,7 +175,7 @@ pub(crate) fn svg_document(
     }
 
     let mut out = String::with_capacity(content.len() + 1024);
-    out.push_str("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-");
+    out.push_str("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-");
     out.push_str(r#type);
     out.push_str("\" viewBox=\"0 0 ");
     push_number(&mut out, width);
@@ -217,7 +235,7 @@ mod tests {
             None,
             None,
             "<rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" rx=\"var(--melee-radius,0)\" fill=\"red\"/>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-flowchart\" viewBox=\"0 0 120 80\" width=\"120\" height=\"80\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\"><rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" fill=\"red\" style=\"rx:var(--_r)\"/></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-flowchart\" viewBox=\"0 0 120 80\" width=\"120\" height=\"80\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\"><rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" fill=\"red\" style=\"rx:var(--_r)\"/></svg>",
         ),
         (
             "flowchart",
@@ -229,7 +247,7 @@ mod tests {
             Some("Title &amp; <x>"),
             Some("Desc"),
             "<rect rx=\"var(--melee-radius,0)\" style=\"fill:red\"/><rectangle rx=\"var(--melee-radius,0)\"/><text font-weight=\"var(--_w)\">b</text>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-flowchart\" viewBox=\"0 0 120.5 80\" width=\"120.5\" height=\"80\" style=\"--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_w:var(--melee-bold-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:14px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\" aria-labelledby=\"my&quot;id-title\" aria-describedby=\"my&quot;id-desc\"><title id=\"my&quot;id-title\">Title &amp; &lt;x&gt;</title><desc id=\"my&quot;id-desc\">Desc</desc><rect style=\"rx:var(--_r);fill:red\"/><rectangle rx=\"var(--melee-radius,0)\"/><text font-weight=\"var(--_w)\">b</text></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-flowchart\" viewBox=\"0 0 120.5 80\" width=\"120.5\" height=\"80\" style=\"--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_w:var(--melee-bold-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:14px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\" aria-labelledby=\"my&quot;id-title\" aria-describedby=\"my&quot;id-desc\"><title id=\"my&quot;id-title\">Title &amp; &lt;x&gt;</title><desc id=\"my&quot;id-desc\">Desc</desc><rect style=\"rx:var(--_r);fill:red\"/><rectangle rx=\"var(--melee-radius,0)\"/><text font-weight=\"var(--_w)\">b</text></svg>",
         ),
         (
             "pie",
@@ -241,7 +259,7 @@ mod tests {
             Some(""),
             Some("only desc"),
             "<g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-pie\" viewBox=\"0 0 10 10\" width=\"10\" height=\"10\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_tw:var(--melee-title-weight,bold);--_hw:var(--melee-heading-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"pie\" aria-describedby=\"pele-desc\"><desc id=\"pele-desc\">only desc</desc><g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-pie\" viewBox=\"0 0 10 10\" width=\"10\" height=\"10\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_tw:var(--melee-title-weight,bold);--_hw:var(--melee-heading-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"pie\" aria-describedby=\"melee-desc\"><desc id=\"melee-desc\">only desc</desc><g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/></svg>",
         ),
         (
             "sequence",
@@ -253,7 +271,7 @@ mod tests {
             None,
             None,
             "",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-sequence\" viewBox=\"0 0 0 0\" width=\"0\" height=\"0\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:12.5px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"sequence\"></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-sequence\" viewBox=\"0 0 0 0\" width=\"0\" height=\"0\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:12.5px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"sequence\"></svg>",
         ),
         (
             "x",
@@ -265,7 +283,7 @@ mod tests {
             None,
             None,
             "<rect rx=\"var(--melee-radius,0)\">",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"pele pele-x\" viewBox=\"0 0 1 2\" width=\"1\" height=\"2\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"x\"><rect style=\"rx:var(--_r)\"></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-x\" viewBox=\"0 0 1 2\" width=\"1\" height=\"2\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);--_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"x\"><rect style=\"rx:var(--_r)\"></svg>",
         ),
     ];
 

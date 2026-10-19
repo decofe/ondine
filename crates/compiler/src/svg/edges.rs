@@ -462,7 +462,7 @@ pub(crate) fn marker(r#type: &str, x: f64, y: f64, dx: f64, dy: f64, color: &str
             let bx = x - dx * ARROW;
             let by = y - dy * ARROW;
             let half = ARROW * 0.42;
-            out.push_str("<path class=\"pele-marker\" d=\"M");
+            out.push_str("<path class=\"melee-marker\" d=\"M");
             push_point(&mut out, x, y);
             out.push('L');
             push_point(&mut out, bx + nx * half, by + ny * half);
@@ -473,7 +473,7 @@ pub(crate) fn marker(r#type: &str, x: f64, y: f64, dx: f64, dy: f64, color: &str
             out.push_str("\" stroke=\"none\"/>");
         }
         "arrow_circle" => {
-            out.push_str("<circle class=\"pele-marker\" cx=\"");
+            out.push_str("<circle class=\"melee-marker\" cx=\"");
             push_num(&mut out, x - dx * 4.0);
             out.push_str("\" cy=\"");
             push_num(&mut out, y - dy * 4.0);
@@ -489,7 +489,7 @@ pub(crate) fn marker(r#type: &str, x: f64, y: f64, dx: f64, dy: f64, color: &str
             let uy = (dy + ny) * a;
             let vx = (dx - nx) * a;
             let vy = (dy - ny) * a;
-            out.push_str("<path class=\"pele-marker\" d=\"M");
+            out.push_str("<path class=\"melee-marker\" d=\"M");
             push_point(&mut out, cx - ux, cy - uy);
             out.push('L');
             push_point(&mut out, cx + ux, cy + uy);
@@ -516,7 +516,7 @@ pub(crate) fn edge_label_svg(
 ) -> String {
     let w = label.width + 8.0;
     let h = label.height;
-    let mut out = String::from("<g class=\"pele-edge-label\" data-id=\"");
+    let mut out = String::from("<g class=\"melee-edge-label\" data-id=\"");
     out.push_str(&esc_text(id));
     out.push_str("\"><rect x=\"");
     push_num(&mut out, x - w / 2.0);
@@ -4239,84 +4239,84 @@ mod tests {
                 "arrow_point",
                 0.0,
                 1.0,
-                "<path class=\"pele-marker\" d=\"M40.5,12.25L37.14,4.25L43.86,4.25Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<path class=\"melee-marker\" d=\"M40.5,12.25L37.14,4.25L43.86,4.25Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 7.0,
             ),
             (
                 "arrow_point",
                 1.0,
                 0.0,
-                "<path class=\"pele-marker\" d=\"M40.5,12.25L32.5,15.61L32.5,8.89Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<path class=\"melee-marker\" d=\"M40.5,12.25L32.5,15.61L32.5,8.89Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 7.0,
             ),
             (
                 "arrow_point",
                 -0.6,
                 0.8,
-                "<path class=\"pele-marker\" d=\"M40.5,12.25L42.61,3.83L47.99,7.87Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<path class=\"melee-marker\" d=\"M40.5,12.25L42.61,3.83L47.99,7.87Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 7.0,
             ),
             (
                 "arrow_point",
                 0.0,
                 -1.0,
-                "<path class=\"pele-marker\" d=\"M40.5,12.25L43.86,20.25L37.14,20.25Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<path class=\"melee-marker\" d=\"M40.5,12.25L43.86,20.25L37.14,20.25Z\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 7.0,
             ),
             (
                 "arrow_circle",
                 0.0,
                 1.0,
-                "<circle class=\"pele-marker\" cx=\"40.5\" cy=\"8.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<circle class=\"melee-marker\" cx=\"40.5\" cy=\"8.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 8.0,
             ),
             (
                 "arrow_circle",
                 1.0,
                 0.0,
-                "<circle class=\"pele-marker\" cx=\"36.5\" cy=\"12.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<circle class=\"melee-marker\" cx=\"36.5\" cy=\"12.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 8.0,
             ),
             (
                 "arrow_circle",
                 -0.6,
                 0.8,
-                "<circle class=\"pele-marker\" cx=\"42.9\" cy=\"9.05\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<circle class=\"melee-marker\" cx=\"42.9\" cy=\"9.05\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 8.0,
             ),
             (
                 "arrow_circle",
                 0.0,
                 -1.0,
-                "<circle class=\"pele-marker\" cx=\"40.5\" cy=\"16.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
+                "<circle class=\"melee-marker\" cx=\"40.5\" cy=\"16.25\" r=\"3.5\" fill=\"var(--_l)\" stroke=\"none\"/>",
                 8.0,
             ),
             (
                 "arrow_cross",
                 0.0,
                 1.0,
-                "<path class=\"pele-marker\" d=\"M44,4.75L37,11.75M37,4.75L44,11.75\"/>",
+                "<path class=\"melee-marker\" d=\"M44,4.75L37,11.75M37,4.75L44,11.75\"/>",
                 4.0,
             ),
             (
                 "arrow_cross",
                 1.0,
                 0.0,
-                "<path class=\"pele-marker\" d=\"M33,8.75L40,15.75M33,15.75L40,8.75\"/>",
+                "<path class=\"melee-marker\" d=\"M33,8.75L40,15.75M33,15.75L40,8.75\"/>",
                 4.0,
             ),
             (
                 "arrow_cross",
                 -0.6,
                 0.8,
-                "<path class=\"pele-marker\" d=\"M47.8,8.35L38,9.75M42.2,4.15L43.6,13.95\"/>",
+                "<path class=\"melee-marker\" d=\"M47.8,8.35L38,9.75M42.2,4.15L43.6,13.95\"/>",
                 4.0,
             ),
             (
                 "arrow_cross",
                 0.0,
                 -1.0,
-                "<path class=\"pele-marker\" d=\"M37,19.75L44,12.75M44,19.75L37,12.75\"/>",
+                "<path class=\"melee-marker\" d=\"M37,19.75L44,12.75M44,19.75L37,12.75\"/>",
                 4.0,
             ),
             ("none", 0.0, 1.0, "", 0.0),
@@ -4354,7 +4354,7 @@ mod tests {
                 " class=\"t\"",
                 Some(resolver)
             ),
-            "<g class=\"pele-edge-label\" data-id=\"L_A_B_0\"><rect x=\"0.45\" y=\"29.5\" width=\"59.1\" height=\"21\" rx=\"3\" fill=\"var(--_bg)\"/><text class=\"t\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"4.45\" y=\"44.9\" text-anchor=\"start\">yes </tspan></text><svg class=\"pele-icon\" data-icon=\"fa:fa-car\" x=\"38.05\" y=\"32.3\" width=\"15.4\" height=\"15.4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg></g>"
+            "<g class=\"melee-edge-label\" data-id=\"L_A_B_0\"><rect x=\"0.45\" y=\"29.5\" width=\"59.1\" height=\"21\" rx=\"3\" fill=\"var(--_bg)\"/><text class=\"t\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"4.45\" y=\"44.9\" text-anchor=\"start\">yes </tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"38.05\" y=\"32.3\" width=\"15.4\" height=\"15.4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg></g>"
         );
         let label = layout_label(
             Some("<b>two</b><br>lines & more"),
@@ -4366,7 +4366,7 @@ mod tests {
         );
         assert_eq!(
             edge_label_svg("a&amp;\"b\"", &label, -3.333, 7.0, "", None),
-            "<g class=\"pele-edge-label\" data-id=\"a&amp;&quot;b&quot;\"><rect x=\"-57.73\" y=\"-14\" width=\"108.8\" height=\"42\" rx=\"3\" fill=\"var(--_bg)\"/><text text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-3.33\" y=\"1.4\" font-weight=\"var(--_w)\">two</tspan><tspan x=\"-3.33\" y=\"22.4\">lines &amp; more</tspan></text></g>"
+            "<g class=\"melee-edge-label\" data-id=\"a&amp;&quot;b&quot;\"><rect x=\"-57.73\" y=\"-14\" width=\"108.8\" height=\"42\" rx=\"3\" fill=\"var(--_bg)\"/><text text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-3.33\" y=\"1.4\" font-weight=\"var(--_w)\">two</tspan><tspan x=\"-3.33\" y=\"22.4\">lines &amp; more</tspan></text></g>"
         );
     }
 

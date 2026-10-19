@@ -1,11 +1,6 @@
 //! Flowcharts: Mermaid's `graph` and `flowchart` diagrams, which swimlane diagrams share. Port of
 //! Pele's `src/diagrams/flowchart/index.ts`.
 
-#![cfg_attr(
-    not(all(test, feature = "model")),
-    expect(dead_code, reason = "rendering, which calls `parse`, is pending")
-)]
-
 pub(crate) mod db;
 pub(crate) mod graph;
 pub(crate) mod lexer;
