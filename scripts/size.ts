@@ -11,11 +11,12 @@ import * as Zlib from 'node:zlib'
 const root = Path.resolve(import.meta.dirname, '..')
 
 /** Entrypoints and their gzip budgets in bytes. */
-// The root entry inlines every diagram type and is reported without a budget. Per-type module
-// budgets follow the size measurements in bench/size.md.
+// The all-types module is reported without a budget. Per-type module budgets follow the size
+// measurements in bench/size.md.
 const budgets: readonly { entry: string; gzip: number | undefined; name: string }[] = [
-  { entry: 'src/index.ts', gzip: undefined, name: 'melee' },
-  { entry: 'src/runtime.ts', gzip: 20_000, name: 'melee/runtime' },
+  { entry: 'src/index.ts', gzip: 20_000, name: 'melee' },
+  { entry: 'src/compiler/wasm.ts', gzip: 20_000, name: 'melee/compiler/wasm' },
+  { entry: 'src/compiler/all.ts', gzip: undefined, name: 'melee/compiler/wasm/all' },
 ]
 
 let failed = false

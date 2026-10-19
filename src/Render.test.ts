@@ -1,6 +1,6 @@
 /** @module Integration tests for rendering Mermaid source through the WebAssembly compiler. */
 import * as Fs from 'node:fs'
-import { Render, render, RenderError } from 'melee'
+import { Render, render, RenderError } from 'melee/compiler'
 
 describe('render', () => {
   test('renders a flowchart', () => {

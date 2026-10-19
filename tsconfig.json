@@ -7,7 +7,11 @@
     "moduleResolution": "nodenext",
     "target": "esnext",
     "paths": {
-      "melee": ["./src/index.ts"]
+      "melee": ["./src/index.ts"],
+      "melee/compiler": ["./src/compiler/index.ts"],
+      "melee/compiler/wasm": ["./src/compiler/wasm.ts"],
+      "melee/compiler/wasm/all": ["./src/compiler/all.ts"],
+      "melee/vite": ["./src/vite/index.ts"]
     },
     "types": ["node", "vite-plus/test/globals"],
 

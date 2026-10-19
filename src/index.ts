@@ -1,3 +1,3 @@
-/** @module Public browser and Node entrypoint. */
-export * as Render from './Render.js'
-export { render, RenderError } from './Render.js'
+/** @module Browser runtime: mounts diagrams compiled ahead of time, without the compiler. */
+export * as Mount from './Mount.js'
+export { mount } from './Mount.js'

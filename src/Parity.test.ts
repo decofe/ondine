@@ -1,5 +1,5 @@
 /** @module Compares Melee's SVG with Pele's for every vector of each ported diagram type. */
-import { render, RenderError } from 'melee'
+import { render, RenderError } from 'melee/compiler'
 import * as Pele from '../test/Pele.js'
 import * as Vectors from '../test/Vectors.js'
 

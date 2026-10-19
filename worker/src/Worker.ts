@@ -6,8 +6,9 @@
  * `?scheme=dark` pins one scheme for `<picture>` sources.
  * @module
  */
-import { Render, RenderError } from 'melee'
-import module from 'melee/src/internal/flowchart.generated.wasm'
+import { Render, RenderError } from 'melee/compiler/wasm'
+// Every diagram type, optimized for speed. Workers download nothing per request.
+import module from 'melee/src/internal/all.fast.generated.wasm'
 
 /** Thrown when a request path does not hold a decodable payload. */
 export class PayloadError extends Error {
@@ -19,7 +20,7 @@ const maxPath = 4096
 // Caps inflated source so a small payload cannot expand without bound.
 const maxSource = 64 * 1024
 
-const renderer = Render.create({ modules: { flowchart: module } })
+const renderer = Render.create({ modules: { all: module } })
 
 const schemes = {
   dark: '--melee-bg:#000;--melee-fg:#fff;--melee-line:#fff',

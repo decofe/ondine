@@ -1,7 +1,9 @@
 /**
- * Builds one WebAssembly module per diagram type and inlines each as base64 in
+ * Builds one size-optimized WebAssembly module per diagram type and inlines each as base64 in
  * `src/internal/<type>.generated.ts`, beside the raw `src/internal/<type>.generated.wasm` for hosts
- * that only accept precompiled modules. Outputs are gitignored and rewritten only when they change.
+ * that only accept precompiled modules. Also builds `all.fast.generated.wasm`, every type optimized
+ * for speed, which `melee/compiler` loads in Node. Outputs are gitignored and rewritten only when
+ * they change.
  * @module
  */
 import * as ChildProcess from 'node:child_process'
@@ -18,9 +20,9 @@ const types = ['block', 'flowchart', 'gantt', 'requirement', 'sankey', 'state', 
  * it, or without its `rust-src` component, modules build on the stable toolchain and are larger.
  */
 const nightly = process.env.MELEE_WASM_TOOLCHAIN ?? 'nightly-2026-06-29'
-const sized = installed(nightly)
+const nightlyInstalled = installed(nightly)
 
-if (!sized)
+if (!nightlyInstalled)
   console.warn(
     `${nightly} with rust-src is not installed. Building larger modules with the stable toolchain. Install it with: rustup toolchain install ${nightly} --component rust-src --target wasm32-unknown-unknown`,
   )
@@ -33,16 +35,23 @@ for (const type of ['all', ...types]) {
   write(Path.join(root, `src/internal/${type}.generated.wasm`), bytes)
 }
 
+// Build tools, servers, and the CLI download nothing, so their module trades size for speed.
+write(Path.join(root, 'src/internal/all.fast.generated.wasm'), build('all', { fast: true }))
+
 /** Builds the `wasm` crate with one diagram feature, optimizes it, and returns its bytes. */
-function build(feature: string): Buffer {
-  const targetDir = `target/wasm-${feature}`
+function build(feature: string, options: build.Options = {}): Buffer {
+  const fast = options.fast === true
+  const targetDir = `target/wasm-${feature}${fast ? '-fast' : ''}`
+  const sized = !fast && nightlyInstalled
 
   // Rebuilding `std` with `optimize_for_size` and aborting panics without formatting their messages
   // removes `core::fmt` and selects smaller `std` algorithms.
   const nightlyArgs = ['-Zbuild-std=std,panic_abort', '-Zbuild-std-features=optimize_for_size']
   const env = sized
     ? { ...process.env, RUSTFLAGS: '-Zunstable-options -Cpanic=immediate-abort' }
-    : process.env
+    : fast
+      ? { ...process.env, CARGO_PROFILE_WASM_OPT_LEVEL: '3' }
+      : process.env
 
   ChildProcess.execFileSync(
     'cargo',
@@ -83,7 +92,7 @@ function build(feature: string): Buffer {
   ChildProcess.execFileSync(
     Path.join(root, 'node_modules/.bin/wasm-opt'),
     [
-      '-Oz',
+      fast ? '-O3' : '-Oz',
       '--converge',
       '--low-memory-unused',
       ...proposals,
@@ -97,6 +106,13 @@ function build(feature: string): Buffer {
   )
 
   return Fs.readFileSync(output)
+}
+
+declare namespace build {
+  type Options = {
+    /** Optimizes for speed instead of size, on the stable toolchain. */
+    readonly fast?: boolean | undefined
+  }
 }
 
 /** Whether rustup has `toolchain` with the `std` sources that `-Zbuild-std` compiles. */

@@ -1,6 +1,7 @@
 /** Renders one diagram with Melee, Pele, or Mermaid, and reports timing and errors. @module */
 import { useEffect, useRef, useState } from 'react'
-import { render } from 'melee'
+import { create } from 'melee/compiler/wasm'
+import { wasm as all } from 'melee/compiler/wasm/all'
 import { style } from './zyzz.config.js'
 
 /** A renderer the preview can show. */
@@ -16,7 +17,8 @@ export async function draw(engine: Engine, source: string, width: number): Promi
   try {
     if (engine === 'melee') {
       const start = performance.now()
-      const result = render(source, { maxWidth: width })
+      renderer ??= create({ modules: { all } })
+      const result = renderer.render(source, { maxWidth: width })
       return { ms: performance.now() - start, ok: true, svg: result.svg, type: result.type }
     }
 
@@ -43,6 +45,7 @@ export async function draw(engine: Engine, source: string, width: number): Promi
 }
 
 let counter = 0
+let renderer: ReturnType<typeof create> | undefined
 
 /** Draws `source` with `engine` and calls `onOutcome` after each render. */
 export function Diagram(props: Diagram.Props) {

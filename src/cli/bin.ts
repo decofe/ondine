@@ -3,6 +3,7 @@
 import * as Fs from 'node:fs'
 import * as Path from 'node:path'
 import * as Util from 'node:util'
+import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 
 const usage = `Usage: melee [files...] [--out-dir <dir>]
@@ -47,7 +48,7 @@ for (const file of positionals) {
 /** Renders `source`, or reports the error with its location and returns `undefined`. */
 function render(source: string, file: string): string | undefined {
   try {
-    return Render.render(source).svg
+    return Compiler.render(source).svg
   } catch (error) {
     if (!(error instanceof Render.RenderError)) throw error
     const location = error.line > 0 ? `:${error.line}:${error.column}` : ''

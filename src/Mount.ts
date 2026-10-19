@@ -8,7 +8,7 @@
  *
  * @example
  * ```ts
- * import { mount } from 'melee/runtime'
+ * import { mount } from 'melee'
  * import diagram from './flow.mmd'
  *
  * mount(document.getElementById('flow')!, diagram)

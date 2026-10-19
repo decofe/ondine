@@ -1,5 +1,6 @@
 /** @module Vite plugin that imports Mermaid files as precompiled SVG. */
 import type { Plugin } from 'vite'
+import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 
 /**
@@ -28,7 +29,7 @@ export function melee(options: melee.Options = {}): Plugin {
       if (!pattern.test(file)) return null
 
       try {
-        const result = Render.render(code, { ...options, idPrefix: prefix(file) })
+        const result = Compiler.render(code, { ...options, idPrefix: prefix(file) })
         const diagram = {
           height: result.height,
           svg: result.svg,

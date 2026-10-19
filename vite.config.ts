@@ -3,9 +3,22 @@ import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
   test: {
-    alias: {
-      melee: Path.resolve(import.meta.dirname, 'src'),
-    },
+    alias: [
+      {
+        find: 'melee/compiler/wasm/all',
+        replacement: Path.resolve(import.meta.dirname, 'src/compiler/all.ts'),
+      },
+      {
+        find: 'melee/compiler/wasm',
+        replacement: Path.resolve(import.meta.dirname, 'src/compiler/wasm.ts'),
+      },
+      {
+        find: 'melee/compiler',
+        replacement: Path.resolve(import.meta.dirname, 'src/compiler/index.ts'),
+      },
+      { find: 'melee/vite', replacement: Path.resolve(import.meta.dirname, 'src/vite/index.ts') },
+      { find: /^melee$/, replacement: Path.resolve(import.meta.dirname, 'src/index.ts') },
+    ],
     globals: true,
   },
   lint: {

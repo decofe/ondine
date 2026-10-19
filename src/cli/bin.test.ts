@@ -9,10 +9,16 @@ describe('melee', () => {
   let bin: string
   let root: string
 
-  // Node cannot resolve the source's `.js` specifiers to `.ts`, so the CLI runs as a bundle.
+  // Node cannot resolve the source's `.js` specifiers to `.ts`, so the CLI runs as a bundle laid
+  // out as the package is: `cli/bin` beside `internal/`, where the compiler module loads from.
   beforeAll(async () => {
     const dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-cli-bin-'))
-    bin = Path.join(dir, 'bin.mjs')
+    bin = Path.join(dir, 'cli/bin.mjs')
+    Fs.mkdirSync(Path.join(dir, 'internal'))
+    Fs.copyFileSync(
+      Path.join(import.meta.dirname, '../internal/all.fast.generated.wasm'),
+      Path.join(dir, 'internal/all.fast.generated.wasm'),
+    )
     await Esbuild.build({
       bundle: true,
       entryPoints: [Path.join(import.meta.dirname, 'bin.ts')],

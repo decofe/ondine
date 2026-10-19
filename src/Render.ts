@@ -1,6 +1,5 @@
-/** @module Renders Mermaid source to monochrome SVG. */
+/** @module Renders Mermaid source to monochrome SVG through compiler modules supplied by the host. */
 import * as Wasm from './internal/Wasm.js'
-import { wasm as all } from './internal/all.generated.js'
 
 /** Thrown when source cannot be rendered. Messages match Mermaid's diagnostics. */
 export class RenderError extends Error {
@@ -45,15 +44,15 @@ export declare namespace RenderError {
 /**
  * Creates a renderer from caller-supplied diagram modules.
  *
- * Use it on hosts that disallow compiling WebAssembly at runtime, such as Cloudflare Workers,
- * where the bundler compiles `flowchart.generated.wasm` ahead of time.
+ * Each module holds one diagram type, or `all` of them. Modules may be precompiled by the host's
+ * bundler, as Cloudflare Workers require, or given as base64 bytes.
  *
  * @example
  * ```ts
- * import { Render } from 'melee'
- * import module from 'melee/src/internal/flowchart.generated.wasm'
+ * import { create } from 'melee/compiler/wasm'
+ * import { wasm as all } from 'melee/compiler/wasm/all'
  *
- * const { svg } = Render.create({ modules: { flowchart: module } }).render('flowchart LR\n  A --> B')
+ * const { svg } = create({ modules: { all } }).render('flowchart LR\n  A --> B')
  * ```
  */
 export function create(options: create.Options): create.ReturnType {
@@ -99,26 +98,6 @@ export declare namespace create {
     /** Renders `source`, choosing the module for its diagram type. */
     readonly render: (source: string, options?: render.Options) => render.ReturnType
   }
-}
-
-let instance: Wasm.Instance | undefined
-
-/**
- * Renders Mermaid `source` to an SVG document.
- *
- * The diagram module compiles on the first call and is reused afterwards.
- *
- * @example
- * ```ts
- * import { render } from 'melee'
- *
- * const { svg } = render('flowchart LR\n  A --> B')
- * ```
- */
-export function render(source: string, options: render.Options = {}): render.ReturnType {
-  instance ??= Wasm.instantiate(all)
-
-  return unwrap(instance.render(source, serialize(options)))
 }
 
 export declare namespace render {

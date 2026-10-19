@@ -47,10 +47,20 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./runtime": {
-      "src": "./src/runtime.ts",
-      "types": "./dist/runtime.d.ts",
-      "default": "./dist/runtime.js"
+    "./compiler": {
+      "src": "./src/compiler/index.ts",
+      "types": "./dist/compiler/index.d.ts",
+      "default": "./dist/compiler/index.js"
+    },
+    "./compiler/wasm": {
+      "src": "./src/compiler/wasm.ts",
+      "types": "./dist/compiler/wasm.d.ts",
+      "default": "./dist/compiler/wasm.js"
+    },
+    "./compiler/wasm/all": {
+      "src": "./src/compiler/all.ts",
+      "types": "./dist/compiler/all.d.ts",
+      "default": "./dist/compiler/all.js"
     },
     "./vite": {
       "src": "./src/vite/index.ts",
