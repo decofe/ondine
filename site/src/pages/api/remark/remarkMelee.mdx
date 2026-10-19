@@ -1,0 +1,66 @@
+# remarkMelee
+
+Replace each ` ```mermaid ` fence with the SVG Melee renders from it.
+
+The plugin renders every `code` node whose language is `mermaid` and replaces it with HTML elements, so the page holds SVG and no compiler. Fences in other languages are left alone.
+
+```ts title="vite.config.ts"
+import mdx from '@mdx-js/rollup'
+import { defineConfig } from 'vite'
+import { remarkMelee } from 'melee/remark'
+
+export default defineConfig({
+  // Compiles Mermaid fences in .md and .mdx files
+  plugins: [mdx({ remarkPlugins: [remarkMelee] })],
+})
+```
+
+## Signature
+
+```ts
+// Returns a remark transformer
+remarkMelee(options?)
+```
+
+## Parameters
+
+### options
+
+- **Type:** `Omit<render.Options, 'idPrefix'>{:ts}`
+- **Default:** `{}{:ts}`
+
+Rendering options applied to every diagram. Every [`render` option](/api/compiler/render#parameters) is accepted except `idPrefix`. The plugin derives each prefix from a hash of the file path and the diagram's position in the file.
+
+```ts title="vite.config.ts"
+import mdx from '@mdx-js/rollup'
+import { defineConfig } from 'vite'
+import { remarkMelee } from 'melee/remark'
+
+export default defineConfig({
+  // Lays out every diagram for a 640-pixel column
+  plugins: [mdx({ remarkPlugins: [[remarkMelee, { maxWidth: 640 }]] })],
+})
+```
+
+## Returns
+
+### transformer
+
+- **Type:** `(tree, file) => undefined{:ts}`
+
+A transformer that replaces each fence with a `meleeDiagram` node. It becomes this HTML, as hast elements rather than a markup string, so `@mdx-js/mdx` in both formats and `remark-rehype` keep it without raw HTML support:
+
+```html
+<!-- One diagram, with its detected type -->
+<div class="melee-diagram" data-melee-diagram="flowchart">
+  <svg class="melee melee-flowchart">…</svg>
+</div>
+```
+
+When the tree is written back to Markdown with `remark-stringify`, each diagram turns back into its fence.
+
+## Errors
+
+### Render Error
+
+A diagram that fails to render throws an `Error` whose message is `file:line:column: message`, positioned in the Markdown file. The [`RenderError`](/api/compiler/RenderError) is its `cause`. The error fails the build.

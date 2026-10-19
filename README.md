@@ -17,7 +17,7 @@ import flow from './flow.mmd'
 mount(document.getElementById('flow')!, flow)
 ```
 
-The compiler also runs in Node (`melee/compiler`), from the `melee` CLI, as an image Worker for READMEs, and in browsers when needed (`melee/compiler/wasm`).
+The compiler also runs in Node (`melee/compiler`), in Markdown and MDX builds (`melee/remark`), from the `melee` CLI, as an image Worker for READMEs, and in browsers when needed (`melee/compiler/wasm`).
 
 > [!NOTE]
 > Melee is being rewritten. [`.agents/plan.md`](.agents/plan.md) tracks progress. The previous prototype lives on the `poc` branch.

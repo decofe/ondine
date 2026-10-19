@@ -105,7 +105,8 @@ All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte f
 
 - [x] `melee`: mounts precompiled SVG, 210 B gzip.
 - [x] `melee` CLI: renders `.mmd` files and standard input to SVG.
-- [ ] CLI: render Markdown ` ```mermaid ` fences to linked images.
+- [x] CLI: render Markdown ` ```mermaid ` fences to linked images.
+- [x] `melee/remark`: compiles ` ```mermaid ` fences in `.md` and `.mdx` builds.
 - [x] `melee/vite`: imports `.mmd` files as precompiled SVG.
 - [x] `melee/compiler` (Node) and `melee/compiler/wasm` (browsers and Workers).
 - [x] Deploy the Worker and the playground to Cloudflare on every push to `main`.

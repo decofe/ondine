@@ -1,13 +1,13 @@
 /** Configures the Melee documentation: navigation, appearance, and Melee-rendered Mermaid fences. @module */
 import { defineConfig } from 'vocs/config'
 import diagrams from './src/diagrams.generated.json' with { type: 'json' }
-import { remarkMelee } from './src/Mermaid.js'
+import { remarkVocsMermaid } from './src/Mermaid.js'
 
 export default defineConfig({
   accentColor: 'light-dark(#000000, #ffffff)',
   description: 'Monochrome Mermaid diagrams, compiled with Rust.',
   editLink: { link: 'https://github.com/wevm/melee/edit/main/site/src/pages/:path' },
-  markdown: { remarkPlugins: [remarkMelee] },
+  markdown: { remarkPlugins: [remarkVocsMermaid] },
   // Every page is static, so the build deploys as plain assets.
   renderStrategy: 'full-static',
   rootDir: import.meta.dirname,
@@ -70,6 +70,14 @@ export default defineConfig({
             { link: '/api/compiler-wasm/all', text: 'wasm (all)' },
           ],
           text: 'melee/compiler/wasm',
+        },
+        {
+          collapsed: false,
+          items: [
+            { link: '/api/remark', text: 'Overview' },
+            { link: '/api/remark/remarkMelee', text: 'remarkMelee' },
+          ],
+          text: 'melee/remark',
         },
         {
           collapsed: false,

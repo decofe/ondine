@@ -14,11 +14,16 @@
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
+    "@mdx-js/rollup": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "binaryen": "catalog:",
     "esbuild": "catalog:",
     "mermaid": "catalog:",
     "pele": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",
@@ -61,6 +66,11 @@
       "src": "./src/compiler/all.ts",
       "types": "./dist/compiler/all.d.ts",
       "default": "./dist/compiler/all.js"
+    },
+    "./remark": {
+      "src": "./src/remark/index.ts",
+      "types": "./dist/remark/index.d.ts",
+      "default": "./dist/remark/index.js"
     },
     "./vite": {
       "src": "./src/vite/index.ts",

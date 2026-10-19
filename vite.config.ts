@@ -16,6 +16,10 @@ export default defineConfig({
         find: 'melee/compiler',
         replacement: Path.resolve(import.meta.dirname, 'src/compiler/index.ts'),
       },
+      {
+        find: 'melee/remark',
+        replacement: Path.resolve(import.meta.dirname, 'src/remark/index.ts'),
+      },
       { find: 'melee/vite', replacement: Path.resolve(import.meta.dirname, 'src/vite/index.ts') },
       { find: /^melee$/, replacement: Path.resolve(import.meta.dirname, 'src/index.ts') },
     ],

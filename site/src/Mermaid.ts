@@ -1,71 +1,64 @@
 /**
- * Remark plugin that renders ` ```mermaid ` fences with Melee at build time.
+ * Remark plugin that renders ` ```mermaid ` fences with `melee/remark` at build time.
  *
  * Vocs turns each fence into a `data-v-mermaid-chart` placeholder that Mermaid draws in the
  * browser. This plugin runs after Vocs's own and replaces every placeholder with a `<Diagram>`
- * holding the source and the SVG from `melee/compiler`, so pages ship no diagram renderer.
+ * holding the highlighted source and the inline SVG `melee/remark` renders from it, so pages ship
+ * no diagram renderer.
  * @module
  */
 import * as Path from 'node:path'
-import { render, RenderError } from 'melee/compiler'
+import { remarkMelee } from 'melee/remark'
 
 const component = Path.resolve(import.meta.dirname, 'components/Diagram.tsx')
 
-/** An mdast node, typed only as far as this plugin reads it. */
-type Node = {
-  [key: string]: unknown
-  children?: Node[]
-  data?: { [key: string]: unknown; hProperties?: Record<string, unknown> }
-  type: string
-}
+type Node = remarkMelee.Node
 
 /** Replaces Vocs's Mermaid placeholders with diagrams rendered by Melee. */
-export function remarkMelee() {
-  return (tree: Node, file: { path?: string }) => {
-    let count = 0
+export function remarkVocsMermaid() {
+  const render = remarkMelee()
+
+  return (tree: Node, file: remarkMelee.File) => {
+    const placeholders: { children: Node[]; index: number; source: string }[] = []
 
     const visit = (node: Node) => {
       const children = node.children
       if (!children) return
 
       for (const [index, child] of children.entries()) {
-        const source = child.data?.hProperties?.['data-v-mermaid-chart']
-        if (typeof source !== 'string') {
-          visit(child)
-          continue
-        }
-
-        count += 1
-        children[index] = diagram(source, `melee-${count}`, file.path ?? '<unknown>')
+        const properties = child.data?.['hProperties'] as Record<string, unknown> | undefined
+        const source = properties?.['data-v-mermaid-chart']
+        if (typeof source === 'string') placeholders.push({ children, index, source })
+        else visit(child)
       }
     }
 
     visit(tree)
-    if (count > 0) tree.children?.unshift(importDiagram())
+    if (placeholders.length === 0) return
+
+    // One tree holds every diagram, so `melee/remark` numbers their element IDs apart.
+    const diagrams: Node = {
+      children: placeholders.map((entry) => code(entry.source)),
+      type: 'root',
+    }
+    render(diagrams, file)
+
+    for (const [at, entry] of placeholders.entries()) {
+      const diagram = diagrams.children?.[at]
+      if (diagram) entry.children[entry.index] = element([code(entry.source), diagram])
+    }
+
+    tree.children?.unshift(importDiagram())
   }
 }
 
-/** A `<Diagram>` element with the highlighted source as its child and the SVG as a prop. */
-function diagram(source: string, idPrefix: string, path: string): Node {
-  const result = (() => {
-    try {
-      return render(source, { idPrefix })
-    } catch (error) {
-      if (!(error instanceof RenderError)) throw error
-      const location = error.line > 0 ? ` (line ${error.line}, column ${error.column})` : ''
-      throw new Error(`${path}: Mermaid block${location}: ${error.message}`)
-    }
-  })()
+function code(source: string): Node {
+  return { lang: 'mermaid', type: 'code', value: source }
+}
 
-  return {
-    attributes: [
-      { name: 'svg', type: 'mdxJsxAttribute', value: result.svg },
-      { name: 'type', type: 'mdxJsxAttribute', value: result.type },
-    ],
-    children: [{ lang: 'mermaid', type: 'code', value: source }],
-    name: 'Diagram',
-    type: 'mdxJsxFlowElement',
-  }
+/** A `<Diagram>` element around the highlighted source and the rendered diagram. */
+function element(children: Node[]): Node {
+  return { attributes: [], children, name: 'Diagram', type: 'mdxJsxFlowElement' }
 }
 
 /** `import { Diagram } from '<component>'`, as the ESTree MDX compiles imports from. */
