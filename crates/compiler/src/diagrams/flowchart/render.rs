@@ -5,7 +5,8 @@
 use super::db::FlowDb;
 use super::graph::{self, GraphEdge, GraphNode};
 use super::shapes::canonical_shape;
-use crate::diagrams::common::fit_width::{Drawn, runs_across, tighten, title_room, turn_to_fit};
+use crate::diagrams::Rendered;
+use crate::diagrams::common::fit_width::{runs_across, tighten, title_room, turn_to_fit};
 use crate::layout::compound::{CEdge, CNode, Dir, cnode, compound_layout, direction, shift_layout};
 use crate::layout::layered::LayeredOptions;
 use crate::svg::builder::{esc, esc_text, label_svg, push_num};
@@ -33,25 +34,6 @@ const GROUP_PAD: f64 = 20.0;
 const LOOP: f64 = 26.0;
 const SHAPE_ATTRS: &str = " fill=\"var(--_s)\" stroke=\"var(--_b)\"";
 const LINE_ATTRS: &str = " stroke=\"var(--_b)\"";
-
-/// A drawn flowchart.
-#[derive(Clone, Debug)]
-pub(crate) struct Rendered {
-    /// Height in pixels.
-    pub(crate) height: f64,
-    /// Links in drawing order.
-    pub(crate) links: Vec<LinkInfo>,
-    /// The SVG document.
-    pub(crate) svg: String,
-    /// Width in pixels.
-    pub(crate) width: f64,
-}
-
-impl Drawn for Rendered {
-    fn width(&self) -> f64 {
-        self.width
-    }
-}
 
 /// What a node is drawn as, beside its layout box.
 struct NodeView<'g> {

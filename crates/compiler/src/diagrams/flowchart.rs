@@ -10,8 +10,32 @@ pub(crate) mod shapes;
 pub(crate) mod tokens;
 pub(crate) mod types;
 
+use super::{Diagram, Input, Rendered};
 use crate::error::Error;
+use crate::svg::root::RenderOptions;
+use crate::util::url::UrlOptions;
 use crate::yaml::Value;
+
+/// The `flowchart` diagram type.
+pub(crate) const DIAGRAM: Diagram = Diagram {
+    keep_comments: false,
+    render: render_input,
+    section: None,
+};
+
+fn render_input(
+    input: &Input<'_>,
+    options: &RenderOptions,
+    url: &UrlOptions<'_>,
+) -> Result<Rendered, Error> {
+    let db = parse(
+        input.source,
+        input.config,
+        input.title,
+        Some(input.max_edges),
+    )?;
+    Ok(render::render(&db, input.config, options, url))
+}
 
 /// The parsed flowchart model: Pele's `FlowDb`.
 pub(crate) use db::FlowDb as Model;

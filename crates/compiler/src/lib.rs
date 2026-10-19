@@ -40,16 +40,7 @@ mod util {
     pub(crate) mod url;
 }
 
-mod diagrams {
-    pub(crate) mod common {
-        pub(crate) mod fit_width;
-        pub(crate) mod scan;
-        pub(crate) mod tokens;
-    }
-
-    #[cfg(feature = "flowchart")]
-    pub(crate) mod flowchart;
-}
+mod diagrams;
 
 pub use error::{Code, Error};
 
@@ -112,55 +103,79 @@ pub fn render(source: &str, options: &str) -> Result<Rendered, Error> {
     };
     let config = yaml::Value::Object(pre.config);
 
-    let mut rendered = match r#type {
-        #[cfg(feature = "flowchart")]
-        "flowchart" => {
-            let mut text = preprocess::encode_entities(&pre.text).into_owned();
-            text.push('\n');
-            let max_edges = options.max_edges.unwrap_or(DEFAULT_MAX_EDGES);
-            #[expect(
-                clippy::cast_possible_truncation,
-                clippy::cast_sign_loss,
-                reason = "a negative or fractional limit saturates, as a count comparison would"
-            )]
-            let max_edges = max_edges as usize;
-            let db =
-                diagrams::flowchart::parse(&text, &config, pre.title.as_deref(), Some(max_edges))?;
+    let Some(diagram) = diagrams::find(r#type) else {
+        let mut message = String::from("Diagram type \"");
+        message.push_str(r#type);
+        message.push_str("\" is not supported yet.");
+        let mut error = Error::new(Code::UnsupportedDiagram, message);
+        error.r#type = Some(r#type);
+        return Err(error);
+    };
 
-            let link_schemes = schemes(options.link_schemes.as_ref());
-            let image_schemes = schemes(options.image_schemes.as_ref());
-            let url = util::url::UrlOptions {
-                image_schemes: image_schemes.as_deref(),
-                images: options.images,
-                link_rel: options.link_rel.as_deref(),
-                link_schemes: link_schemes.as_deref(),
-                links: options.links,
-            };
-            let drawn = diagrams::flowchart::render::render(&db, &config, &options, &url);
-            Rendered {
-                height: drawn.height,
-                links: drawn
-                    .links
-                    .into_iter()
-                    .map(|link| Link {
-                        href: link.href,
-                        id: link.id,
-                        internal: link.internal,
-                    })
-                    .collect(),
-                svg: drawn.svg,
-                r#type,
-                width: drawn.width,
-            }
-        }
-        other => {
-            let mut message = String::from("Diagram type \"");
-            message.push_str(other);
-            message.push_str("\" is not supported yet.");
-            let mut error = Error::new(Code::UnsupportedDiagram, message);
-            error.r#type = Some(other);
-            return Err(error);
-        }
+    // A diagram whose config section sets `useMaxWidth: false` keeps its natural size.
+    let section = match &config {
+        yaml::Value::Object(entries) => entries
+            .iter()
+            .find(|(key, _)| key == diagram.section.unwrap_or(r#type))
+            .map(|(_, value)| value),
+        _ => None,
+    };
+    let fixed = matches!(
+        section,
+        Some(yaml::Value::Object(entries))
+            if entries.iter().any(|(key, value)| key == "useMaxWidth" && *value == yaml::Value::Bool(false))
+    );
+    let mut options = options;
+    options.responsive = Some(options.responsive.unwrap_or(!fixed));
+
+    let mut source = preprocess::encode_entities(if diagram.keep_comments {
+        &pre.with_comments
+    } else {
+        &pre.text
+    })
+    .into_owned();
+    source.push('\n');
+
+    let max_edges = options.max_edges.unwrap_or(DEFAULT_MAX_EDGES);
+    #[expect(
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss,
+        reason = "a negative or fractional limit saturates, as a count comparison would"
+    )]
+    let max_edges = max_edges as usize;
+    let input = diagrams::Input {
+        config: &config,
+        line_offset: pre.line_offset,
+        max_edges,
+        source: &source,
+        title: pre.title.as_deref(),
+    };
+
+    let link_schemes = schemes(options.link_schemes.as_ref());
+    let image_schemes = schemes(options.image_schemes.as_ref());
+    let url = util::url::UrlOptions {
+        image_schemes: image_schemes.as_deref(),
+        images: options.images,
+        link_rel: options.link_rel.as_deref(),
+        link_schemes: link_schemes.as_deref(),
+        links: options.links,
+    };
+
+    let drawn = (diagram.render)(&input, &options, &url)?;
+    let mut rendered = Rendered {
+        height: drawn.height,
+        links: drawn
+            .links
+            .into_iter()
+            .map(|link| Link {
+                href: link.href,
+                id: link.id,
+                internal: link.internal,
+            })
+            .collect(),
+        svg: drawn.svg,
+        r#type,
+        width: drawn.width,
     };
 
     let output_limit = options.output_limit.unwrap_or(DEFAULT_OUTPUT_LIMIT);
