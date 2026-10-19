@@ -80,7 +80,11 @@ The problems below remain. Each changes diagram content or layout, so each needs
 ### Theme in Content
 
 - **Critical and muted states:** `--melee-critical` and `--melee-muted` default to the foreground, so gantt critical tasks match normal ones and kanban "Very High" matches "Very Low". Monochrome needs a second channel, such as a hatch or a heavier outline.
-- **Authored fills without text color:** a `fill` without `color` keeps the scheme's text color. White fills turn white text invisible in dark (state corpus 19 to 21, requirement corpus 8). Mid fills give poor contrast (flowchart corpus 107 and 108, block corpus 22 and 23).
+- **Authored fills without text color:** a `fill` without `color` keeps the scheme's text color. White fills turn white text invisible in dark (state corpus 19 to 21, requirement corpus 8). Mid fills give poor contrast (flowchart corpus 107 and 108, block corpus 22 and 23, class corpus 32 to 34, er corpus 20 to 23, sequence `rect` corpus 32 and `box Purple` corpus 16).
+- **ER stripes:** even attribute rows overlay `var(--_bg)` at 0.6 opacity, so on an authored fill in dark the rows swing between dark and light.
+- **Sequence backdrops:** message label backdrops are `var(--_bg)` rects, which leave a patch where they cross an authored box fill (sequence corpus 16).
+- **Fixed radii:** sequence activation bars and git highlights use `rx="2"`, and git tags `rx="3"`, instead of `--melee-radius`, so they stay rounded under square defaults.
+- **Series cycle:** eight shades repeat, so a ninth gitGraph branch matches `main` (gitGraph corpus 29). Shades 93% and 100% are also close.
 - **Treemap shades:** a section takes the shade of its top-level root, so a tree with one root draws every section and leaf in one shade (treemap corpus 1, 3, and 6).
 - **Eventmodeling slots:** processors (slot 6) and commands (slot 0) share near-equal shades under a 0.22 wash, so the two read as one kind.
 - **Agentflow outlines:** decision, refdoc, and connector outlines take their series shade, so they read lighter than other nodes.
@@ -92,6 +96,7 @@ The problems below remain. Each changes diagram content or layout, so each needs
 ### Layout
 
 - **Flowchart ports:** edges on non-rectangular shapes (`doc`, `tri`, `hourglass`, `cloud`, `brace`, and more) meet at one point, as `shape_span` returns 0 for them. Hubs with many edges (Fan in 7 and 30, Notes into two hubs) also collapse to one point.
+- **Class edges:** class corpus 21 runs edges through namespace titles. Seven inheritance triangles on one side touch base to base ("Wide inheritance").
 - **Flowchart forks:** `fork` keeps a horizontal 72 by 8 bar in left-to-right diagrams, where Mermaid turns it vertical.
 - **Edges through titles:** flowchart edges cross subgraph titles ("Group two", "Inner", "Second"). Step routing stacks parallel runs a few pixels apart.
 - **Labels on lines:** wardley annotations and labels, cynefin transitions, c4 relation labels, gantt task labels, and xychart point labels sit on lines with no halo.
