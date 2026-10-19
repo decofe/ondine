@@ -21,6 +21,7 @@ import { Link } from './Link.js'
 export function SearchDialog(props: SearchDialog.Props) {
   const { onOpenChange, open } = props
 
+  const [failed, setFailed] = useState(false)
   const [index, setIndex] = useState<MiniSearch<Search.Document>>()
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(0)
@@ -62,7 +63,11 @@ export function SearchDialog(props: SearchDialog.Props) {
       .then((module) => {
         if (current) setIndex(MiniSearch.loadJSON(module.default, Search.options))
       })
-      .catch((error: unknown) => console.error(error))
+      .catch((error: unknown) => {
+        // A deployment replaces the hashed chunk under an open tab, so only a reload fetches the current one.
+        console.error(error)
+        if (current) setFailed(true)
+      })
     return () => {
       current = false
     }
@@ -186,6 +191,13 @@ export function SearchDialog(props: SearchDialog.Props) {
               />
             ))}
           </ul>
+        ) : failed && !index ? (
+          <p {...styles.empty()} role="alert">
+            The search index did not load. The site may have changed since this page opened.{' '}
+            <button onClick={() => location.reload()} type="button" {...styles.reload()}>
+              Reload the page
+            </button>
+          </p>
         ) : (
           <p {...styles.empty()}>{message}</p>
         )}
@@ -352,6 +364,17 @@ namespace styles {
     transform: 'translateX(-50%)',
     width: 'calc(100vw - 2rem) !custom',
     '@media (max-width: 640px)': { top: 'md' },
+  })
+
+  export const reload = style({
+    ':focus-visible': { outline: '2px solid', outlineColor: 'link', outlineOffset: '2px' },
+    backgroundColor: 'transparent !custom',
+    border: 'none',
+    color: 'link',
+    cursor: 'pointer',
+    font: 'inherit',
+    padding: '0 !custom',
+    textDecoration: 'underline',
   })
 
   export const empty = style({
