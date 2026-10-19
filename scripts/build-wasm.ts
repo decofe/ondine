@@ -14,6 +14,7 @@ const root = Path.resolve(import.meta.dirname, '..')
 
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
 const types = [
+  'agentflow',
   'architecture',
   'block',
   'c4',
@@ -36,6 +37,7 @@ const types = [
   'sankey',
   'sequence',
   'state',
+  'swimlane',
   'timeline',
   'treemap',
   'usecase',
