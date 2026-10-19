@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "bench": "pnpm build:wasm && vp test bench --run --no-file-parallelism",
+    "bench": "pnpm build:wasm && vp test bench --run --no-file-parallelism && tsx bench/compare.ts",
+    "bench:compare": "pnpm build:wasm && tsx bench/compare.ts",
     "build": "pnpm build:wasm && zile",
     "build:wasm": "node scripts/build-wasm.ts",
     "changeset:publish": "pnpm build:wasm && zile publish:prepare && changeset publish && zile publish:post",
@@ -32,6 +33,7 @@
     "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",
