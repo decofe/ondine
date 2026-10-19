@@ -37,7 +37,7 @@ Read github.com/wevm/melee and help me render my Mermaid diagrams with Melee.
 
 - **Compiled.** Diagrams compile ahead of time, so pages load only the SVG and a 210-byte runtime.
 - **Compatible.** Every diagram type accepts and rejects the same input as Mermaid 12.1.0.
-- **Precise.** Square outlines, rounded orthogonal edges, and monospace labels on a strict grid.
+- **Precise.** Square outlines, rounded orthogonal edges, and monospace labels.
 - **Deterministic.** A uniform monospace advance measures text, so Node and browsers emit identical bytes.
 - **Inert.** Output escapes every authored string and holds no scripts, event handlers, or external references.
 - **Small.** The runtime stays under 20 kB gzip, and each WebAssembly module has a measured size budget.
