@@ -78,7 +78,7 @@ A `test/vectors/ledger.json` records each vector's parse, model, render, and lay
 ### 2. Vectors and oracles
 
 - [x] Import the vectors with notices. The ledger is pending.
-- [ ] Oracle harness: Mermaid 12.1.0 grammars and `@mermaid-js/parser`, Pele 1.6.0 for timing and layout metrics.
+- [ ] Oracle harness: Mermaid 12.1.0 grammars and `@mermaid-js/parser` are done in `test/oracles/`. Pele 1.6.0 for timing and layout metrics is pending.
 - [ ] Layout metrics: crossings, overlaps, bounding area, edge length.
 
 ### 3. Vertical slice: flowchart
@@ -98,7 +98,7 @@ A `test/vectors/ledger.json` records each vector's parse, model, render, and lay
 All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte for byte; the two `info` vectors differ by design (Melee's name and version). Every type has a syntax fixture harvested from Pele's compat specs, comparing accept/reject, messages, positions, and models.
 
 - [ ] Screenshot sheets per type, reviewed in light and dark.
-- [ ] Port Pele's Mermaid grammar oracles and fuzzing as committed tests (agents ran them as throwaway checks).
+- [x] Port Pele's Mermaid grammar oracles and fuzzing as committed tests. `test/oracles/` compares every type with Mermaid 12.1.0 end to end and with its grammars, and records divergences in `Divergences.ts`.
 - [ ] `test/vectors/ledger.json`, or drop it from AGENTS.md in favor of the generated Compatibility page.
 
 ### 5a. Build-time path

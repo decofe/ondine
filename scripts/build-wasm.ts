@@ -2,13 +2,16 @@
  * Builds one size-optimized WebAssembly module per diagram type and inlines each as base64 in
  * `src/internal/<type>.generated.ts`, beside the raw `src/internal/<type>.generated.wasm` for hosts
  * that only accept precompiled modules. Also builds `all.fast.generated.wasm`, every type optimized
- * for speed, which `melee/compiler` loads in Node. Outputs are gitignored and rewritten only when
- * they change. Writes the matching `melee/compiler/wasm/<type>` and `<type>.wasm` exports into
+ * for speed, which `melee/compiler` loads in Node, and `test/oracles/model.generated.wasm`, every
+ * type with the `model` export that the oracle tests read. Outputs are gitignored and rewritten only
+ * when they change. Writes the matching `melee/compiler/wasm/<type>` and `<type>.wasm` exports into
  * `package.json`.
  * @module
  */
 import * as ChildProcess from 'node:child_process'
+import * as Crypto from 'node:crypto'
 import * as Fs from 'node:fs'
+import * as Os from 'node:os'
 import * as Path from 'node:path'
 
 const root = Path.resolve(import.meta.dirname, '..')
@@ -68,22 +71,101 @@ write(
   manifest(Fs.readFileSync(Path.join(root, 'package.json'), 'utf8')),
 )
 
-// `all` includes every diagram type, for the root entrypoint and the tests.
-for (const type of ['all', ...types]) {
-  const bytes = build(type)
+// The stamp stays outside `src/`, which the package publishes.
+const stampFile = Path.join(root, 'target/wasm.stamp')
+const stamp = inputs()
+const modelFile = Path.join(root, 'test/oracles/model.generated.wasm')
+const outputs = [
+  ...['all', ...types].flatMap((type) => [
+    Path.join(root, `src/internal/${type}.generated.ts`),
+    Path.join(root, `src/internal/${type}.generated.wasm`),
+  ]),
+  Path.join(root, 'src/internal/all.fast.generated.wasm'),
+  modelFile,
+]
+const fresh =
+  Fs.existsSync(stampFile) &&
+  Fs.readFileSync(stampFile, 'utf8') === stamp &&
+  outputs.every((file) => Fs.existsSync(file))
 
-  write(Path.join(root, `src/internal/${type}.generated.ts`), source(type, bytes))
-  write(Path.join(root, `src/internal/${type}.generated.wasm`), bytes)
+if (fresh) console.log('WebAssembly modules are up to date.')
+else {
+  // `all` includes every diagram type, for the root entrypoint and the tests. Build tools,
+  // servers, and the CLI download nothing, so `all.fast` trades size for speed.
+  const jobs: (() => Promise<void>)[] = [
+    ...['all', ...types].map((type) => async () => {
+      const bytes = await build(type)
+      write(Path.join(root, `src/internal/${type}.generated.ts`), source(type, bytes))
+      write(Path.join(root, `src/internal/${type}.generated.wasm`), bytes)
+    }),
+    async () =>
+      write(
+        Path.join(root, 'src/internal/all.fast.generated.wasm'),
+        await build('all', { fast: true }),
+      ),
+    // Tests compare parsed models, which no published module exports.
+    async () => write(modelFile, await build('all,model', { model: true })),
+  ]
+
+  // Each module has its own target directory, so builds run side by side.
+  await parallel(jobs, Number(process.env.MELEE_WASM_JOBS) || Os.availableParallelism())
+  write(stampFile, stamp)
 }
 
-// Build tools, servers, and the CLI download nothing, so their module trades size for speed.
-write(Path.join(root, 'src/internal/all.fast.generated.wasm'), build('all', { fast: true }))
+/**
+ * A hash of everything a module build reads: the Rust sources and manifests, the toolchain names,
+ * this script, and the optimizer version. An unchanged hash skips the build.
+ */
+function inputs(): string {
+  const hash = Crypto.createHash('sha256')
+  const files = [
+    'Cargo.lock',
+    'Cargo.toml',
+    'rust-toolchain.toml',
+    'scripts/build-wasm.ts',
+    'node_modules/binaryen/package.json',
+    ...(Fs.globSync('crates/**/*', { cwd: root }) as string[]).filter((file) =>
+      Fs.statSync(Path.join(root, file)).isFile(),
+    ),
+  ].sort()
+
+  // The toolchain name, not whether it is installed: jobs that restore built modules need none.
+  hash.update(`${nightly}\n`)
+  for (const file of files) {
+    hash.update(`${file}\n`)
+    hash.update(Fs.readFileSync(Path.join(root, file)))
+  }
+  return hash.digest('hex')
+}
+
+/** Runs `jobs` with at most `limit` in flight, failing on the first error. */
+async function parallel(jobs: readonly (() => Promise<void>)[], limit: number): Promise<void> {
+  let next = 0
+  const worker = async () => {
+    while (next < jobs.length) await jobs[next++]?.()
+  }
+  await Promise.all(Array.from({ length: Math.max(1, limit) }, worker))
+}
+
+/** Runs a command, rejecting when it exits unsuccessfully. */
+function run(command: string, args: readonly string[], env: NodeJS.ProcessEnv): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = ChildProcess.spawn(command, args, { cwd: root, env, stdio: 'inherit' })
+    child.on('error', reject)
+    child.on('exit', (code) =>
+      code === 0
+        ? resolve()
+        : reject(new Error(`${command} ${args.join(' ')} exited with ${code}`)),
+    )
+  })
+}
 
 /** Builds the `wasm` crate with one diagram feature, optimizes it, and returns its bytes. */
-function build(feature: string, options: build.Options = {}): Buffer {
+async function build(feature: string, options: build.Options = {}): Promise<Buffer> {
   const fast = options.fast === true
-  const targetDir = `target/wasm-${feature}${fast ? '-fast' : ''}`
-  const sized = !fast && nightlyInstalled
+  const model = options.model === true
+  const targetDir = model ? 'target/wasm-model' : `target/wasm-${feature}${fast ? '-fast' : ''}`
+  const sized = !fast && !model && nightlyInstalled
 
   // Rebuilding `std` with `optimize_for_size` and aborting panics without formatting their messages
   // removes `core::fmt` and selects smaller `std` algorithms.
@@ -94,7 +176,7 @@ function build(feature: string, options: build.Options = {}): Buffer {
       ? { ...process.env, CARGO_PROFILE_WASM_OPT_LEVEL: '3' }
       : process.env
 
-  ChildProcess.execFileSync(
+  await run(
     'cargo',
     [
       ...(sized ? [`+${nightly}`] : []),
@@ -112,10 +194,14 @@ function build(feature: string, options: build.Options = {}): Buffer {
       targetDir,
       ...(sized ? nightlyArgs : []),
     ],
-    { cwd: root, env, stdio: 'inherit' },
+    env,
   )
 
   const input = Path.join(root, targetDir, 'wasm32-unknown-unknown/wasm/wasm.wasm')
+
+  // Only tests load the model module, so it skips optimization.
+  if (model) return Fs.readFileSync(input)
+
   const output = Path.join(root, targetDir, 'optimized.wasm')
 
   // Rust's wasm32 target enables these proposals by default, so the optimizer must accept them.
@@ -130,7 +216,7 @@ function build(feature: string, options: build.Options = {}): Buffer {
 
   // The pinned npm build of Binaryen keeps output identical across machines. Rust places the stack
   // and static data above the first kilobyte, so `--low-memory-unused` can fold address offsets.
-  ChildProcess.execFileSync(
+  await run(
     Path.join(root, 'node_modules/.bin/wasm-opt'),
     [
       fast ? '-O3' : '-Oz',
@@ -143,7 +229,7 @@ function build(feature: string, options: build.Options = {}): Buffer {
       '-o',
       output,
     ],
-    { cwd: root, stdio: 'inherit' },
+    process.env,
   )
 
   return Fs.readFileSync(output)
@@ -153,6 +239,8 @@ declare namespace build {
   type Options = {
     /** Optimizes for speed instead of size, on the stable toolchain. */
     readonly fast?: boolean | undefined
+    /** Builds the unoptimized test module with the `model` export, on the stable toolchain. */
+    readonly model?: boolean | undefined
   }
 }
 

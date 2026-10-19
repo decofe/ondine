@@ -8,6 +8,9 @@
 //! - Success fields: type, width, height, links (`href`, `id`, and `internal` repeated), SVG.
 //! - Error fields: code, type, line, column, snippet, message.
 //!
+//! With the `model` feature, a `model` export takes the same arguments and returns the parsed
+//! model instead, for tests: type and JSON on success, and the same error fields.
+//!
 //! Memory comes from a bump arena that `reset` empties, so each render starts with a clean heap.
 #![cfg_attr(target_arch = "wasm32", no_main)]
 #![cfg_attr(
@@ -164,6 +167,20 @@ fn encode(result: Result<compiler::Rendered, compiler::Error>) -> Vec<u8> {
     out
 }
 
+/// Encodes a parse result: type and model JSON on success, or the fields of [`encode`]'s errors.
+#[cfg(all(target_arch = "wasm32", feature = "model"))]
+fn encode_model(result: Result<compiler::Model, compiler::Error>) -> Vec<u8> {
+    match result {
+        Ok(model) => {
+            let mut out = vec![0];
+            field(&mut out, model.r#type.as_bytes());
+            field(&mut out, model.json.as_bytes());
+            out
+        }
+        Err(error) => encode(Err(error)),
+    }
+}
+
 #[cfg(target_arch = "wasm32")]
 fn field(out: &mut Vec<u8>, bytes: &[u8]) {
     out.extend_from_slice(&u32::try_from(bytes.len()).unwrap_or(u32::MAX).to_le_bytes());
@@ -209,16 +226,48 @@ mod exports {
 
         let result = match (core::str::from_utf8(source), core::str::from_utf8(options)) {
             (Ok(source), Ok(options)) => compiler::render(source, options, now),
-            _ => Err(compiler::Error {
-                code: compiler::Code::Limit,
-                column: 0,
-                line: 0,
-                message: String::from("Input is not valid UTF-8."),
-                snippet: String::new(),
-                r#type: None,
-            }),
+            _ => Err(invalid()),
         };
 
         Box::into_raw(super::encode(result).into_boxed_slice()).cast::<u8>()
+    }
+
+    /// Parses the UTF-8 source and options the host wrote without drawing, and returns the
+    /// result's address, as `render` does.
+    #[cfg(feature = "model")]
+    #[unsafe(no_mangle)]
+    extern "C" fn model(
+        source: *const u8,
+        source_len: usize,
+        options: *const u8,
+        options_len: usize,
+        now: f64,
+    ) -> *const u8 {
+        // SAFETY: the host wrote `source_len` and `options_len` bytes inside memory from `alloc`.
+        let (source, options) = unsafe {
+            (
+                core::slice::from_raw_parts(source, source_len),
+                core::slice::from_raw_parts(options, options_len),
+            )
+        };
+
+        let result = match (core::str::from_utf8(source), core::str::from_utf8(options)) {
+            (Ok(source), Ok(options)) => compiler::model(source, options, now),
+            _ => Err(invalid()),
+        };
+
+        Box::into_raw(super::encode_model(result).into_boxed_slice()).cast::<u8>()
+    }
+
+    #[cold]
+    fn invalid() -> compiler::Error {
+        compiler::Error {
+            code: compiler::Code::Limit,
+            column: 0,
+            line: 0,
+            message: String::from("Input is not valid UTF-8."),
+            snippet: String::new(),
+            r#type: None,
+        }
     }
 }

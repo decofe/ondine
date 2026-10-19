@@ -33,6 +33,8 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          // Mermaid and Pele read gantt dates in local time, so references run in UTC as CI does.
+          env: { TZ: 'UTC' },
           exclude: [...defaultExclude, 'scripts/packed-consumer.test.ts', 'src/Screenshot.test.ts'],
           name: 'node',
         },
