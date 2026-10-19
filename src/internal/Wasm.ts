@@ -49,9 +49,14 @@ type Exports = {
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
 
-/** Compiles base64 module bytes synchronously and returns its render function. */
-export function instantiate(base64: string): Instance {
-  const module = new WebAssembly.Module(bytes(base64))
+/**
+ * Instantiates a diagram module and returns its render function.
+ *
+ * Base64 bytes compile synchronously. Hosts that disallow runtime compilation, such as
+ * Cloudflare Workers, pass a module their bundler compiled ahead of time.
+ */
+export function instantiate(input: string | WebAssembly.Module): Instance {
+  const module = typeof input === 'string' ? new WebAssembly.Module(bytes(input)) : input
   const exports = new WebAssembly.Instance(module, {}).exports as unknown as Exports
 
   return {

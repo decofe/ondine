@@ -1,6 +1,7 @@
 /**
  * Builds one WebAssembly module per diagram type and inlines each as base64 in
- * `src/internal/<type>.generated.ts`. Outputs are gitignored and rewritten only when they change.
+ * `src/internal/<type>.generated.ts`, beside the raw `src/internal/<type>.generated.wasm` for hosts
+ * that only accept precompiled modules. Outputs are gitignored and rewritten only when they change.
  * @module
  */
 import * as ChildProcess from 'node:child_process'
@@ -12,8 +13,12 @@ const root = Path.resolve(import.meta.dirname, '..')
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
 const types = ['flowchart'] as const
 
-for (const type of types)
-  write(Path.join(root, `src/internal/${type}.generated.ts`), source(build(type)))
+for (const type of types) {
+  const bytes = build(type)
+
+  write(Path.join(root, `src/internal/${type}.generated.ts`), source(bytes))
+  write(Path.join(root, `src/internal/${type}.generated.wasm`), bytes)
+}
 
 /** Builds the `wasm` crate with one diagram feature, optimizes it, and returns its bytes. */
 function build(feature: string): Buffer {
@@ -67,8 +72,8 @@ function source(bytes: Buffer): string {
 }
 
 /** Writes a file only when its contents change, so watchers skip unchanged outputs. */
-function write(file: string, contents: string): void {
-  if (Fs.existsSync(file) && Fs.readFileSync(file, 'utf8') === contents) return
+function write(file: string, contents: string | Buffer): void {
+  if (Fs.existsSync(file) && Fs.readFileSync(file).equals(Buffer.from(contents))) return
 
   Fs.mkdirSync(Path.dirname(file), { recursive: true })
   Fs.writeFileSync(file, contents)

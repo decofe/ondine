@@ -42,6 +42,44 @@ export declare namespace RenderError {
   }
 }
 
+/**
+ * Creates a renderer from caller-supplied diagram modules.
+ *
+ * Use it on hosts that disallow compiling WebAssembly at runtime, such as Cloudflare Workers,
+ * where the bundler compiles `flowchart.generated.wasm` ahead of time.
+ *
+ * @example
+ * ```ts
+ * import { Render } from 'melee'
+ * import module from 'melee/src/internal/flowchart.generated.wasm'
+ *
+ * const { svg } = Render.create({ modules: { flowchart: module } }).render('flowchart LR\n  A --> B')
+ * ```
+ */
+export function create(options: create.Options): create.ReturnType {
+  const instance = Wasm.instantiate(options.modules.flowchart)
+
+  return {
+    render: (source, renderOptions = {}) => run(instance, source, renderOptions),
+  }
+}
+
+export declare namespace create {
+  /** Renderer options. */
+  type Options = {
+    /** Diagram modules by type, each compiled or as base64 bytes. */
+    readonly modules: {
+      readonly flowchart: WebAssembly.Module | string
+    }
+  }
+
+  /** A renderer bound to its own module instances. */
+  type ReturnType = {
+    /** Renders Mermaid `source` to an SVG document, as {@link render} does. */
+    readonly render: (source: string, options?: render.Options) => render.ReturnType
+  }
+}
+
 let instance: Wasm.Instance | undefined
 
 /**
@@ -59,16 +97,7 @@ let instance: Wasm.Instance | undefined
 export function render(source: string, options: render.Options = {}): render.ReturnType {
   instance ??= Wasm.instantiate(flowchart)
 
-  const result = instance.render(source, JSON.stringify(options))
-  if (!result.ok) throw new RenderError({ ...result, code: result.code as RenderError.Code })
-
-  return {
-    height: result.height,
-    links: result.links,
-    svg: result.svg,
-    type: result.type,
-    width: result.width,
-  }
+  return run(instance, source, options)
 }
 
 export declare namespace render {
@@ -108,5 +137,18 @@ export declare namespace render {
     readonly type: string
     /** Width in pixels. */
     readonly width: number
+  }
+}
+
+function run(instance: Wasm.Instance, source: string, options: render.Options): render.ReturnType {
+  const result = instance.render(source, JSON.stringify(options))
+  if (!result.ok) throw new RenderError({ ...result, code: result.code as RenderError.Code })
+
+  return {
+    height: result.height,
+    links: result.links,
+    svg: result.svg,
+    type: result.type,
+    width: result.width,
   }
 }
