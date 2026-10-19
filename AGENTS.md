@@ -283,8 +283,8 @@ Applies to documentation, comments, TSDoc, commit messages, and pull requests.
 - Name the thing that changed, in the identifiers the codebase already uses. Prefer `feat: return annotation styles from Frame.render` over `feat: return the styles annotated markup needs`.
 - State the change, not the reason for it. Leave `because`, `so that`, and `in order to` out of the subject.
 - Write each message to stand alone for a reader who has not seen the pull request or the task that produced it.
-- Keep the pull request title accurate as the branch grows: a squash merge makes it the message that lands on `main`, and the branch's own messages disappear.
 - Never force push and never amend a pushed commit. Correct a mistake with a follow-up commit.
+- Always commit and push directly to `main`. Never create or push to another branch, and never open a pull request.
 
 ## UI Conventions
 
