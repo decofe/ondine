@@ -112,5 +112,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: ignore
+          # Vitest writes diffs under a dot directory, which the action skips by default.
+          include-hidden-files: true
           name: screenshot-diffs
           path: .vitest-attachments
