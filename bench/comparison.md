@@ -1,6 +1,6 @@
 # Comparison
 
-Bundle size and render speed of Melee, Pele 1.6.0, and Mermaid 12.1.0 over all 33 diagram types, from one run of `pnpm bench:compare` (`bench/compare.ts`) at `1c9f5d6`.
+Runtime size and render speed of Melee, Pele 1.6.0, and Mermaid 12.1.0 over all 33 diagram types, from one run of `pnpm bench:compare` (`bench/compare.ts`) at `1c9f5d6`.
 
 Measured on a 4-core Intel Xeon at 2.10 GHz (16 GB, Linux 6.18) with Node 22.22.0, headless Chromium 141, `nightly-2026-06-29`, and Binaryen 132. Each warm lane discarded 3 rounds, then recorded at least 5 rounds of at least 10 ms and up to 1 s. Cold times are the median of 5 fresh processes or browser contexts.
 
@@ -8,31 +8,27 @@ Measured on a 4-core Intel Xeon at 2.10 GHz (16 GB, Linux 6.18) with Node 22.22.
 
 Every library rendered all 612 vectors, so every lane renders the same sources. Ratios are geometric means over the 33 types, divided by Melee's value, so a ratio above 1× favors Melee.
 
-| Measure                                     | Pele ÷ Melee | Mermaid ÷ Melee |
-| ------------------------------------------- | -----------: | --------------: |
-| Node warm render, speed module              |        1.84× |                 |
-| Node cold start, speed module               |        1.46× |                 |
-| Chrome warm render, per-type size module    |        1.16× |         327.86× |
-| Chrome warm render, `all` speed module      |        1.99× |         562.99× |
-| Chrome cold start, per-type size module     |        1.65× |           7.89× |
-| Chrome download of one diagram, size module |        0.39× |           4.33× |
+| Measure                                  | Pele ÷ Melee | Mermaid ÷ Melee |
+| ---------------------------------------- | -----------: | --------------: |
+| Node warm render, speed module           |        1.84× |                 |
+| Node cold start, speed module            |        1.46× |                 |
+| Chrome warm render, per-type size module |        1.16× |         327.86× |
+| Chrome warm render, `all` speed module   |        1.99× |         562.99× |
+| Chrome cold start, per-type size module  |        1.65× |           7.89× |
 
 - **Speed:** Melee is faster than Pele on every type in Node, and with the speed module on every type in Chrome. The per-type size modules lose to Pele on 14 small types in Chrome, by 1% to 8% except `info` (0.73×), `ishikawa` (0.65×), `journey` (0.89×), and `kanban` (0.88×).
-- **Download:** Compiling in the browser downloads 2.6 times as much as `pele/lazy`, since each per-type module carries its own allocator, `std`, and shared layout code. The speed module is 1.27 MB gzip and serves Node, the CLI, and the Worker, not browsers.
-- **Precompiled:** Diagrams compiled at build time need only the 127-byte `melee` runtime.
+- **Size:** Diagrams compiled at build time need only the 127-byte `melee` runtime, against 248,064 bytes gzip for Pele and 1,506,327 for Mermaid.
 
 ## Size
 
-Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Melee counts its JavaScript glue and the `.wasm` file it fetches.
+Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Melee compiles diagrams ahead of time, so its row is the runtime that mounts them, without the compiler.
 
-| Bundle                                              | Files | Entry gzip |       Raw |      Gzip |    Brotli |
-| --------------------------------------------------- | ----: | ---------: | --------: | --------: | --------: |
-| melee (mount precompiled SVG)                       |     1 |        127 |       115 |       127 |        93 |
-| melee/compiler/wasm + all.wasm (size profile)       |     2 |      1,076 | 1,479,708 |   638,254 |   513,632 |
-| melee/compiler/wasm + all.fast.wasm (speed profile) |     2 |      1,076 | 3,680,040 | 1,270,799 |   902,582 |
-| pele                                                |     1 |    248,064 |   665,656 |   248,064 |   200,236 |
-| pele/lazy                                           |    57 |      3,728 |   675,516 |   276,422 |   250,731 |
-| mermaid                                             |   106 |     11,698 | 5,179,321 | 1,506,327 | 1,252,410 |
+| Bundle                        | Files | Entry gzip |       Raw |      Gzip |    Brotli |
+| ----------------------------- | ----: | ---------: | --------: | --------: | --------: |
+| melee (mount precompiled SVG) |     1 |        127 |       115 |       127 |        93 |
+| pele                          |     1 |    248,064 |   665,656 |   248,064 |   200,236 |
+| pele/lazy                     |    57 |      3,728 |   675,516 |   276,422 |   250,731 |
+| mermaid                       |   106 |     11,698 | 5,179,321 | 1,506,327 | 1,252,410 |
 
 ## Node
 
@@ -162,7 +158,7 @@ Vectors each library rejected. A library that rejects every vector of a type doe
 
 ## Chrome
 
-Melee loads the size-optimized module for the diagram type, as browsers do, and `melee-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks. Download is the gzip size of every file a page fetched to render one diagram.
+Melee loads the size-optimized module for the diagram type, as browsers do, and `melee-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks.
 
 ### Warm
 
@@ -245,47 +241,6 @@ Median milliseconds from before the library loads until its first diagram render
 | wardley            |  31.9 |        159 | 52.2 |     265 |              4.99× |        1.64× |           8.32× |
 | xychart            |  29.4 |        165 | 51.1 |     144 |              5.62× |        1.74× |           4.89× |
 | **Geometric mean** |       |            |      |         |              4.50× |        1.65× |           7.89× |
-
-### Download
-
-Gzip bytes fetched to render one diagram of the type.
-
-| Type               |   melee | melee-fast |   pele | mermaid | melee-fast ÷ melee | pele ÷ melee | mermaid ÷ melee |
-| ------------------ | ------: | ---------: | -----: | ------: | -----------------: | -----------: | --------------: |
-| agentflow          | 148,138 |  1,271,311 | 52,284 | 700,261 |              8.58× |        0.35× |           4.73× |
-| architecture       |  69,641 |  1,271,311 | 37,649 | 511,090 |             18.26× |        0.54× |           7.34× |
-| block              |  95,897 |  1,271,311 | 40,443 | 212,577 |             13.26× |        0.42× |           2.22× |
-| c4                 |  99,001 |  1,271,311 | 43,469 | 205,009 |             12.84× |        0.44× |           2.07× |
-| class              | 117,956 |  1,271,311 | 47,582 | 691,201 |             10.78× |        0.40× |           5.86× |
-| cynefin            |  47,999 |  1,271,311 | 32,564 | 329,563 |             26.49× |        0.68× |           6.87× |
-| er                 | 109,482 |  1,271,311 | 41,112 | 684,566 |             11.61× |        0.38× |           6.25× |
-| eventmodeling      |  56,676 |  1,271,311 | 36,108 | 330,219 |             22.43× |        0.64× |           5.83× |
-| flowchart          | 139,615 |  1,271,311 | 49,449 | 695,691 |              9.11× |        0.35× |           4.98× |
-| gantt              |  94,071 |  1,271,311 | 27,149 | 202,522 |             13.51× |        0.29× |           2.15× |
-| gitGraph           |  71,233 |  1,271,311 | 22,232 | 334,740 |             17.85× |        0.31× |           4.70× |
-| info               |  40,059 |  1,271,311 | 16,569 | 326,164 |             31.74× |        0.41× |           8.14× |
-| ishikawa           |  42,445 |  1,271,311 | 31,367 | 191,882 |             29.95× |        0.74× |           4.52× |
-| journey            |  60,124 |  1,271,311 | 19,298 | 194,663 |             21.14× |        0.32× |           3.24× |
-| kanban             |  54,038 |  1,271,311 | 20,344 | 192,764 |             23.53× |        0.38× |           3.57× |
-| mindmap            |  55,402 |  1,271,311 | 22,552 | 358,302 |             22.95× |        0.41× |           6.47× |
-| packet             |  61,587 |  1,271,311 | 20,032 | 327,842 |             20.64× |        0.33× |           5.32× |
-| pie                |  62,059 |  1,271,311 | 18,895 | 328,086 |             20.49× |        0.30× |           5.29× |
-| quadrantChart      |  63,828 |  1,271,311 | 19,762 | 195,102 |             19.92× |        0.31× |           3.06× |
-| radar              |  64,785 |  1,271,311 | 19,612 | 328,569 |             19.62× |        0.30× |           5.07× |
-| railroad           |  69,672 |  1,271,311 | 23,961 | 334,029 |             18.25× |        0.34× |           4.79× |
-| requirement        |  92,363 |  1,271,311 | 36,873 | 683,798 |             13.76× |        0.40× |           7.40× |
-| sankey             |  65,401 |  1,271,311 | 18,882 | 193,603 |             19.44× |        0.29× |           2.96× |
-| sequence           |  88,853 |  1,271,311 | 43,044 | 218,143 |             14.31× |        0.48× |           2.46× |
-| state              | 117,609 |  1,271,311 | 45,281 | 688,869 |             10.81× |        0.39× |           5.86× |
-| swimlane           | 152,042 |  1,271,311 | 54,710 | 268,473 |              8.36× |        0.36× |           1.77× |
-| timeline           |  44,414 |  1,271,311 | 31,302 | 195,383 |             28.62× |        0.70× |           4.40× |
-| treeView           |  50,519 |  1,271,311 | 22,141 | 329,789 |             25.17× |        0.44× |           6.53× |
-| treemap            |  65,748 |  1,271,311 | 20,057 | 330,241 |             19.34× |        0.31× |           5.02× |
-| usecase            | 134,607 |  1,271,311 | 46,727 | 724,368 |              9.44× |        0.35× |           5.38× |
-| venn               |  79,105 |  1,271,311 | 20,246 | 200,853 |             16.07× |        0.26× |           2.54× |
-| wardley            |  78,087 |  1,271,311 | 36,500 | 332,704 |             16.28× |        0.47× |           4.26× |
-| xychart            |  62,748 |  1,271,311 | 21,142 | 197,317 |             20.26× |        0.34× |           3.14× |
-| **Geometric mean** |         |            |        |         |             16.92× |        0.39× |           4.33× |
 
 ### Rejected
 

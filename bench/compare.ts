@@ -61,8 +61,6 @@ type Size = { brotli: number; gzip: number; raw: number }
 type Lane = {
   /** Until the first diagram renders. */
   cold: number | undefined
-  /** Gzip, raw, and Brotli bytes fetched to render one diagram, in Chrome. */
-  download: Size | undefined
   rejected: number
   supported: boolean
   /** Per diagram. */
@@ -139,27 +137,16 @@ async function bundle() {
   return files
 }
 
-/** Sizes of each library's browser bundle with every diagram type. */
+/** Sizes of each library's browser bundle with every diagram type. Melee ships its runtime only. */
 async function size() {
   const entries = [
     {
       name: 'melee (mount precompiled SVG)',
       source: `export { mount } from ${JSON.stringify(Path.join(root, 'src/index.ts'))}`,
-      wasm: undefined,
     },
-    {
-      name: 'melee/compiler/wasm + all.wasm (size profile)',
-      source: `export { create } from ${JSON.stringify(Path.join(root, 'src/compiler/wasm.ts'))}`,
-      wasm: 'all.generated.wasm',
-    },
-    {
-      name: 'melee/compiler/wasm + all.fast.wasm (speed profile)',
-      source: `export { create } from ${JSON.stringify(Path.join(root, 'src/compiler/wasm.ts'))}`,
-      wasm: 'all.fast.generated.wasm',
-    },
-    { name: 'pele', source: `export { render } from 'pele'`, wasm: undefined },
-    { name: 'pele/lazy', source: `export { load, render } from 'pele/lazy'`, wasm: undefined },
-    { name: 'mermaid', source: `export { default } from 'mermaid'`, wasm: undefined },
+    { name: 'pele', source: `export { render } from 'pele'` },
+    { name: 'pele/lazy', source: `export { load, render } from 'pele/lazy'` },
+    { name: 'mermaid', source: `export { default } from 'mermaid'` },
   ]
   const rows = []
 
@@ -177,7 +164,6 @@ async function size() {
       write: false,
     })
     const outputs = result.outputFiles.map((file) => file.contents)
-    if (entry.wasm) outputs.push(Fs.readFileSync(Path.join(root, 'src/internal', entry.wasm)))
 
     const first = result.outputFiles.find((file) => Path.basename(file.path) === 'stdin.js')
     rows.push({
@@ -222,7 +208,7 @@ async function node() {
   return rows
 }
 
-/** Cold and warm times and download sizes in headless Chromium, each run in a fresh context. */
+/** Cold and warm times in headless Chromium, each run in a fresh context. */
 async function chrome() {
   const browser = await Playwright.chromium.launch()
   report.environment.chrome = browser.version()
@@ -242,7 +228,6 @@ async function chrome() {
         await compare(type, lanes, async (lane, config) => {
           const context = await browser.newContext()
           const page = await context.newPage()
-          const fetched = new Set<string>()
           const settings = { config, wasm: `/wasm/${wasm(lane)}` }
           const bundle = lane === 'melee-fast' ? 'melee' : lane
           // Inline JSON must not close the script element.
@@ -257,7 +242,6 @@ async function chrome() {
               : bundles.get(path)
             if (body === undefined) return route.fulfill({ status: 404 })
 
-            fetched.add(path)
             return route.fulfill({
               body: Buffer.from(body),
               contentType: path.endsWith('.wasm') ? 'application/wasm' : 'text/javascript',
@@ -271,14 +255,7 @@ async function chrome() {
             const result = await page.evaluate(
               () => (globalThis as typeof globalThis & { result: Harness.Result }).result,
             )
-            const download = measure(
-              [...fetched].map((path) =>
-                path.startsWith('/wasm/')
-                  ? Fs.readFileSync(Path.join(root, 'src/internal', path.slice('/wasm/'.length)))
-                  : (bundles.get(path) ?? new Uint8Array()),
-              ),
-            )
-            return { download, result }
+            return { result }
           } finally {
             await context.close()
           }
@@ -299,10 +276,7 @@ async function chrome() {
 async function compare(
   type: string,
   lanes: readonly string[],
-  run: (
-    lane: string,
-    config: Harness.Config,
-  ) => Promise<{ download?: Size | undefined; result: Harness.Result }>,
+  run: (lane: string, config: Harness.Config) => Promise<{ result: Harness.Result }>,
 ): Promise<Row> {
   const sources = Vectors.of(type).map((vector) => vector.source)
   const row: Row = { lanes: {}, shared: 0, type, vectors: sources.length }
@@ -317,7 +291,6 @@ async function compare(
     errors.set(lane, list)
     row.lanes[lane] = {
       cold: undefined,
-      download: probe.download,
       rejected,
       supported: rejected < sources.length,
       warm: undefined,
@@ -367,7 +340,7 @@ function render() {
     lines.push(
       '## Size',
       '',
-      'Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Melee counts its JavaScript glue and the `.wasm` file it fetches.',
+      'Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Melee compiles diagrams ahead of time, so its row is the runtime that mounts them, without the compiler.',
       '',
       '| Bundle | Files | Entry gzip | Raw | Gzip | Brotli |',
       '| --- | --: | --: | --: | --: | --: |',
@@ -392,7 +365,7 @@ function render() {
     lines.push(
       '## Chrome',
       '',
-      'Melee loads the size-optimized module for the diagram type, as browsers do, and `melee-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks. Download is the gzip size of every file a page fetched to render one diagram.',
+      'Melee loads the size-optimized module for the diagram type, as browsers do, and `melee-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks.',
       '',
       ...tables(report.chrome, ['melee', 'melee-fast', 'pele', 'mermaid'], 'melee'),
     )
@@ -400,7 +373,7 @@ function render() {
   return `${lines.join('\n')}\n`
 }
 
-/** Warm, cold, download, and rejection tables for one host. Ratios divide by `base`. */
+/** Warm, cold, and rejection tables for one host. Ratios divide by `base`. */
 function tables(rows: readonly Row[], lanes: readonly string[], base: string) {
   const others = lanes.filter((lane) => lane !== base)
   const header = (first: string, columns: readonly string[]) => [
@@ -464,30 +437,6 @@ function tables(rows: readonly Row[], lanes: readonly string[], base: string) {
     `| **Geometric mean** | ${lanes.map(() => '').join(' | ')} | ${ratios((lane) => lane.cold).join(' | ')} |`,
     '',
   )
-
-  if (rows.some((row) => Object.values(row.lanes).some((lane) => lane.download))) {
-    lines.push('### Download', '', 'Gzip bytes fetched to render one diagram of the type.', '')
-    lines.push(...header('Type', [...lanes, ...others.map((lane) => `${lane} ÷ ${base}`)]))
-    for (const row of rows)
-      lines.push(
-        `| ${row.type} | ${lanes
-          .map((lane) => {
-            const entry = row.lanes[lane]
-            return entry?.supported && entry.download ? bytes(entry.download.gzip) : '—'
-          })
-          .join(' | ')} | ${others
-          .map((lane) =>
-            row.lanes[lane]?.supported
-              ? ratio(row.lanes[base]?.download?.gzip, row.lanes[lane]?.download?.gzip)
-              : '—',
-          )
-          .join(' | ')} |`,
-      )
-    lines.push(
-      `| **Geometric mean** | ${lanes.map(() => '').join(' | ')} | ${ratios((lane) => (lane.supported ? lane.download?.gzip : undefined)).join(' | ')} |`,
-      '',
-    )
-  }
 
   lines.push(
     '### Rejected',
