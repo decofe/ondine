@@ -10,6 +10,11 @@
 
 ## Overview
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/overview-dark.svg">
+  <img alt="Sequence diagram rendered by Melee" src=".github/assets/overview-light.svg">
+</picture>
+
 ```text
 sequenceDiagram
   participant Browser
@@ -24,11 +29,6 @@ sequenceDiagram
     Server-->>Browser: 200 OK
   end
 ```
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/overview-dark.svg">
-  <img alt="Sequence diagram rendered by Melee" src=".github/assets/overview-light.svg">
-</picture>
 
 ## Agent Prompt
 
