@@ -102,16 +102,30 @@ export function App() {
                 </button>
               ))}
             </div>
-            <button
-              {...styles.search()}
-              onClick={async () => {
-                await navigator.clipboard.writeText(Share.link(source))
-                flash('Link copied')
-              }}
-              type="button"
-            >
-              Copy share link
-            </button>
+            <span {...styles.tools()}>
+              <button
+                {...styles.search()}
+                onClick={async () => {
+                  const url = await Share.image(source)
+                  if (!url) return flash('Too long for an image link')
+                  await navigator.clipboard.writeText(`![Mermaid diagram](${url})`)
+                  flash('Image Markdown copied')
+                }}
+                type="button"
+              >
+                Copy image link
+              </button>
+              <button
+                {...styles.search()}
+                onClick={async () => {
+                  await navigator.clipboard.writeText(Share.link(source))
+                  flash('Link copied')
+                }}
+                type="button"
+              >
+                Copy share link
+              </button>
+            </span>
           </div>
 
           {view === 'diagram' ? <Diagram onOutcome={onOutcome} source={source} /> : null}

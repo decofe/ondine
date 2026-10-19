@@ -2,8 +2,9 @@
  * Serves Ondine diagrams as SVG images for Markdown hosts such as GitHub.
  *
  * `GET /<payload>.svg` renders the Mermaid source in `payload`, encoded as Kroki does: UTF-8, zlib
- * deflate, then base64url. One adaptive SVG follows the embedder's color scheme. `?scheme=light` or
- * `?scheme=dark` pins one scheme for `<picture>` sources.
+ * deflate, then base64url. `GET /svg?source=<source>` reads percent-encoded source instead, which
+ * authors and agents can write without a compressor. One adaptive SVG follows the embedder's color
+ * scheme. `?scheme=light` or `?scheme=dark` pins one scheme for `<picture>` sources.
  * @module
  */
 import { Render, RenderError } from 'ondine/compiler/wasm'
@@ -15,8 +16,10 @@ export class PayloadError extends Error {
   override name = 'Image.PayloadError'
 }
 
-/** Matches an image path and captures its payload. Static assets such as `/favicon.svg` are served before the Worker runs. */
-export const path = /^\/([\w-]+)\.svg$/
+/** Matches a payload path and captures its payload. Static assets such as `/favicon.svg` are served before the Worker runs. */
+const payloadPath = /^\/([\w-]+)\.svg$/
+/** Reads percent-encoded source from the `source` query parameter. */
+const sourcePath = '/svg'
 
 // Camo rejects proxied URLs over about 8 kB, and it hex-encodes the origin URL, doubling it.
 const maxPath = 4096
@@ -30,14 +33,18 @@ const schemes = {
   light: '--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000',
 } as const
 
-/** Answers a request whose pathname matches {@link path} with the rendered diagram, or with an SVG error card and status 400. */
+/** Whether `url` names a diagram image: a payload path or the `/svg` source path. */
+export function matches(url: URL): boolean {
+  return url.pathname === sourcePath || payloadPath.test(url.pathname)
+}
+
+/** Answers a request whose URL {@link matches} with the rendered diagram, or with an SVG error card and status 400. */
 export async function respond(request: Request): Promise<Response> {
   if (request.method !== 'GET' && request.method !== 'HEAD')
     return new Response('Method not allowed', { headers: { allow: 'GET, HEAD' }, status: 405 })
 
   const url = new URL(request.url)
-  const match = path.exec(url.pathname)
-  if (!match?.[1]) return new Response('Not found', { status: 404 })
+  if (!matches(url)) return new Response('Not found', { status: 404 })
 
   const scheme = url.searchParams.get('scheme')
   const style = (() => {
@@ -46,10 +53,20 @@ export async function respond(request: Request): Promise<Response> {
   })()
 
   try {
-    if (url.pathname.length > maxPath)
-      throw new PayloadError(`Payload exceeds ${maxPath} characters.`)
+    const source = await (async () => {
+      const payload = payloadPath.exec(url.pathname)?.[1]
+      if (payload !== undefined) {
+        if (url.pathname.length > maxPath)
+          throw new PayloadError(`Payload exceeds ${maxPath} characters.`)
+        return inflate(payload)
+      }
 
-    const source = await inflate(match[1])
+      const text = url.searchParams.get('source')
+      if (text === null) throw new PayloadError('The source query parameter is missing.')
+      if (url.search.length > maxPath)
+        throw new PayloadError(`Payload exceeds ${maxPath} characters.`)
+      return text
+    })()
     const { svg } = renderer.render(source)
 
     return image(theme(svg, style), {

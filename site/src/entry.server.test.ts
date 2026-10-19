@@ -84,6 +84,7 @@ describe('fetch', () => {
 
     expect(lines.filter((line) => line.startsWith('## '))).toMatchInlineSnapshot(`
       [
+        "## Render Diagrams in Markdown",
         "## Introduction",
         "## Guides",
         "## Diagrams",
@@ -187,6 +188,21 @@ describe('fetch', () => {
     expect(response.headers.get('x-content-type-options')).toMatchInlineSnapshot(`"nosniff"`)
     expect(await response.text()).toMatchInlineSnapshot(
       `"<svg xmlns="http://www.w3.org/2000/svg" width="394" height="64" viewBox="0 0 394 64"><style>:root{--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000}@media (prefers-color-scheme:dark){:root{--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff}}</style><rect width="100%" height="100%" fill="var(--ondine-bg)" stroke="var(--ondine-line)" stroke-width="2"/><text font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" fill="var(--ondine-fg)" xml:space="preserve"><tspan x="12" y="26">Ondine could not render this diagram.</tspan><tspan x="12" y="46">No diagram type detected for the given text.</tspan></text></svg>"`,
+    )
+  })
+
+  test('renders diagram images from percent-encoded source', async () => {
+    const source = encodeURIComponent('flowchart LR\n  A --> B')
+    const response = await fetch(`${origin}/svg?source=${source}`)
+    const missing = await fetch(`${origin}/svg`)
+
+    expect(response.status).toMatchInlineSnapshot(`200`)
+    expect((await response.text()).match(/^<svg[^>]*class="[^"]*"/)?.[0]).toMatchInlineSnapshot(
+      `"<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart""`,
+    )
+    expect(missing.status).toMatchInlineSnapshot(`400`)
+    expect((await missing.text()).match(/The source[^<]*/)?.[0]).toMatchInlineSnapshot(
+      `"The source query parameter is missing."`,
     )
   })
 

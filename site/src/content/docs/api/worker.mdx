@@ -14,6 +14,7 @@ The Worker at `https://ondine.sh` compiles the Mermaid source encoded in the req
 
 ```txt
 GET /<payload>.svg?scheme=light|dark
+GET /svg?source=<source>&scheme=light|dark
 ```
 
 `HEAD` is also accepted. Other methods return `405` with an `allow: GET, HEAD` header, and other paths return `404`.
@@ -29,6 +30,18 @@ import * as Zlib from 'node:zlib'
 
 // Encodes a diagram for the request path
 const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url')
+```
+
+### source
+
+- **Type:** percent-encoded string
+
+The Mermaid source in the query of `/svg`, for authors and agents that cannot deflate. URLs grow faster than with a payload.
+
+```md
+<!-- Renders a two-node flowchart from plain source -->
+
+![Flow](https://ondine.sh/svg?source=flowchart%20LR%0A%20%20A%20--%3E%20B)
 ```
 
 ### scheme
@@ -65,13 +78,14 @@ Status `200` with the compiled SVG. A `<style>` element after the root tag sets 
 
 Status `400` with an SVG card that reads "Ondine could not render this diagram." followed by the error message, cached for 300 seconds.
 
-| Cause                              | Message                               |
-| ---------------------------------- | ------------------------------------- |
-| Path over 4,096 characters         | `Payload exceeds 4096 characters.`    |
-| Invalid base64url                  | `Payload is not base64url.`           |
-| Invalid zlib data or UTF-8         | `Payload is not zlib-deflated UTF-8.` |
-| Source over 64 KiB after inflating | `Source exceeds 65536 bytes.`         |
-| Invalid Mermaid                    | The `RenderError` message             |
+| Cause                               | Message                                  |
+| ----------------------------------- | ---------------------------------------- |
+| Path or query over 4,096 characters | `Payload exceeds 4096 characters.`       |
+| `/svg` without `source`             | `The source query parameter is missing.` |
+| Invalid base64url                   | `Payload is not base64url.`              |
+| Invalid zlib data or UTF-8          | `Payload is not zlib-deflated UTF-8.`    |
+| Source over 64 KiB after inflating  | `Source exceeds 65536 bytes.`            |
+| Invalid Mermaid                     | The `RenderError` message                |
 
 ## Deploy
 

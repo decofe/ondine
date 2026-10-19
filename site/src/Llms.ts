@@ -14,6 +14,7 @@ export function index(request: Request, options: index.Options = {}): Response {
   const origin = new URL(request.url).origin
   const body = [
     ...header,
+    ...images(origin),
     `Each link opens a page's Markdown. [llms-full.txt](${origin}/llms-full.txt) holds every page in one file.`,
     '',
     ...sections().flatMap((section) => [
@@ -44,9 +45,28 @@ export function full(request: Request): Response {
       ['---', '', `Source: ${origin}/docs/${entry.path}`, '', entry.markdown.trim(), ''].join('\n'),
     ),
   )
-  const body = [...header, ...pages].join('\n')
+  const body = [...header, ...images(origin), ...pages].join('\n')
 
   return respond(request, body, 'text/plain')
+}
+
+/** Tells agents how to embed diagrams as images in Markdown that cannot run scripts. */
+function images(origin: string): readonly string[] {
+  const example = `${origin}/svg?source=${encodeURIComponent('flowchart LR\n  A[README] --> B[Ondine]')}`
+
+  return [
+    '## Render Diagrams in Markdown',
+    '',
+    'Markdown that cannot run scripts, such as a GitHub README, embeds a Mermaid diagram as an SVG image from this site. Percent-encode the source into the `source` query parameter:',
+    '',
+    `![Flowchart](${example})`,
+    '',
+    "- `?scheme=light` or `?scheme=dark` pins one color scheme. Without it, the image follows the reader's scheme.",
+    `- \`${origin}/<payload>.svg\` takes the source zlib-deflated, then base64url-encoded, for shorter URLs.`,
+    '- `npx ondine README.md` rewrites every ` ```mermaid ` fence in a file to these images, and `--restore` turns them back into fences.',
+    '- URLs stay under 4,096 characters. Invalid Mermaid renders an error card with status 400.',
+    '',
+  ]
 }
 
 /** Sends a text body, leaving it out of `HEAD` responses. */

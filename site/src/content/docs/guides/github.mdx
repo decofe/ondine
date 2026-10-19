@@ -29,6 +29,14 @@ import * as Zlib from 'node:zlib'
 const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url')
 ```
 
+Markdown written by hand or by an agent can skip compression. The `/svg` path reads the source percent-encoded in its `source` query parameter.
+
+```md title="README.md"
+<!-- Encodes the same diagram with encodeURIComponent -->
+
+![Request flow](https://ondine.sh/svg?source=flowchart%20LR%0A%20%20A%20--%3E%20B)
+```
+
 ### Embed the Image
 
 Without a `scheme` parameter, one image follows the viewer's color scheme through `prefers-color-scheme`.
