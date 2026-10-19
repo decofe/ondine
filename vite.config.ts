@@ -1,18 +1,19 @@
-import path from 'node:path'
+import * as Path from 'node:path'
 import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
   test: {
     alias: {
-      melee: path.resolve(import.meta.dirname, 'src'),
+      melee: Path.resolve(import.meta.dirname, 'src'),
     },
     globals: true,
   },
   lint: {
     ignorePatterns: ['dist/**', 'test/vectors/**'],
+    // TypeScript runs separately through `pnpm check:types`.
     options: {
-      typeAware: true,
-      typeCheck: true,
+      typeAware: false,
+      typeCheck: false,
     },
   },
   fmt: {
