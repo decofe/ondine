@@ -45,10 +45,13 @@ const { svg } = create({ modules: { all } }).render('flowchart LR\n  A --> B')
     to="/api/compiler-wasm/all"
     description="The size-optimized module for every diagram type."
   />
+  <Card
+    title="melee/compiler/wasm/<type>"
+    icon="package"
+    to="/api/compiler-wasm/types"
+    description="One size-optimized module per diagram type, as base64 or a .wasm file."
+  />
 </Cards>
-
-> [!NOTE]
-> The build produces one size-optimized module per diagram type, but the package does not export them yet.
 
 ## Namespaces
 

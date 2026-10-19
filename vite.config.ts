@@ -1,5 +1,5 @@
 import * as Path from 'node:path'
-import { defineConfig } from 'vite-plus'
+import { defaultExclude, defineConfig } from 'vite-plus'
 
 export default defineConfig({
   test: {
@@ -19,6 +19,8 @@ export default defineConfig({
       { find: 'melee/vite', replacement: Path.resolve(import.meta.dirname, 'src/vite/index.ts') },
       { find: /^melee$/, replacement: Path.resolve(import.meta.dirname, 'src/index.ts') },
     ],
+    // `pnpm test:packed` runs the packed-consumer suite with its own config.
+    exclude: [...defaultExclude, 'scripts/packed-consumer.test.ts'],
     globals: true,
   },
   lint: {

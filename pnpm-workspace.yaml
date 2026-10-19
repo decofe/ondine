@@ -35,3 +35,6 @@ catalog:
 
 minimumReleaseAgeExclude:
   - zyzz@0.0.34
+
+patchedDependencies:
+  zile@0.0.30: patches/zile@0.0.30.patch

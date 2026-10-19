@@ -68,6 +68,7 @@ export default defineConfig({
           items: [
             { link: '/api/compiler-wasm', text: 'Overview' },
             { link: '/api/compiler-wasm/all', text: 'wasm (all)' },
+            { link: '/api/compiler-wasm/types', text: 'Diagram modules' },
           ],
           text: 'melee/compiler/wasm',
         },

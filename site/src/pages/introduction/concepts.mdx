@@ -29,8 +29,7 @@ The compiler ships as WebAssembly in two profiles. Node, the CLI, and the image 
 | `melee/compiler/wasm` | Browsers, Workers | Supplied by the caller    |
 | `melee`               | Browsers          | None                      |
 
-> [!NOTE]
-> The build also produces one size-optimized module per diagram type, but the package does not export them yet.
+Browsers that compile only some types load one size-optimized module per type from `melee/compiler/wasm/<type>`. Each module also ships as a raw `.wasm` file for hosts that compile WebAssembly ahead of time.
 
 ## Text Measurement
 

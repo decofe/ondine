@@ -123,4 +123,5 @@ All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte f
 
 ### 8. Release
 
-- [ ] Packed-consumer test, changesets, first publish (needs approval).
+- [x] Packed-consumer test (`pnpm test:packed`) and the initial changeset.
+- [ ] First publish (needs approval).

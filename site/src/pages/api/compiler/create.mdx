@@ -30,7 +30,7 @@ WebAssembly modules by diagram type, as compiled modules or base64 bytes. Base64
 
 ```ts
 import { create } from 'melee/compiler/wasm'
-import all from './all.wasm'
+import all from 'melee/compiler/wasm/all.wasm'
 
 // Passes a module compiled ahead of time by the bundler
 const renderer = create({ modules: { all } })

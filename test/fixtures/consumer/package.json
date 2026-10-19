@@ -1,0 +1,11 @@
+{
+  "name": "melee-consumer",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "melee": "file:melee.tgz",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
