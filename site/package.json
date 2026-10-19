@@ -1,5 +1,5 @@
 {
-  "name": "@melee/site",
+  "name": "@ondine/site",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "generate": "node --import=tsx scripts/generate.ts"
   },
   "dependencies": {
-    "melee": "workspace:*",
+    "ondine": "workspace:*",
     "mermaid": "catalog:",
     "pele": "catalog:",
     "react": "catalog:",

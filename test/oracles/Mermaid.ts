@@ -20,7 +20,7 @@ export function failure(error: unknown, source: string): Result {
   }
 }
 
-/** Melee's name for a diagram type Mermaid detects. */
+/** Ondine's name for a diagram type Mermaid detects. */
 export function name(type: string): string {
   return names[type] ?? type
 }
@@ -56,7 +56,7 @@ export type Result =
        */
       readonly db: Db
       readonly ok: true
-      /** The detected diagram type, using Melee's names. */
+      /** The detected diagram type, using Ondine's names. */
       readonly type: string
     }
   | {
@@ -65,7 +65,7 @@ export type Result =
       /** The error's class name, such as `TypeError`. */
       readonly name: string
       readonly ok: false
-      /** The diagram type Mermaid detects, using Melee's names, when it detects one. */
+      /** The diagram type Mermaid detects, using Ondine's names, when it detects one. */
       readonly type: string | undefined
       /**
        * Where Mermaid rejected the source: `grammar` for its lexers and parsers, `yaml` for
@@ -81,7 +81,7 @@ export type Stage = 'db' | 'detect' | 'grammar' | 'yaml'
 /** Diagram types whose databases do not clear the fields that all databases share. */
 export const stale: ReadonlySet<string> = new Set(['c4', 'info', 'kanban'])
 
-/** Mermaid's names for diagram types that Melee names differently. */
+/** Mermaid's names for diagram types that Ondine names differently. */
 const names: Record<string, string> = {
   class: 'class',
   classDiagram: 'class',

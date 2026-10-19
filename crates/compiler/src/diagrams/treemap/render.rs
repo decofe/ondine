@@ -163,7 +163,7 @@ pub(crate) fn render(model: &TreemapModel, config: &Value, options: &RenderOptio
                     text.push_str("</text>");
                 }
                 if with_value {
-                    text.push_str("<text class=\"melee-value\" x=\"");
+                    text.push_str("<text class=\"ondine-value\" x=\"");
                     push_num(&mut text, x + b.w - SIDE - 2.0);
                     text.push_str("\" y=\"");
                     push_num(&mut text, baseline + tiny * 0.35);
@@ -178,7 +178,7 @@ pub(crate) fn render(model: &TreemapModel, config: &Value, options: &RenderOptio
             }
             // A section is a tint of its color, unless a class gives it a fill of its own.
             let own_fill = style.shape.contains("\"fill:") || style.shape.contains(";fill:");
-            sections.push_str("<g class=\"melee-node melee-section");
+            sections.push_str("<g class=\"ondine-node ondine-section");
             sections.push_str(&classes);
             sections.push_str("\" ");
             sections.push_str(&rect);
@@ -233,7 +233,7 @@ pub(crate) fn render(model: &TreemapModel, config: &Value, options: &RenderOptio
                 push_text(&mut text, "", first, label.size, &label.text);
                 push_text(
                     &mut text,
-                    " class=\"melee-value\"",
+                    " class=\"ondine-value\"",
                     second,
                     value_size,
                     &value,
@@ -242,7 +242,7 @@ pub(crate) fn render(model: &TreemapModel, config: &Value, options: &RenderOptio
                 push_text(&mut text, "", cy, label.size, &label.text);
             }
         }
-        leaves.push_str("<g class=\"melee-node melee-leaf");
+        leaves.push_str("<g class=\"ondine-node ondine-leaf");
         leaves.push_str(&classes);
         leaves.push_str("\" ");
         leaves.push_str(&rect);
@@ -258,18 +258,18 @@ pub(crate) fn render(model: &TreemapModel, config: &Value, options: &RenderOptio
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !sections.is_empty() {
-        content.push_str("<g class=\"melee-sections\" font-size=\"");
+        content.push_str("<g class=\"ondine-sections\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\">");
         content.push_str(&sections);
         content.push_str("</g>");
     }
     if !leaves.is_empty() {
-        content.push_str("<g class=\"melee-leaves\" text-anchor=\"middle\" fill=\"var(--_bg)\">");
+        content.push_str("<g class=\"ondine-leaves\" text-anchor=\"middle\" fill=\"var(--_bg)\">");
         content.push_str(&leaves);
         content.push_str("</g>");
     }

@@ -337,7 +337,7 @@ pub(crate) fn render(
             &title,
             width / 2.0,
             pad + title.height / 2.0,
-            " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+            " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
             None,
         );
         return Ok(Rendered {
@@ -562,7 +562,7 @@ pub(crate) fn render(
         }
         extent = js_max(extent, end);
         let id = esc_text(&task.id);
-        vert_lines.push_str("<path class=\"melee-vert\" data-id=\"");
+        vert_lines.push_str("<path class=\"ondine-vert\" data-id=\"");
         vert_lines.push_str(&id);
         vert_lines.push_str("\" d=\"M");
         push_num(&mut vert_lines, vx);
@@ -571,7 +571,7 @@ pub(crate) fn render(
         vert_lines.push('V');
         push_num(&mut vert_lines, plot_bottom);
         vert_lines.push_str("\"/>");
-        let mut attrs = String::from(" class=\"melee-vert-label\" data-id=\"");
+        let mut attrs = String::from(" class=\"ondine-vert-label\" data-id=\"");
         attrs.push_str(&id);
         attrs.push('"');
         #[expect(clippy::cast_precision_loss, reason = "line counts stay small")]
@@ -612,7 +612,7 @@ pub(crate) fn render(
             (end - row) as f64 * row_height,
         );
         if categories.len() > 1 || !section.is_empty() {
-            bands.push_str("<rect class=\"melee-section melee-section-");
+            bands.push_str("<rect class=\"ondine-section ondine-section-");
             bands.push_str(&int_string(style));
             bands.push_str("\" x=\"0\" y=\"");
             push_num(&mut bands, y);
@@ -629,7 +629,7 @@ pub(crate) fn render(
             bands.push_str("\"/>");
         }
         if let Some(label) = section_labels.get(category_index) {
-            let mut attrs = String::from(" class=\"melee-section-label\" data-id=\"");
+            let mut attrs = String::from(" class=\"ondine-section-label\" data-id=\"");
             attrs.push_str(&esc_text(section));
             attrs.push('"');
             section_out.push_str(&label_svg(
@@ -699,25 +699,25 @@ pub(crate) fn render(
         } else {
             ""
         };
-        let mut classes = String::from("melee-task");
+        let mut classes = String::from("ondine-task");
         if !state.is_empty() {
-            classes.push_str(" melee-");
+            classes.push_str(" ondine-");
             classes.push_str(state);
         }
         if task.crit {
-            classes.push_str(" melee-crit");
+            classes.push_str(" ondine-crit");
         }
         if task.milestone {
-            classes.push_str(" melee-milestone");
+            classes.push_str(" ondine-milestone");
         }
         if task.classes.iter().any(|class| class == "clickable") {
-            classes.push_str(" melee-clickable");
+            classes.push_str(" ondine-clickable");
         }
 
         let mut shape = String::new();
         let mut text_fill = "";
         if bar.x0.is_nan() {
-            classes.push_str(" melee-unscheduled");
+            classes.push_str(" ondine-unscheduled");
             text_fill = " fill=\"var(--_m)\"";
         } else {
             // A critical task takes the critical color in place of the accent. Done, it keeps
@@ -790,7 +790,7 @@ pub(crate) fn render(
             }
         }
 
-        let mut attrs = String::from(" class=\"melee-label\"");
+        let mut attrs = String::from(" class=\"ondine-label\"");
         attrs.push_str(text_fill);
         let mut body = shape;
         body.push_str(&label_svg(&bar.label, bar.label_x, cy, &attrs, None));
@@ -816,7 +816,7 @@ pub(crate) fn render(
             let declarations: Vec<&str> = model.today_marker.split(',').collect();
             resolve_style(&declarations).line
         };
-        today.push_str("<g class=\"melee-today\"><path d=\"M");
+        today.push_str("<g class=\"ondine-today\"><path d=\"M");
         push_num(&mut today, tx);
         today.push(',');
         push_num(&mut today, top);
@@ -860,46 +860,46 @@ pub(crate) fn render(
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !bands.is_empty() {
-        content.push_str("<g class=\"melee-sections\">");
+        content.push_str("<g class=\"ondine-sections\">");
         content.push_str(&bands);
         content.push_str("</g>");
     }
     if !excluded.is_empty() {
-        content.push_str("<g class=\"melee-excluded\" fill=\"var(--_a)\">");
+        content.push_str("<g class=\"ondine-excluded\" fill=\"var(--_a)\">");
         content.push_str(&excluded);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-grid\" fill=\"none\"><path d=\"");
+    content.push_str("<g class=\"ondine-grid\" fill=\"none\"><path d=\"");
     content.push_str(&grid);
     content.push_str("\" stroke=\"var(--_b)\" stroke-dasharray=\"1 3\"/><path d=\"");
     content.push_str(&axis_line);
     content.push_str("\" stroke=\"var(--_b)\"/></g>");
     if !vert_lines.is_empty() {
-        content.push_str("<g class=\"melee-verts\" fill=\"none\" stroke=\"var(--_l)\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\">");
+        content.push_str("<g class=\"ondine-verts\" fill=\"none\" stroke=\"var(--_l)\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\">");
         content.push_str(&vert_lines);
         content.push_str("</g>");
     }
     content.push_str(&today);
-    content.push_str("<g class=\"melee-tasks\" font-size=\"");
+    content.push_str("<g class=\"ondine-tasks\" font-size=\"");
     push_num(&mut content, label_size);
     content.push_str("\">");
     content.push_str(&tasks_out);
-    content.push_str("</g><g class=\"melee-section-labels\" font-size=\"");
+    content.push_str("</g><g class=\"ondine-section-labels\" font-size=\"");
     push_num(&mut content, section_size);
     content.push_str("\">");
     content.push_str(&section_out);
-    content.push_str("</g><g class=\"melee-axis\" font-size=\"");
+    content.push_str("</g><g class=\"ondine-axis\" font-size=\"");
     content.push_str(&int_string(tick_size));
     content.push_str("\" fill=\"var(--_m)\">");
     content.push_str(&axis_bottom);
     content.push_str(&axis_top);
     content.push_str("</g>");
     if !vert_labels.is_empty() {
-        content.push_str("<g class=\"melee-vert-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-vert-labels\" font-size=\"");
         push_num(&mut content, label_size);
         content.push_str("\">");
         content.push_str(&vert_labels);

@@ -49,8 +49,8 @@ export declare namespace RenderError {
  *
  * @example
  * ```ts
- * import { create } from 'melee/compiler/wasm'
- * import { wasm as all } from 'melee/compiler/wasm/all'
+ * import { create } from 'ondine/compiler/wasm'
+ * import { wasm as all } from 'ondine/compiler/wasm/all'
  *
  * const { svg } = create({ modules: { all } }).render('flowchart LR\n  A --> B')
  * ```

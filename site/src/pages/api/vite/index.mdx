@@ -1,18 +1,18 @@
 import { Card, Cards } from 'vocs'
 
-# melee/vite
+# ondine/vite
 
 Compile Mermaid file imports to SVG during the Vite build.
 
-`melee/vite` exports one Vite plugin. It requires Vite as a peer dependency and compiles with the same module as `melee/compiler`. The [Vite](/guides/vite) guide covers common tasks.
+`ondine/vite` exports one Vite plugin. It requires Vite as a peer dependency and compiles with the same module as `ondine/compiler`. The [Vite](/guides/vite) guide covers common tasks.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
-import { melee } from 'melee/vite'
+import { ondine } from 'ondine/vite'
 
 export default defineConfig({
   // Compiles .mmd and .mermaid imports
-  plugins: [melee()],
+  plugins: [ondine()],
 })
 ```
 
@@ -20,18 +20,18 @@ export default defineConfig({
 
 <Cards>
   <Card
-    title="melee"
+    title="ondine"
     icon="zap"
-    to="/api/vite/melee"
+    to="/api/vite/ondine"
     description="The Vite plugin and its rendering options."
   />
 </Cards>
 
 ## Types
 
-`melee/vite/client` declares the default export of `.mmd` and `.mermaid` imports: `{ height, svg, type, width }`.
+`ondine/vite/client` declares the default export of `.mmd` and `.mermaid` imports: `{ height, svg, type, width }`.
 
 ```ts title="src/env.d.ts"
 // Types every Mermaid import in the project
-/// <reference types="melee/vite/client" />
+/// <reference types="ondine/vite/client" />
 ```

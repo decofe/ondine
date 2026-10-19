@@ -1,11 +1,11 @@
-/** Renders one diagram with Melee, Pele, or Mermaid, and reports timing and errors. @module */
+/** Renders one diagram with Ondine, Pele, or Mermaid, and reports timing and errors. @module */
 import { useEffect, useRef, useState } from 'react'
-import { create } from 'melee/compiler/wasm'
-import { wasm as all } from 'melee/compiler/wasm/all'
+import { create } from 'ondine/compiler/wasm'
+import { wasm as all } from 'ondine/compiler/wasm/all'
 import { style } from './zyzz.config.js'
 
 /** A renderer the preview can show. */
-export type Engine = 'melee' | 'mermaid' | 'pele'
+export type Engine = 'ondine' | 'mermaid' | 'pele'
 
 /** The outcome of one render. */
 export type Outcome =
@@ -15,7 +15,7 @@ export type Outcome =
 /** Renders `source` with `engine`. Mermaid and Pele load on first use. */
 export async function draw(engine: Engine, source: string, width: number): Promise<Outcome> {
   try {
-    if (engine === 'melee') {
+    if (engine === 'ondine') {
       const start = performance.now()
       renderer ??= create({ modules: { all } })
       const result = renderer.render(source, { maxWidth: width })
@@ -73,7 +73,7 @@ export function Diagram(props: Diagram.Props) {
       {outcome === undefined ? (
         <p {...styles.message()}>Rendering…</p>
       ) : outcome.ok ? (
-        // Melee and Pele emit inert SVG, and Mermaid runs with its strict security level.
+        // Ondine and Pele emit inert SVG, and Mermaid runs with its strict security level.
         <div {...styles.svg()} dangerouslySetInnerHTML={{ __html: outcome.svg }} />
       ) : (
         <pre {...styles.error()}>{outcome.message}</pre>
@@ -96,9 +96,9 @@ export declare namespace Diagram {
 
 namespace styles {
   export const frame = style({
-    '--melee-bg': 'light-dark(#ffffff, #000000) !custom',
-    '--melee-fg': 'light-dark(#000000, #ffffff) !custom',
-    '--melee-line': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': 'light-dark(#ffffff, #000000) !custom',
+    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-line': 'light-dark(#000000, #ffffff) !custom',
     alignItems: 'start',
     display: 'flex',
     flex: '1 !custom',

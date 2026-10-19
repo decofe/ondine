@@ -154,7 +154,7 @@ fn push_json_string(out: &mut String, text: &str) {
 
 #[cfg(test)]
 mod tests {
-    //! Parity with Pele's `kanban.parse` over the Melee vectors, every string literal of Pele's
+    //! Parity with Pele's `kanban.parse` over the Ondine vectors, every string literal of Pele's
     //! kanban compat specs, and the documents those specs build at runtime, as recorded by
     //! running Pele's TypeScript.
 

@@ -1,5 +1,5 @@
 /** @module Builds a page of precompiled diagrams and a page that compiles in the browser. */
-import { melee } from 'melee/vite'
+import { ondine } from 'ondine/vite'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -9,5 +9,5 @@ export default defineConfig({
       output: { entryFileNames: '[name].js' },
     },
   },
-  plugins: [melee()],
+  plugins: [ondine()],
 })

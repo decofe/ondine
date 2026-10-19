@@ -1,5 +1,5 @@
 /**
- * @module Projections of Melee's model JSON and Mermaid's diagram databases onto one shape per
+ * @module Projections of Ondine's model JSON and Mermaid's diagram databases onto one shape per
  * diagram type, so the oracle suites compare what each parser built. Each projection reads Mermaid
  * through the getters its renderer calls, as Pele's `tests/compat/<type>/adapter.ts` exposes Pele's
  * model to Mermaid's specs, and drops fields that only one side keeps, such as Mermaid's DOM ids.
@@ -8,32 +8,32 @@ import type * as Corpus from './Corpus.js'
 import type * as Mermaid from './Mermaid.js'
 
 /**
- * The paths at which `melee` and `mermaid` differ, each with both values, after `plain`
+ * The paths at which `ondine` and `mermaid` differ, each with both values, after `plain`
  * conversion. `equal` decides leaf values that are not identical, so a recorded divergence can
  * accept them.
  */
 export function differences(
-  melee: unknown,
+  ondine: unknown,
   mermaid: unknown,
-  equal: (melee: unknown, mermaid: unknown) => boolean = () => false,
+  equal: (ondine: unknown, mermaid: unknown) => boolean = () => false,
   path = '',
 ): readonly string[] {
-  if (Object.is(melee, mermaid)) return []
+  if (Object.is(ondine, mermaid)) return []
 
   const object = (value: unknown) => value !== null && typeof value === 'object'
-  if (object(melee) && object(mermaid) && Array.isArray(melee) === Array.isArray(mermaid)) {
-    const a = melee as Json
+  if (object(ondine) && object(mermaid) && Array.isArray(ondine) === Array.isArray(mermaid)) {
+    const a = ondine as Json
     const b = mermaid as Json
     if (Array.isArray(a) && a.length !== b.length)
-      return [`${path || '.'}: ${a.length} entries in Melee, ${b.length} in Mermaid`]
+      return [`${path || '.'}: ${a.length} entries in Ondine, ${b.length} in Mermaid`]
     return [...new Set([...Object.keys(a), ...Object.keys(b)])].flatMap((key) =>
       differences(a[key], b[key], equal, `${path}.${key}`),
     )
   }
 
-  if (equal(melee, mermaid)) return []
+  if (equal(ondine, mermaid)) return []
   return [
-    `${path || '.'}: ${JSON.stringify(melee)} in Melee, ${JSON.stringify(mermaid)} in Mermaid`,
+    `${path || '.'}: ${JSON.stringify(ondine)} in Ondine, ${JSON.stringify(mermaid)} in Mermaid`,
   ]
 }
 
@@ -72,18 +72,18 @@ export type Projection = {
    * while rendering, so sources with it compare without them.
    */
   readonly matter?: readonly string[] | undefined
-  /** Reads Melee's model JSON. */
-  readonly melee: (model: Json) => unknown
+  /** Reads Ondine's model JSON. */
+  readonly ondine: (model: Json) => unknown
   /** Reads Mermaid's database after a parse. */
   readonly mermaid: (db: Mermaid.Db) => unknown
-  /** Reads the title Mermaid's `getDiagramTitle` reports from Melee's model, when not `title`. */
+  /** Reads the title Mermaid's `getDiagramTitle` reports from Ondine's model, when not `title`. */
   readonly title?: ((model: Json) => unknown) | undefined
 }
 
 /** Diagram types whose models the oracle suites compare, by module name. */
 export const projections: Partial<Record<Corpus.Type, Projection>> = {
   agentflow: {
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: keyed(model.classes),
       connectors: model.connectors,
       diagnostics: (model.diagnostics as Json[]).map((diagnostic) => ({
@@ -130,7 +130,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   architecture: {
-    melee: (model) => ({
+    ondine: (model) => ({
       edges: model.edges,
       groups: model.groups,
       layoutHints: model.layoutHints,
@@ -146,8 +146,8 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   },
   block: {
     // Mermaid leaves `children` off blocks that have none, and names anonymous blocks with a
-    // random part that Melee leaves out.
-    melee: (model) => ({
+    // random part that Ondine leaves out.
+    ondine: (model) => ({
       classes: Object.fromEntries((model.classes as Json[]).map((entry) => [entry.id, entry])),
       edges: model.edges,
       root: rename(
@@ -165,7 +165,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   c4: {
-    melee: (model) => {
+    ondine: (model) => {
       const boundaries = model.boundaries as Json[]
       const view = (el: Json) => c4Element(el, boundaries)
       return {
@@ -212,7 +212,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   class: {
     // Mermaid also keeps the display text, shape, and DOM id of each class and the display text
     // of each member, and leaves out a member's empty parameters and return type.
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: keyed(
         without(
           model.classes,
@@ -251,7 +251,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   cynefin: {
-    melee: (model) => ({
+    ondine: (model) => ({
       domains: Object.fromEntries(model.domains),
       transitions: model.transitions,
     }),
@@ -261,7 +261,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   er: {
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: model.classes,
       direction: model.direction,
       // Mermaid keys entities by the name the diagram gives them, which their ids embed.
@@ -282,7 +282,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   flowchart: {
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: model.classes,
       direction: model.direction,
       edges: model.edges,
@@ -301,10 +301,10 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   },
 
   gantt: {
-    // Mermaid schedules tasks when `getTasks` is first called, and Melee records the schedule's
+    // Mermaid schedules tasks when `getTasks` is first called, and Ondine records the schedule's
     // error when it has one. Unset task flags read as false.
     matter: ['displayMode'],
-    melee: (model) => ({
+    ondine: (model) => ({
       dateFormat: model.dateFormat,
       displayMode: model.displayMode,
       excludes: model.excludes,
@@ -345,7 +345,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   },
   git: {
     // Both sides give commits without an id a random suffix.
-    melee: (model) =>
+    ondine: (model) =>
       rename(
         {
           branches: Object.fromEntries(model.branches),
@@ -371,12 +371,12 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   },
   ishikawa: {
     // Mermaid reports the head, the root's text, as the diagram title.
-    melee: (model) => ({ root: model.root }),
+    ondine: (model) => ({ root: model.root }),
     mermaid: (db) => ({ root: call(db, 'getRoot') }),
     title: (model) => model.root?.text ?? '',
   },
   journey: {
-    melee: (model) => ({
+    ondine: (model) => ({
       actors: model.actors,
       sections: model.sections,
       tasks: (model.tasks as Json[]).map((task) => ({ ...task, type: task.section })),
@@ -390,7 +390,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   kanban: {
     // Mermaid hands out its columns as parsed, and its cards only in drawing data that keeps
     // these fields.
-    melee: (model) => ({
+    ondine: (model) => ({
       items: (model.sections as Json[]).flatMap((section) =>
         (section.items as Json[]).map((item) => ({
           ...pick(item, ['assigned', 'icon', 'id', 'label', 'level', 'priority', 'ticket']),
@@ -421,10 +421,10 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   mindmap: {
-    // Melee lists nodes with the indexes of their children, and Mermaid nests them.
-    melee: (model) => {
+    // Ondine lists nodes with the indexes of their children, and Mermaid nests them.
+    ondine: (model) => {
       const nodes = model.nodes as Json[]
-      // Melee numbers the branch each node descends from, for coloring.
+      // Ondine numbers the branch each node descends from, for coloring.
       const nest = (node: Json): Json => ({
         ...node,
         children: (node.children as number[]).map((index) => nest(nodes[index]!)),
@@ -435,11 +435,11 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     mermaid: (db) => without(call(db, 'getMindmap'), (key) => key === 'width' || key === 'padding'),
   },
   packet: {
-    melee: (model) => ({ rows: model.rows }),
+    ondine: (model) => ({ rows: model.rows }),
     mermaid: (db) => ({ rows: call(db, 'getPacket') }),
   },
   pie: {
-    melee: (model) => ({
+    ondine: (model) => ({
       sections: Object.fromEntries(model.sections),
       showData: model.showData,
     }),
@@ -453,7 +453,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     // back through the quadrants' extent, which front matter can change. It adds each point
     // before the earlier ones, and does not draw empty axis labels.
     matter: ['coordinates'],
-    melee: (model) => ({
+    ondine: (model) => ({
       axisLabels: [model.xAxisLeft, model.xAxisRight, model.yAxisBottom, model.yAxisTop]
         .map((label) => label?.text ?? '')
         .filter((label) => label !== ''),
@@ -481,7 +481,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     },
   },
   radar: {
-    melee: (model) => ({ axes: model.axes, curves: model.curves, options: model.options }),
+    ondine: (model) => ({ axes: model.axes, curves: model.curves, options: model.options }),
     mermaid: (db) => ({
       axes: call(db, 'getAxes'),
       curves: call(db, 'getCurves'),
@@ -489,12 +489,12 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   railroad: {
-    // Melee writes an unbounded repetition's maximum as the text `Infinity`.
-    melee: (model) => ({ rules: model.rules }),
+    // Ondine writes an unbounded repetition's maximum as the text `Infinity`.
+    ondine: (model) => ({ rules: model.rules }),
     mermaid: (db) => ({ rules: infinite(call(db, 'getRules')) }),
   },
   requirement: {
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: model.classes,
       direction: model.direction,
       elements: keyed(model.elements, 'name'),
@@ -510,7 +510,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   sankey: {
-    melee: (model) => ({
+    ondine: (model) => ({
       links: (model.links as Json[]).map((link) => ({
         source: model.nodes[link.source],
         target: model.nodes[link.target],
@@ -527,7 +527,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     },
   },
   sequence: {
-    melee: (model) => ({
+    ondine: (model) => ({
       actors: Object.fromEntries(
         (model.actors as Json[]).map((actor) => [
           actor.id,
@@ -558,9 +558,9 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   state: {
-    // Mermaid numbers concurrency dividers per diagram or gives them a random id, and Melee
+    // Mermaid numbers concurrency dividers per diagram or gives them a random id, and Ondine
     // numbers them across the diagram.
-    melee: (model) =>
+    ondine: (model) =>
       rename(
         {
           classes: Object.fromEntries(model.classes),
@@ -582,7 +582,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
       ),
   },
   swimlane: {
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: model.classes,
       direction: model.direction,
       edges: model.edges,
@@ -600,7 +600,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   timeline: {
-    melee: (model) => ({
+    ondine: (model) => ({
       direction: model.direction,
       sections: model.sections,
       tasks: (model.periods as Json[]).map((period) => ({
@@ -622,7 +622,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   treemap: {
     // Mermaid hangs the diagram's roots under an unnamed node, and derives text styles for its
     // classes while parsing.
-    melee: (model) => ({
+    ondine: (model) => ({
       classes: Object.fromEntries(
         (model.classes as [string, string[]][]).map((entry) => [
           entry[0],
@@ -638,14 +638,14 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
   },
   treeview: {
     // Mermaid's root is a directory named `/` that holds the diagram's top level.
-    melee: (model) => ({ count: model.count, root: model.root }),
+    ondine: (model) => ({ count: model.count, root: model.root }),
     mermaid: (db) => ({
       count: call(db, 'getCount'),
       root: without(call(db, 'getRoot'), () => false),
     }),
   },
   usecase: {
-    melee: (model) => ({
+    ondine: (model) => ({
       actors: keyed(model.actors),
       classDefs: keyed(model.classDefs),
       direction: model.direction,
@@ -655,7 +655,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
       systemBoundaries: keyed(model.systemBoundaries),
       useCases: keyed(model.useCases),
     }),
-    // Melee also flattens a JSON node into the rows it draws, and Mermaid records the order of
+    // Ondine also flattens a JSON node into the rows it draws, and Mermaid records the order of
     // its properties.
     mermaid: (db) => ({
       actors: call(db, 'getActors'),
@@ -669,7 +669,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   venn: {
-    melee: (model) => ({
+    ondine: (model) => ({
       styles: (model.styles as Json[]).map((style) => ({
         styles: Object.fromEntries(style.styles),
         targets: style.targets,
@@ -684,7 +684,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     }),
   },
   wardley: {
-    melee: (model) => ({
+    ondine: (model) => ({
       ...model,
       accDescr: undefined,
       accTitle: undefined,
@@ -694,7 +694,7 @@ export const projections: Partial<Record<Corpus.Type, Projection>> = {
     mermaid: (db) => call(db, 'getWardleyData'),
   },
   xychart: {
-    melee: (model) => ({
+    ondine: (model) => ({
       plots: model.plots,
       xAxis: model.xAxis,
       yAxis: model.yAxis,
@@ -734,10 +734,10 @@ const ganttTask = [
   'vert',
 ] as const
 
-/** Ids that Melee and Mermaid generate for git commits without one. */
+/** Ids that Ondine and Mermaid generate for git commits without one. */
 const commit = /\b(\d+)-[0-9a-f]{7}\b/g
 
-/** Ids that Melee and Mermaid generate for state diagram dividers. */
+/** Ids that Ondine and Mermaid generate for state diagram dividers. */
 const divider = /divider-id-\d+|id-[a-z0-9]+-\d+/g
 
 /**
@@ -797,7 +797,7 @@ function infinite(value: unknown): unknown {
   return Object.fromEntries(Object.entries(value).map((entry) => [entry[0], infinite(entry[1])]))
 }
 
-/** An agentflow source range, which Melee writes as start line, start column, end line, end column. */
+/** An agentflow source range, which Ondine writes as start line, start column, end line, end column. */
 function position(range: readonly number[]): Json {
   return { endColumn: range[3], endLine: range[2], startColumn: range[1], startLine: range[0] }
 }

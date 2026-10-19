@@ -41,7 +41,7 @@ fn mood(score: f64) -> (&'static str, &'static str) {
 
 fn push_face(out: &mut String, x: f64, y: f64, score: f64) {
     let (name, mouth) = mood(score);
-    out.push_str("<g class=\"melee-face melee-face-");
+    out.push_str("<g class=\"ondine-face ondine-face-");
     out.push_str(name);
     out.push_str("\" transform=\"translate(");
     push_num(out, x);
@@ -245,9 +245,9 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             push_number(&mut scale, f64::from(score));
             scale.push_str("</text>");
         }
-        body.push_str("<path class=\"melee-grid\" d=\"");
+        body.push_str("<path class=\"ondine-grid\" d=\"");
         body.push_str(&grid);
-        body.push_str("\" fill=\"none\" stroke=\"var(--_a)\"/><g class=\"melee-scale\"");
+        body.push_str("\" fill=\"none\" stroke=\"var(--_a)\"/><g class=\"ondine-scale\"");
         body.push_str(&font_size(tiny));
         body.push_str(" text-anchor=\"end\" fill=\"var(--_m)\">");
         body.push_str(&scale);
@@ -279,7 +279,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             push_num(&mut stems, y - FACE);
             push_face(&mut faces, cx, y, score);
 
-            let mut card = String::from("<g class=\"melee-node melee-task\" data-id=\"");
+            let mut card = String::from("<g class=\"ondine-node ondine-task\" data-id=\"");
             card.push_str(&esc_text(trim(&task.task)));
             card.push_str("\"><rect x=\"");
             push_num(&mut card, x);
@@ -305,7 +305,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             let spread = people.len() as f64 - 1.0;
             let step = DOT_STEP.min((card_w - 2.0 * PAD_X - 2.0 * DOT) / spread.max(1.0));
             for (k, name) in people.iter().enumerate() {
-                card.push_str("<circle class=\"melee-actor\" cx=\"");
+                card.push_str("<circle class=\"ondine-actor\" cx=\"");
                 push_num(&mut card, cx + (k as f64 - spread / 2.0) * step);
                 card.push_str("\" cy=\"");
                 push_num(&mut card, cards_y + card_h - PAD_Y - DOT);
@@ -320,11 +320,11 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             card.push_str("</g>");
             cards.push(card);
         }
-        body.push_str("<path class=\"melee-stems\" d=\"");
+        body.push_str("<path class=\"ondine-stems\" d=\"");
         body.push_str(&stems);
         body.push_str("\" fill=\"none\" stroke=\"var(--_b)\" stroke-dasharray=\"2 3\"/>");
         if n > 1 {
-            body.push_str("<path class=\"melee-edge\" d=\"");
+            body.push_str("<path class=\"ondine-edge\" d=\"");
             body.push_str(&line);
             body.push_str("\" fill=\"none\" stroke=\"var(--_l)\" stroke-linejoin=\"round\"/>");
         }
@@ -341,7 +341,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             };
             let x = left + run.start as f64 * pitch;
             let w = run.count as f64 * pitch - GAP;
-            body.push_str("<g class=\"melee-cluster melee-section\" data-id=\"");
+            body.push_str("<g class=\"ondine-cluster ondine-section\" data-id=\"");
             body.push_str(&esc_text(trim(
                 tasks
                     .get(run.start)
@@ -376,7 +376,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             let mut items = String::new();
             for item in &legend {
                 let cy = y0 + item.y + item.h / 2.0;
-                items.push_str("<g class=\"melee-legend-item\" data-id=\"");
+                items.push_str("<g class=\"ondine-legend-item\" data-id=\"");
                 items.push_str(&esc_text(item.name));
                 items.push_str("\"><circle cx=\"");
                 push_num(&mut items, x0 + item.x + DOT);
@@ -396,7 +396,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
                 ));
                 items.push_str("</g>");
             }
-            body.push_str("<g class=\"melee-legend\"");
+            body.push_str("<g class=\"ondine-legend\"");
             body.push_str(&small_size);
             body.push('>');
             body.push_str(&items);
@@ -411,7 +411,7 @@ fn draw(model: &JourneyDb, options: &RenderOptions) -> Rendered {
         &title,
         pad + width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&body);
@@ -478,7 +478,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
                     &head,
                     pad + 8.0 + head.width / 2.0,
                     y + head.height / 2.0,
-                    " class=\"melee-cluster-label\" font-weight=\"var(--_hw)\"",
+                    " class=\"ondine-cluster-label\" font-weight=\"var(--_hw)\"",
                     None,
                 ));
                 width = width.max(head.width + 16.0);
@@ -498,7 +498,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             h += person.height.max(16.0) + 4.0;
         }
         let w = room.max(label.width + 72.0);
-        body.push_str("<g class=\"melee-node melee-journey-step\" data-id=\"");
+        body.push_str("<g class=\"ondine-node ondine-journey-step\" data-id=\"");
         push_number(&mut body, index as f64);
         body.push_str("\"><rect x=\"");
         push_num(&mut body, pad);
@@ -515,13 +515,13 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
             &label,
             pad + PAD_X + label.width / 2.0,
             y + PAD_Y + label.height / 2.0,
-            " class=\"melee-label\"",
+            " class=\"ondine-label\"",
             None,
         ));
         let cx = pad + w - 28.0;
         push_face(&mut body, cx, y + PAD_Y + FACE, task.score);
         if !task.score.is_nan() {
-            body.push_str("<text class=\"melee-journey-score\" x=\"");
+            body.push_str("<text class=\"ondine-journey-score\" x=\"");
             push_num(&mut body, cx);
             body.push_str("\" y=\"");
             push_num(&mut body, y + PAD_Y + 2.0 * FACE + small);
@@ -534,7 +534,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
         let mut py = y + PAD_Y + text_h + 4.0;
         for (name, person) in &people {
             let ph = person.height.max(16.0);
-            body.push_str("<circle class=\"melee-actor\" cx=\"");
+            body.push_str("<circle class=\"ondine-actor\" cx=\"");
             push_num(&mut body, pad + 16.0);
             body.push_str("\" cy=\"");
             push_num(&mut body, py + ph / 2.0);
@@ -549,7 +549,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
                 person,
                 pad + 28.0 + person.width / 2.0,
                 py + ph / 2.0,
-                &[" class=\"melee-journey-actor\"", small_size.as_str()].concat(),
+                &[" class=\"ondine-journey-actor\"", small_size.as_str()].concat(),
                 None,
             ));
             py += ph + 4.0;
@@ -557,7 +557,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
         body.push_str("</g>");
         y += h;
         if index + 1 < count {
-            body.push_str("<path class=\"melee-edge\" d=\"M");
+            body.push_str("<path class=\"ondine-edge\" d=\"M");
             push_num(&mut body, pad + w / 2.0);
             body.push(',');
             push_num(&mut body, y);
@@ -573,7 +573,7 @@ fn vertical(model: &JourneyDb, options: &RenderOptions) -> Rendered {
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&body);

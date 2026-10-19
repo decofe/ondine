@@ -192,7 +192,7 @@ fn draw(model: &PacketModel, config: &Value, options: &RenderOptions, down: bool
                 } * bit_width;
             let w = count * bit_width - gap;
 
-            fields.push_str("<g class=\"melee-node\" data-id=\"");
+            fields.push_str("<g class=\"ondine-node\" data-id=\"");
             push_number(&mut fields, block.start);
             fields.push('-');
             push_number(&mut fields, block.end);
@@ -279,14 +279,14 @@ fn draw(model: &PacketModel, config: &Value, options: &RenderOptions, down: bool
     let total_height = (rows_height + title_height + 2.0 * pad).ceil();
     let mut content = String::new();
     if !fields.is_empty() {
-        content.push_str("<g class=\"melee-packet-fields\" font-size=\"");
+        content.push_str("<g class=\"ondine-packet-fields\" font-size=\"");
         push_number(&mut content, label_size);
         content.push_str("\" text-anchor=\"middle\">");
         content.push_str(&fields);
         content.push_str("</g>");
     }
     if !bits.is_empty() {
-        content.push_str("<g class=\"melee-packet-bits\" font-size=\"");
+        content.push_str("<g class=\"ondine-packet-bits\" font-size=\"");
         push_number(&mut content, bit_size);
         content.push_str("\" fill=\"var(--_m)\">");
         content.push_str(&bits);
@@ -297,7 +297,7 @@ fn draw(model: &PacketModel, config: &Value, options: &RenderOptions, down: bool
         &title,
         total_width / 2.0,
         total_height - pad - title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     ));
 

@@ -248,7 +248,7 @@ fn option(conf: Option<&Value>, key: &str, fallback: f64) -> f64 {
 
 fn half(out: &mut String, x: f64, y: f64, dir: f64, up: f64, stick: bool) {
     let bx = x - dir * ARROW;
-    out.push_str("<path class=\"melee-marker\" d=\"M");
+    out.push_str("<path class=\"ondine-marker\" d=\"M");
     push_num(out, x);
     out.push(',');
     push_num(out, y);
@@ -273,7 +273,7 @@ fn head(out: &mut String, r#type: Head, x: f64, y: f64, dir: f64, up: f64) {
         Head::Arrow => out.push_str(&marker("arrow_point", x, y, dir, 0.0, "var(--_l)")),
         Head::Cross => out.push_str(&marker("arrow_cross", x, y, dir, 0.0, "var(--_l)")),
         Head::Open => {
-            out.push_str("<path class=\"melee-marker\" d=\"M");
+            out.push_str("<path class=\"ondine-marker\" d=\"M");
             push_num(out, x - dir * ARROW);
             out.push(',');
             push_num(out, y - 4.5);
@@ -930,7 +930,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         let depth = col.activations.len() as f64;
         let x = col.x - ACT_W / 2.0 + depth * ACT_STEP;
         bounds.extend(x, x + ACT_W);
-        let mut out = String::from("<rect class=\"melee-activation\" data-id=\"");
+        let mut out = String::from("<rect class=\"ondine-activation\" data-id=\"");
         out.push_str(&esc_text(col.id));
         out.push_str("\" x=\"");
         push_num(&mut out, x);
@@ -950,7 +950,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         let cx = col.x;
         let cy = line_y + 16.0;
         col.life_end = Some(cy);
-        crosses_out.push_str("<path class=\"melee-destroy\" data-id=\"");
+        crosses_out.push_str("<path class=\"ondine-destroy\" data-id=\"");
         crosses_out.push_str(&esc_text(col.id));
         crosses_out.push_str("\" d=\"M");
         for (k, (x, y)) in [
@@ -973,10 +973,10 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         cy + 6.0
     };
     let actor_svg = |col: &Column, top: f64, footer: bool| -> String {
-        let mut out = String::from("<g class=\"melee-node melee-actor melee-actor-");
+        let mut out = String::from("<g class=\"ondine-node ondine-actor ondine-actor-");
         out.push_str(col.kind);
         if footer {
-            out.push_str(" melee-actor-footer");
+            out.push_str(" ondine-actor-footer");
         }
         if let Some((_, Value::String(cls))) =
             col.actor.properties.iter().find(|(key, _)| key == "class")
@@ -991,7 +991,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         out
     };
     let badge = |i: usize, cx: f64, cy: f64, w: f64| -> String {
-        let mut out = String::from("<g class=\"melee-sequence-number\"><rect x=\"");
+        let mut out = String::from("<g class=\"ondine-sequence-number\"><rect x=\"");
         push_num(&mut out, cx - w / 2.0);
         out.push_str("\" y=\"");
         push_num(&mut out, cy - BADGE_H / 2.0);
@@ -1017,7 +1017,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         out.push_str("</text></g>");
         out
     };
-    let frame_label_attrs = " class=\"melee-frame-label\" fill=\"var(--_m)\" stroke=\"none\"";
+    let frame_label_attrs = " class=\"ondine-frame-label\" fill=\"var(--_m)\" stroke=\"none\"";
 
     let mut y = head_bottom + 6.0;
     let mut stack: Vec<usize> = Vec::new();
@@ -1069,7 +1069,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                 };
                 rects_out.push(
                     [
-                        "<rect class=\"melee-rect\" x=\"",
+                        "<rect class=\"ondine-rect\" x=\"",
                         &x,
                         "\" y=\"",
                         &top,
@@ -1134,7 +1134,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                 push_num(&mut inner, TAB_H);
                 inner.push_str("\" rx=\"");
                 inner.push_str(RADIUS);
-                inner.push_str("\" fill=\"var(--_s)\"/><text class=\"melee-frame-kind\" x=\"");
+                inner.push_str("\" fill=\"var(--_s)\"/><text class=\"ondine-frame-kind\" x=\"");
                 push_num(&mut inner, frame.x0 + frame.tab_w / 2.0);
                 inner.push_str("\" y=\"");
                 push_num(&mut inner, frame.top + TAB_H / 2.0 + tiny * 0.35);
@@ -1149,7 +1149,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                     frame.top + TAB_H.max(frame.title.height) / 2.0,
                     frame_label_attrs,
                 ));
-                frames_out.push_str("<g class=\"melee-frame melee-frame-");
+                frames_out.push_str("<g class=\"ondine-frame ondine-frame-");
                 frames_out.push_str(frame.kind);
                 frames_out.push_str("\">");
                 frames_out.push_str(&inner);
@@ -1182,7 +1182,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                     x += left_edge(a, 0) - a.x;
                 }
                 bounds.extend(x, x + view.w);
-                notes_out.push_str("<g class=\"melee-note\" data-id=\"i");
+                notes_out.push_str("<g class=\"ondine-note\" data-id=\"i");
                 notes_out.push_str(&esc_text(&m.id));
                 notes_out.push_str("\"><rect x=\"");
                 push_num(&mut notes_out, x);
@@ -1199,7 +1199,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                     &view.label,
                     x + view.w / 2.0,
                     top + h / 2.0,
-                    " class=\"melee-label\" stroke=\"none\" fill=\"var(--_fg)\"",
+                    " class=\"ondine-label\" stroke=\"none\" fill=\"var(--_fg)\"",
                     None,
                 ));
                 notes_out.push_str("</g>");
@@ -1243,7 +1243,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                 Some(line::CENTRAL_CONNECTION_REVERSE | line::CENTRAL_CONNECTION_DUAL)
             );
             let circle = |out: &mut String, cx: f64, cy: f64| {
-                out.push_str("<circle class=\"melee-central\" cx=\"");
+                out.push_str("<circle class=\"ondine-central\" cx=\"");
                 push_num(out, cx);
                 out.push_str("\" cy=\"");
                 push_num(out, cy);
@@ -1331,7 +1331,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                 push_num(&mut path, to);
                 bounds.extend(a.x, out + 8.0 + label.width);
                 if label.width > 0.0 {
-                    labels_out.push_str("<g class=\"melee-edge-label\" data-id=\"i");
+                    labels_out.push_str("<g class=\"ondine-edge-label\" data-id=\"i");
                     labels_out.push_str(&esc_text(&m.id));
                     labels_out.push_str("\">");
                     labels_out.push_str(&label_svg(
@@ -1439,7 +1439,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                         _ => f64::midpoint(l, r),
                     };
                     bounds.extend(cx - label.width / 2.0, cx + label.width / 2.0);
-                    labels_out.push_str("<g class=\"melee-edge-label\" data-id=\"i");
+                    labels_out.push_str("<g class=\"ondine-edge-label\" data-id=\"i");
                     labels_out.push_str(&esc_text(&m.id));
                     labels_out.push_str("\">");
                     labels_out.push_str(&backed(label, cx, line_y - 4.0 - label.height / 2.0, ""));
@@ -1449,7 +1449,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
                     y = line_y + b_size.h / 2.0 - 6.0;
                 }
             }
-            edges_out.push_str("<g class=\"melee-edge melee-message\" data-id=\"i");
+            edges_out.push_str("<g class=\"ondine-edge ondine-message\" data-id=\"i");
             edges_out.push_str(&esc_text(&m.id));
             edges_out.push_str("\"><path d=\"");
             edges_out.push_str(&path);
@@ -1497,7 +1497,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
         actors_out.push_str(&actor_svg(col, col.top, false));
         let end = col.life_end.unwrap_or(y);
         if end > col.life_start {
-            lifelines.push_str("<path class=\"melee-lifeline\" data-id=\"");
+            lifelines.push_str("<path class=\"ondine-lifeline\" data-id=\"");
             lifelines.push_str(&esc_text(col.id));
             lifelines.push_str("\" d=\"M");
             push_num(&mut lifelines, col.x);
@@ -1520,7 +1520,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
             }
             _ => String::new(),
         };
-        boxes_out.push_str("<g class=\"melee-cluster melee-box\"");
+        boxes_out.push_str("<g class=\"ondine-cluster ondine-box\"");
         if let Some(name) = r#box
             .and_then(|b| b.name.as_deref())
             .filter(|name| !name.is_empty())
@@ -1547,7 +1547,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
             &run.title,
             f64::midpoint(x0, x1),
             box_pad / 2.0 + 2.0 + run.title.height / 2.0,
-            " class=\"melee-cluster-label\" fill=\"var(--_m)\"",
+            " class=\"ondine-cluster-label\" fill=\"var(--_m)\"",
             None,
         ));
         boxes_out.push_str("</g>");
@@ -1576,7 +1576,7 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
             &title,
             cx,
             min_y + title.height / 2.0,
-            " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+            " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
             None,
         );
     }
@@ -1600,30 +1600,30 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
     push_number(&mut small_attr, small);
     group(
         &mut content,
-        &["<g class=\"melee-boxes\" font-size=\"", &small_attr, "\">"].concat(),
+        &["<g class=\"ondine-boxes\" font-size=\"", &small_attr, "\">"].concat(),
         &boxes_out,
     );
     rects_out.reverse();
     group(
         &mut content,
-        "<g class=\"melee-rects\" fill=\"var(--_a)\">",
+        "<g class=\"ondine-rects\" fill=\"var(--_a)\">",
         &rects_out.concat(),
     );
     group(
         &mut content,
-        "<g class=\"melee-lifelines\" fill=\"none\" stroke=\"var(--_b)\">",
+        "<g class=\"ondine-lifelines\" fill=\"none\" stroke=\"var(--_b)\">",
         &lifelines,
     );
     activations_out.reverse();
     group(
         &mut content,
-        "<g class=\"melee-activations\" fill=\"var(--_s)\" stroke=\"var(--_b)\">",
+        "<g class=\"ondine-activations\" fill=\"var(--_s)\" stroke=\"var(--_b)\">",
         &activations_out.concat(),
     );
     group(
         &mut content,
         &[
-            "<g class=\"melee-frames\" font-size=\"",
+            "<g class=\"ondine-frames\" font-size=\"",
             &small_attr,
             "\" stroke=\"var(--_b)\">",
         ]
@@ -1632,18 +1632,18 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
     );
     group(
         &mut content,
-        "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+        "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         &edges_out,
     );
     group(
         &mut content,
-        "<g class=\"melee-destroys\" fill=\"none\" stroke=\"var(--_l)\" stroke-width=\"1.5\" stroke-linecap=\"round\">",
+        "<g class=\"ondine-destroys\" fill=\"none\" stroke=\"var(--_l)\" stroke-width=\"1.5\" stroke-linecap=\"round\">",
         &crosses_out,
     );
     group(
         &mut content,
         &[
-            "<g class=\"melee-edge-labels\" font-size=\"",
+            "<g class=\"ondine-edge-labels\" font-size=\"",
             &small_attr,
             "\">",
         ]
@@ -1653,14 +1653,14 @@ fn draw(db: &SeqDb, config: &Value, options: &RenderOptions, tight: bool) -> Ren
     group(
         &mut content,
         &[
-            "<g class=\"melee-notes\" font-size=\"",
+            "<g class=\"ondine-notes\" font-size=\"",
             &small_attr,
             "\" fill=\"var(--_a)\" stroke=\"var(--_b)\">",
         ]
         .concat(),
         &notes_out,
     );
-    group(&mut content, "<g class=\"melee-nodes\">", &actors_out);
+    group(&mut content, "<g class=\"ondine-nodes\">", &actors_out);
     content.push_str("</g>");
 
     let accessible = Accessible {

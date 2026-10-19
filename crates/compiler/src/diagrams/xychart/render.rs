@@ -781,7 +781,7 @@ pub(crate) fn render(
                 outside.push_str(&label);
                 outside.push_str("</text>");
             }
-            series.push_str("<g class=\"melee-series melee-bars\"");
+            series.push_str("<g class=\"ondine-series ondine-bars\"");
             series.push_str(&id);
             series.push_str(" fill=\"");
             series.push_str(&color);
@@ -876,7 +876,7 @@ pub(crate) fn render(
                 });
             }
         }
-        lines.push_str("<g class=\"melee-series melee-line\"");
+        lines.push_str("<g class=\"ondine-series ondine-line\"");
         lines.push_str(&id);
         lines.push_str(" fill=\"");
         lines.push_str(&color);
@@ -929,7 +929,7 @@ pub(crate) fn render(
         let Some(plot) = plots.get(*index) else {
             continue;
         };
-        legend_out.push_str("<g class=\"melee-legend-item\" data-id=\"");
+        legend_out.push_str("<g class=\"ondine-legend-item\" data-id=\"");
         legend_out.push_str(&esc_text(&plot.title));
         legend_out.push_str("\">");
         if plot.bar {
@@ -964,20 +964,20 @@ pub(crate) fn render(
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !grid.is_empty() {
-        content.push_str("<path class=\"melee-grid\" d=\"");
+        content.push_str("<path class=\"ondine-grid\" d=\"");
         content.push_str(&grid);
         content.push_str("\" stroke=\"var(--_a)\"/>");
     }
-    content.push_str("<g class=\"melee-plot\">");
+    content.push_str("<g class=\"ondine-plot\">");
     content.push_str(&series);
     content.push_str(&lines);
     content.push_str("</g>");
     if !axis.is_empty() {
-        content.push_str("<path class=\"melee-axis\" d=\"");
+        content.push_str("<path class=\"ondine-axis\" d=\"");
         content.push_str(&axis);
         content.push_str("\" fill=\"none\" stroke=\"var(--_b)\"/>");
     }
@@ -997,15 +997,15 @@ pub(crate) fn render(
     };
     group(
         &mut content,
-        "melee-axis-labels",
+        "ondine-axis-labels",
         small,
         " fill=\"var(--_m)\"",
         &labels,
     );
-    group(&mut content, "melee-axis-titles", small, "", &titles);
-    group(&mut content, "melee-data-labels", tiny, "", &outside);
-    group(&mut content, "melee-point-labels", tiny, "", &point_labels);
-    group(&mut content, "melee-legend", small, "", &legend_out);
+    group(&mut content, "ondine-axis-titles", small, "", &titles);
+    group(&mut content, "ondine-data-labels", tiny, "", &outside);
+    group(&mut content, "ondine-point-labels", tiny, "", &point_labels);
+    group(&mut content, "ondine-legend", small, "", &legend_out);
 
     Ok(Rendered {
         height,

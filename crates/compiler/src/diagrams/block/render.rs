@@ -967,7 +967,7 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
         let id = esc_text(block.id.as_deref().unwrap_or(""));
         if v.kind == Kind::Composite {
             let top = c.y - c.h / 2.0;
-            clusters.push_str("<g class=\"melee-cluster");
+            clusters.push_str("<g class=\"ondine-cluster");
             clusters.push_str(&classes);
             clusters.push_str("\" data-id=\"");
             clusters.push_str(&id);
@@ -985,7 +985,7 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
             clusters.push_str(&v.style.shape);
             clusters.push_str("/>");
             let attrs = [
-                " class=\"melee-cluster-label\" fill=\"var(--_m)\"",
+                " class=\"ondine-cluster-label\" fill=\"var(--_m)\"",
                 &v.style.text,
             ]
             .concat();
@@ -1000,7 +1000,7 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
             continue;
         }
         let arrow = v.kind == Kind::Arrow;
-        nodes.push_str("<g class=\"melee-node melee-shape-");
+        nodes.push_str("<g class=\"ondine-node ondine-shape-");
         nodes.push_str(if arrow { "block-arrow" } else { v.shape });
         nodes.push_str(&classes);
         nodes.push_str("\" data-id=\"");
@@ -1015,7 +1015,7 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
             let line_attrs = [LINE_ATTRS, &v.style.line].concat();
             nodes.push_str(&draw_shape(v.shape, v.bw, v.bh, &shape_attrs, &line_attrs));
         }
-        let attrs = [" class=\"melee-label\"", &v.style.text].concat();
+        let attrs = [" class=\"ondine-label\"", &v.style.text].concat();
         nodes.push_str(&label_svg(&v.label, v.dx, v.dy, &attrs, None));
         nodes.push_str("</g>");
     }
@@ -1047,7 +1047,7 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
             )
         };
         let id = block.id.as_deref().unwrap_or("");
-        edges.push_str("<g class=\"melee-edge\" data-id=\"");
+        edges.push_str("<g class=\"ondine-edge\" data-id=\"");
         edges.push_str(&esc_text(id));
         edges.push_str("\"><path d=\"");
         edges.push_str(&path.d);
@@ -1092,26 +1092,26 @@ fn draw(model: &BlockDb, config: &Value, options: &RenderOptions, tight: bool) -
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !edges.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes);
     content.push_str("</g>");
     if !labels.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_number(&mut content, edge_size);
         content.push_str("\">");
         content.push_str(&labels);

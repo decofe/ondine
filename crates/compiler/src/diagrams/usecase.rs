@@ -319,7 +319,7 @@ fn push_json_string(out: &mut String, text: &str) {
 
 #[cfg(test)]
 mod tests {
-    //! Parity with Pele's `usecase.parse` over the Melee vectors, every string literal and
+    //! Parity with Pele's `usecase.parse` over the Ondine vectors, every string literal and
     //! runtime-built document of Pele's use case compat specs, and edge cases, as recorded by
     //! running Pele's TypeScript.
 

@@ -106,7 +106,7 @@ pub(crate) fn struck_title(
     push_num(&mut halo, 100.0 * (1.0 - 0.5_f64.powi(depth)));
     halo.push_str("%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\"");
 
-    let mut out = String::from("<g class=\"melee-cluster-title\" data-id=\"");
+    let mut out = String::from("<g class=\"ondine-cluster-title\" data-id=\"");
     out.push_str(id);
     out.push_str("\">");
     out.push_str(&label_svg(label, x, y, &halo, icons));
@@ -182,9 +182,9 @@ mod tests {
         }
         let label = layout_label(Some("Cluster *title*"), true, 14.0, 4000.0, 0, None);
         let expected = [
-            "<g class=\"melee-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 50%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
-            "<g class=\"melee-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 75%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
-            "<g class=\"melee-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 87.5%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
+            "<g class=\"ondine-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 50%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
+            "<g class=\"ondine-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 75%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
+            "<g class=\"ondine-cluster-title\" data-id=\"sg&amp;1\"><text fill=\"none\" stroke=\"color-mix(in srgb,var(--_a) 87.5%,var(--_bg))\" stroke-width=\"5\" stroke-linejoin=\"round\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text><text class=\"ct\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"12\" y=\"39.4\">Cluster </tspan><tspan font-style=\"italic\">title</tspan></text></g>",
         ];
         for (i, expected) in expected.iter().enumerate() {
             assert_eq!(

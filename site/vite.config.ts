@@ -5,8 +5,8 @@ import { vocs } from 'vocs/vite'
 import { zyzz } from 'zyzz/vite'
 
 export default defineConfig({
-  // The Examples page renders on the server with `melee/compiler`, which reads its WebAssembly
+  // The Examples page renders on the server with `ondine/compiler`, which reads its WebAssembly
   // module beside its own file, so the server build loads the package instead of bundling it.
-  environments: { rsc: { build: { rolldownOptions: { external: [/^melee\/compiler$/] } } } },
+  environments: { rsc: { build: { rolldownOptions: { external: [/^ondine\/compiler$/] } } } },
   plugins: [zyzz(), react(), vocs()],
 })

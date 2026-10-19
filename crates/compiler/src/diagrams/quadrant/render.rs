@@ -197,7 +197,7 @@ pub(crate) fn render(model: &QuadrantDb, config: &Value, options: &RenderOptions
             cx + text.width / 2.0,
             cy + text.height / 2.0,
         ]);
-        quadrants.push_str("<g class=\"melee-quadrant\" data-id=\"");
+        quadrants.push_str("<g class=\"ondine-quadrant\" data-id=\"");
         quadrants.push(char::from(b'1' + u8::try_from(k).unwrap_or(0)));
         quadrants.push_str("\"><rect x=\"");
         push_num(&mut quadrants, x);
@@ -214,7 +214,7 @@ pub(crate) fn render(model: &QuadrantDb, config: &Value, options: &RenderOptions
             &text,
             cx,
             cy,
-            " class=\"melee-label\" fill=\"var(--_fg)\" stroke=\"none\"",
+            " class=\"ondine-label\" fill=\"var(--_fg)\" stroke=\"none\"",
             None,
         ));
         quadrants.push_str("</g>");
@@ -322,7 +322,7 @@ pub(crate) fn render(model: &QuadrantDb, config: &Value, options: &RenderOptions
             text: label(Some(&point.text), point_size, 200.0),
         });
 
-        let mut circle = String::from("<circle class=\"melee-point");
+        let mut circle = String::from("<circle class=\"ondine-point");
         circle.push_str(&class_names(&point.class_name));
         circle.push_str("\" data-id=\"");
         circle.push_str(&esc_text(&point.text.text));
@@ -413,7 +413,7 @@ pub(crate) fn render(model: &QuadrantDb, config: &Value, options: &RenderOptions
         if careful {
             taken.extend([tx - half_w, ty - half_h, tx + half_w, ty + half_h]);
         }
-        labels.push_str(&label_svg(text, tx, ty, " class=\"melee-label\"", None));
+        labels.push_str(&label_svg(text, tx, ty, " class=\"ondine-label\"", None));
     }
 
     // Mermaid puts each new point under the ones before it.
@@ -421,27 +421,27 @@ pub(crate) fn render(model: &QuadrantDb, config: &Value, options: &RenderOptions
         &title,
         width / 2.0,
         title_pad / 2.0 + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
-    content.push_str("<g class=\"melee-quadrants\" fill=\"var(--_s)\" stroke=\"var(--_b)\">");
+    content.push_str("<g class=\"ondine-quadrants\" fill=\"var(--_s)\" stroke=\"var(--_b)\">");
     content.push_str(&quadrants);
     content.push_str("</g>");
     if !axes.is_empty() {
-        content.push_str("<g class=\"melee-axis-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-axis-labels\" font-size=\"");
         push_number(&mut content, axis_size);
         content.push_str("\" fill=\"var(--_m)\">");
         content.push_str(&axes);
         content.push_str("</g>");
     }
     if !dots.is_empty() {
-        content.push_str("<g class=\"melee-points\" fill=\"");
+        content.push_str("<g class=\"ondine-points\" fill=\"");
         content.push_str(&fill);
         content.push_str("\">");
         for circle in circles.iter().rev() {
             content.push_str(circle);
         }
-        content.push_str("</g><g class=\"melee-point-labels\" font-size=\"");
+        content.push_str("</g><g class=\"ondine-point-labels\" font-size=\"");
         push_number(&mut content, point_size);
         content.push_str("\">");
         content.push_str(&labels);

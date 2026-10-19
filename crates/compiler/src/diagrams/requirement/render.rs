@@ -132,13 +132,13 @@ fn contains_marker(x: f64, y: f64, dx: f64, dy: f64) -> String {
     let r = CONTAINS_RADIUS;
     let cx = x - dx * r;
     let cy = y - dy * r;
-    let mut out = String::from("<circle class=\"melee-marker\" cx=\"");
+    let mut out = String::from("<circle class=\"ondine-marker\" cx=\"");
     push_num(&mut out, cx);
     out.push_str("\" cy=\"");
     push_num(&mut out, cy);
     out.push_str("\" r=\"");
     push_number(&mut out, r);
-    out.push_str("\"/><path class=\"melee-marker\" d=\"M");
+    out.push_str("\"/><path class=\"ondine-marker\" d=\"M");
     push_point(&mut out, cx - dx * r, cy - dy * r);
     out.push('L');
     push_point(&mut out, cx + dx * r, cy + dy * r);
@@ -154,7 +154,7 @@ fn contains_marker(x: f64, y: f64, dx: f64, dy: f64) -> String {
 fn arrow_marker(x: f64, y: f64, dx: f64, dy: f64) -> String {
     let bx = x - dx * ARROW_LENGTH;
     let by = y - dy * ARROW_LENGTH;
-    let mut out = String::from("<path class=\"melee-marker\" d=\"M");
+    let mut out = String::from("<path class=\"ondine-marker\" d=\"M");
     push_point(&mut out, bx - dy * ARROW_HALF, by + dx * ARROW_HALF);
     out.push('L');
     push_point(&mut out, x, y);
@@ -471,7 +471,7 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
         body.push_str(&style.shape);
         body.push_str("/>");
 
-        let mut attrs = String::from(" class=\"melee-stereotype\" font-size=\"");
+        let mut attrs = String::from(" class=\"ondine-stereotype\" font-size=\"");
         push_number(&mut attrs, view.kind.size);
         attrs.push_str("\" fill=\"var(--_m)\"");
         attrs.push_str(&style.text);
@@ -482,7 +482,7 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
             &attrs,
             None,
         ));
-        let mut attrs = String::from(" class=\"melee-label\" font-size=\"");
+        let mut attrs = String::from(" class=\"ondine-label\" font-size=\"");
         push_number(&mut attrs, view.name.size);
         attrs.push_str("\" font-weight=\"var(--_hw)\"");
         attrs.push_str(&style.text);
@@ -496,7 +496,7 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
 
         if let Some(first) = view.rows.first() {
             let divider = top + view.head_height;
-            body.push_str("<path class=\"melee-divider\" d=\"M");
+            body.push_str("<path class=\"ondine-divider\" d=\"M");
             push_point(&mut body, left, divider);
             body.push('H');
             push_num(&mut body, -left);
@@ -504,9 +504,9 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
             body.push_str(&style.line);
             body.push_str("/>");
 
-            let mut key_attrs = String::from(" class=\"melee-field\" fill=\"var(--_m)\"");
+            let mut key_attrs = String::from(" class=\"ondine-field\" fill=\"var(--_m)\"");
             key_attrs.push_str(&style.text);
-            let mut value_attrs = String::from(" class=\"melee-value\"");
+            let mut value_attrs = String::from(" class=\"ondine-value\"");
             value_attrs.push_str(&style.text);
             let mut y = divider + PAD_Y;
             let mut rows = String::new();
@@ -520,18 +520,18 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
                 ));
                 y += row.height + ROW_GAP;
             }
-            body.push_str("<g class=\"melee-fields\" font-size=\"");
+            body.push_str("<g class=\"ondine-fields\" font-size=\"");
             push_number(&mut body, first.key.size);
             body.push_str("\">");
             body.push_str(&rows);
             body.push_str("</g>");
         }
 
-        nodes_out.push_str("<g class=\"melee-node ");
+        nodes_out.push_str("<g class=\"ondine-node ");
         nodes_out.push_str(if node.requirement.is_some() {
-            "melee-requirement"
+            "ondine-requirement"
         } else {
-            "melee-element"
+            "ondine-element"
         });
         nodes_out.push_str(&class_names(without_default(&node.css_classes)));
         nodes_out.push_str("\" data-id=\"");
@@ -635,7 +635,7 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
             route_path(&route, None, start_trim, 0.0, None, None)
         };
 
-        edges_out.push_str("<g class=\"melee-edge melee-relationship-");
+        edges_out.push_str("<g class=\"ondine-edge ondine-relationship-");
         edges_out.push_str(if edge.contains { "contains" } else { "arrow" });
         edges_out.push_str("\" data-id=\"");
         edges_out.push_str(&esc_text(&edge.id));
@@ -659,24 +659,24 @@ fn draw(model: &RequirementDb, options: &RenderOptions, turned: bool) -> Rendere
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !edges_out.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\" fill=\"var(--_m)\">");
         content.push_str(&labels_out);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes_out);
     content.push_str("</g>");
 

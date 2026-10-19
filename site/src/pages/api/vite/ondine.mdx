@@ -1,4 +1,4 @@
-# melee
+# ondine
 
 Create a Vite plugin that imports `.mmd` and `.mermaid` files as precompiled SVG.
 
@@ -6,19 +6,19 @@ The plugin compiles each matching module in its `transform` hook, ignoring query
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
-import { melee } from 'melee/vite'
+import { ondine } from 'ondine/vite'
 
 export default defineConfig({
   // Compiles .mmd and .mermaid imports
-  plugins: [melee()],
+  plugins: [ondine()],
 })
 ```
 
 ## Signature
 
 ```ts
-// Returns a Vite plugin named 'melee'
-melee(options?)
+// Returns a Vite plugin named 'ondine'
+ondine(options?)
 ```
 
 ## Parameters
@@ -32,11 +32,11 @@ Rendering options applied to every imported diagram. Every [`render` option](/ap
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
-import { melee } from 'melee/vite'
+import { ondine } from 'ondine/vite'
 
 export default defineConfig({
   // Lays out every diagram for a 640-pixel column, at 14-pixel text
-  plugins: [melee({ fontSize: 14, maxWidth: 640 })],
+  plugins: [ondine({ fontSize: 14, maxWidth: 640 })],
 })
 ```
 

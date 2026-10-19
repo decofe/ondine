@@ -6,14 +6,14 @@ Render Mermaid files to SVG files from a terminal or a build script.
 
 ## Overview
 
-The `melee` command compiles each `.mmd` or `.mermaid` file it receives and writes an `.svg` file with the same base name. With no files, it reads Mermaid from standard input and writes SVG to standard output.
+The `ondine` command compiles each `.mmd` or `.mermaid` file it receives and writes an `.svg` file with the same base name. With no files, it reads Mermaid from standard input and writes SVG to standard output.
 
 ```sh
 # Writes docs/flow.svg
-npx melee docs/flow.mmd
+npx ondine docs/flow.mmd
 ```
 
-The command runs the same compiler as `melee/compiler`, so its output matches the Vite plugin and the Node API byte for byte.
+The command runs the same compiler as `ondine/compiler`, so its output matches the Vite plugin and the Node API byte for byte.
 
 ## Walkthrough
 
@@ -35,7 +35,7 @@ sequenceDiagram
 
 ```sh
 # Writes public/diagrams/<name>.svg for each source file
-npx melee diagrams/*.mmd --out-dir public/diagrams
+npx ondine diagrams/*.mmd --out-dir public/diagrams
 ```
 
 Each rendered file is reported on standard error as `source -> output`.
@@ -57,7 +57,7 @@ An image cannot read page styles, so it keeps the default black-on-white theme. 
 
 ```sh
 # Renders standard input to standard output
-cat flow.mmd | npx melee > flow.svg
+cat flow.mmd | npx ondine > flow.svg
 ```
 
 ### Fail on Errors
@@ -66,7 +66,7 @@ An invalid diagram is reported as `file:line:column: message`, and the command e
 
 ```sh
 # Stops a build when any diagram fails
-npx melee diagrams/*.mmd -o public/diagrams || exit 1
+npx ondine diagrams/*.mmd -o public/diagrams || exit 1
 ```
 
 ### Render Markdown
@@ -75,10 +75,10 @@ Each ` ```mermaid ` fence in a `.md` or `.markdown` file is rewritten in place t
 
 ```sh
 # Rewrites the fences in README.md to Worker images
-npx melee README.md
+npx ondine README.md
 ```
 
-Each rewritten fence becomes a block between `<!-- melee:<payload> -->` and `<!-- /melee -->`. The payload is the encoded source, so a later run re-renders the block instead of adding another, and an unchanged file is left untouched.
+Each rewritten fence becomes a block between `<!-- ondine:<payload> -->` and `<!-- /ondine -->`. The payload is the encoded source, so a later run re-renders the block instead of adding another, and an unchanged file is left untouched.
 
 ### Link SVG Files
 
@@ -86,7 +86,7 @@ Each rewritten fence becomes a block between `<!-- melee:<payload> -->` and `<!-
 
 ```sh
 # Writes docs/assets/guide-1.light.svg and docs/assets/guide-1.dark.svg
-npx melee docs/guide.md --svg --out-dir docs/assets
+npx ondine docs/guide.md --svg --out-dir docs/assets
 ```
 
 ### Edit a Diagram
@@ -95,8 +95,8 @@ npx melee docs/guide.md --svg --out-dir docs/assets
 
 ```sh
 # Restores the fences, then renders them again after editing
-npx melee README.md --restore
-npx melee README.md
+npx ondine README.md --restore
+npx ondine README.md
 ```
 
 ### Check in CI
@@ -105,7 +105,7 @@ npx melee README.md
 
 ```sh
 # Fails when README.md has unrendered fences
-npx melee README.md --check
+npx ondine README.md --check
 ```
 
 ### Add a Script
@@ -113,7 +113,7 @@ npx melee README.md --check
 ```json title="package.json"
 {
   "scripts": {
-    "diagrams": "melee diagrams/*.mmd --out-dir public/diagrams"
+    "diagrams": "ondine diagrams/*.mmd --out-dir public/diagrams"
   }
 }
 ```

@@ -7,7 +7,7 @@ import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 import * as Markdown from './Markdown.js'
 
-const usage = `Usage: melee [files...] [options]
+const usage = `Usage: ondine [files...] [options]
 
 Renders each .mmd or .mermaid file to an .svg file beside it, or in --out-dir.
 With no files, reads Mermaid from standard input and writes SVG to standard output.

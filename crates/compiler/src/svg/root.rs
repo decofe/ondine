@@ -7,8 +7,8 @@ use crate::svg::theme::{RADIUS, ROOT_STYLE, ROUNDED, font_style};
 use crate::yaml::push_number;
 
 /// The host's options that the shared SVG modules read. A subset of Pele's `RenderOptions`;
-/// diagram modules add the fields they read as they are ported. Melee has no font options, since
-/// fonts come from `--melee-font` and every width is monospace.
+/// diagram modules add the fields they read as they are ported. Ondine has no font options, since
+/// fonts come from `--ondine-font` and every width is monospace.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct RenderOptions {
     /// Whether a diagram that runs across may be drawn running down when it does not fit
@@ -133,7 +133,7 @@ pub(crate) fn svg_document(
     acc: Accessible<'_>,
     content: &str,
 ) -> String {
-    let prefix = esc(options.id_prefix.as_deref().unwrap_or("melee"));
+    let prefix = esc(options.id_prefix.as_deref().unwrap_or("ondine"));
     let mut head = String::new();
     let mut aria = String::new();
     if let Some(title) = acc.acc_title.filter(|title| !title.is_empty()) {
@@ -194,14 +194,14 @@ pub(crate) fn svg_document(
         if used {
             weights.push(';');
             weights.push_str(alias);
-            weights.push_str(":var(--melee-");
+            weights.push_str(":var(--ondine-");
             weights.push_str(name);
             weights.push_str("-weight,bold)");
         }
     }
 
     let mut out = String::with_capacity(content.len() + 1024);
-    out.push_str("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-");
+    out.push_str("<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-");
     out.push_str(r#type);
     out.push_str("\" viewBox=\"0 0 ");
     push_number(&mut out, width);
@@ -234,7 +234,7 @@ pub(crate) fn svg_document(
 #[cfg(test)]
 mod tests {
     //! Expectations come from Pele's `svgDocument`, after the theme substitution: Pele's root
-    //! style, font declarations, and `--pele-*` variables replaced by Melee's.
+    //! style, font declarations, and `--pele-*` variables replaced by Ondine's.
 
     use super::{Accessible, RenderOptions, svg_document};
 
@@ -260,8 +260,8 @@ mod tests {
             None,
             None,
             None,
-            "<rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" rx=\"var(--melee-radius,0)\" fill=\"red\"/>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-flowchart\" viewBox=\"0 0 120 80\" width=\"120\" height=\"80\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\"><rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" fill=\"red\" style=\"rx:var(--_r)\"/></svg>",
+            "<rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" rx=\"var(--ondine-radius,0)\" fill=\"red\"/>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-flowchart\" viewBox=\"0 0 120 80\" width=\"120\" height=\"80\" style=\"max-width:100%;height:auto;--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--ondine-radius,0);--_fm:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\"><rect x=\"0\" y=\"0\" width=\"5\" height=\"5\" fill=\"red\" style=\"rx:var(--_r)\"/></svg>",
         ),
         (
             "flowchart",
@@ -272,8 +272,8 @@ mod tests {
             Some(false),
             Some("Title &amp; <x>"),
             Some("Desc"),
-            "<rect rx=\"var(--melee-radius,0)\" style=\"fill:red\"/><rectangle rx=\"var(--melee-radius,0)\"/><text font-weight=\"var(--_w)\">b</text>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-flowchart\" viewBox=\"0 0 120.5 80\" width=\"120.5\" height=\"80\" style=\"--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_w:var(--melee-bold-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:14px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\" aria-labelledby=\"my&quot;id-title\" aria-describedby=\"my&quot;id-desc\"><title id=\"my&quot;id-title\">Title &amp; &lt;x&gt;</title><desc id=\"my&quot;id-desc\">Desc</desc><rect style=\"rx:var(--_r);fill:red\"/><rectangle rx=\"var(--melee-radius,0)\"/><text font-weight=\"var(--_w)\">b</text></svg>",
+            "<rect rx=\"var(--ondine-radius,0)\" style=\"fill:red\"/><rectangle rx=\"var(--ondine-radius,0)\"/><text font-weight=\"var(--_w)\">b</text>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-flowchart\" viewBox=\"0 0 120.5 80\" width=\"120.5\" height=\"80\" style=\"--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--ondine-radius,0);--_w:var(--ondine-bold-weight,bold);--_fm:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:14px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"flowchart\" aria-labelledby=\"my&quot;id-title\" aria-describedby=\"my&quot;id-desc\"><title id=\"my&quot;id-title\">Title &amp; &lt;x&gt;</title><desc id=\"my&quot;id-desc\">Desc</desc><rect style=\"rx:var(--_r);fill:red\"/><rectangle rx=\"var(--ondine-radius,0)\"/><text font-weight=\"var(--_w)\">b</text></svg>",
         ),
         (
             "pie",
@@ -285,7 +285,7 @@ mod tests {
             Some(""),
             Some("only desc"),
             "<g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/>",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-pie\" viewBox=\"0 0 10 10\" width=\"10\" height=\"10\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_tw:var(--melee-title-weight,bold);--_hw:var(--melee-heading-weight,bold);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"pie\" aria-describedby=\"melee-desc\"><desc id=\"melee-desc\">only desc</desc><g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-pie\" viewBox=\"0 0 10 10\" width=\"10\" height=\"10\" style=\"max-width:100%;height:auto;--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_tw:var(--ondine-title-weight,bold);--_hw:var(--ondine-heading-weight,bold);--_fm:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"pie\" aria-describedby=\"ondine-desc\"><desc id=\"ondine-desc\">only desc</desc><g><text font-weight=\"var(--_tw)\">t</text><text font-weight=\"var(--_hw)\">h</text></g><rect width=\"1\"/></svg>",
         ),
         (
             "sequence",
@@ -297,7 +297,7 @@ mod tests {
             None,
             None,
             "",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-sequence\" viewBox=\"0 0 0 0\" width=\"0\" height=\"0\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:12.5px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"sequence\"></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-sequence\" viewBox=\"0 0 0 0\" width=\"0\" height=\"0\" style=\"max-width:100%;height:auto;--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_fm:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:12.5px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"sequence\"></svg>",
         ),
         (
             "x",
@@ -308,8 +308,8 @@ mod tests {
             None,
             None,
             None,
-            "<rect rx=\"var(--melee-radius,0)\">",
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"melee melee-x\" viewBox=\"0 0 1 2\" width=\"1\" height=\"2\" style=\"max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--melee-radius,0);--_fm:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"x\"><rect style=\"rx:var(--_r)\"></svg>",
+            "<rect rx=\"var(--ondine-radius,0)\">",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"ondine ondine-x\" viewBox=\"0 0 1 2\" width=\"1\" height=\"2\" style=\"max-width:100%;height:auto;--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg);--_r:var(--ondine-radius,0);--_fm:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font:16px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace);font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision\" fill=\"var(--_fg)\" role=\"graphics-document document\" aria-roledescription=\"x\"><rect style=\"rx:var(--_r)\"></svg>",
         ),
     ];
 

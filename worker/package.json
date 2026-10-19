@@ -1,5 +1,5 @@
 {
-  "name": "@melee/worker",
+  "name": "@ondine/worker",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "dev": "pnpm --dir .. build:wasm && wrangler dev"
   },
   "dependencies": {
-    "melee": "workspace:*"
+    "ondine": "workspace:*"
   },
   "devDependencies": {
     "wrangler": "catalog:"

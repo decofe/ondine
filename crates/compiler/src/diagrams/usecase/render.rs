@@ -277,7 +277,7 @@ fn extension(x: f64, y: f64, dx: f64, dy: f64, color: &str) -> String {
     let bx = x - dx * EXTENSION;
     let by = y - dy * EXTENSION;
     let half = EXTENSION * 0.5;
-    let mut out = String::from("<path class=\"melee-marker\" d=\"M");
+    let mut out = String::from("<path class=\"ondine-marker\" d=\"M");
     push_point(&mut out, x, y);
     out.push('L');
     push_point(&mut out, bx - dy * half, by + dx * half);
@@ -336,7 +336,7 @@ fn figure(view: &View, node: &GraphNode<'_>) -> String {
             out.push_str(ROUNDED);
             out.push_str(SHAPE_ATTRS);
             out.push_str(shape);
-            out.push_str("/><svg class=\"melee-icon\" data-icon=\"");
+            out.push_str("/><svg class=\"ondine-icon\" data-icon=\"");
             out.push_str(&esc_text(node.icon.unwrap_or("")));
             out.push_str("\" x=\"-14\" y=\"-18\" width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></svg>");
         }
@@ -351,7 +351,7 @@ fn figure(view: &View, node: &GraphNode<'_>) -> String {
     }
     if node.business {
         // The slash of a business actor: a chord across the lower right of the head.
-        out.push_str("<path class=\"melee-business\" d=\"M");
+        out.push_str("<path class=\"ondine-business\" d=\"M");
         push_point(&mut out, 0.12 * radius, head + 0.99 * radius);
         out.push('L');
         push_point(&mut out, 0.92 * radius, head - 0.39 * radius);
@@ -672,13 +672,14 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
             let mut boxed =
                 String::from(" fill=\"var(--_a)\" fill-opacity=\"0.5\" stroke=\"var(--_b)\"");
             boxed.push_str(shape);
-            let mut title_attrs = String::from(" class=\"melee-cluster-label\" fill=\"var(--_m)\"");
+            let mut title_attrs =
+                String::from(" class=\"ondine-cluster-label\" fill=\"var(--_m)\"");
             title_attrs.push_str(text_attrs);
             let mut body = String::new();
             if node.package {
                 let tab_w = (view.label.width + 2.0 * TAB_PAD + 8.0).min(c.w);
                 let tab_h = view.label.height + 2.0 * TAB_PAD;
-                body.push_str("<rect class=\"melee-boundary-tab\" x=\"");
+                body.push_str("<rect class=\"ondine-boundary-tab\" x=\"");
                 push_num(&mut body, x);
                 body.push_str("\" y=\"");
                 push_num(&mut body, y);
@@ -727,7 +728,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     None,
                 ));
             }
-            clusters.push_str("<g class=\"melee-cluster melee-boundary");
+            clusters.push_str("<g class=\"ondine-cluster ondine-boundary");
             clusters.push_str(&classes);
             clusters.push_str("\" data-id=\"");
             clusters.push_str(&id);
@@ -737,7 +738,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
             continue;
         }
 
-        let mut stereotype_attrs = String::from(" class=\"melee-stereotype\" font-size=\"");
+        let mut stereotype_attrs = String::from(" class=\"ondine-stereotype\" font-size=\"");
         push_number(&mut stereotype_attrs, tiny);
         stereotype_attrs.push_str("\" fill=\"var(--_m)\"");
         let mut body = String::new();
@@ -745,7 +746,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
             Kind::Actor => {
                 let top = -h / 2.0;
                 let stereotype_y = top + FIGURE_H + FIGURE_GAP + view.stereotype.height / 2.0;
-                body.push_str("<g class=\"melee-actor-figure\" transform=\"translate(0,");
+                body.push_str("<g class=\"ondine-actor-figure\" transform=\"translate(0,");
                 push_num(&mut body, top + FIGURE_H / 2.0);
                 body.push_str(")\">");
                 body.push_str(&figure(view, node));
@@ -757,7 +758,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     &stereotype_attrs,
                     None,
                 ));
-                let mut attrs = String::from(" class=\"melee-label\"");
+                let mut attrs = String::from(" class=\"ondine-label\"");
                 attrs.push_str(text_attrs);
                 body.push_str(&label_svg(
                     &view.label,
@@ -766,7 +767,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     &attrs,
                     None,
                 ));
-                "melee-actor"
+                "ondine-actor"
             }
             Kind::Json => {
                 let x0 = -w / 2.0;
@@ -782,7 +783,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     lines.push('V');
                     push_num(&mut lines, h / 2.0);
                 }
-                let mut value_attrs = String::from(" class=\"melee-json-value\"");
+                let mut value_attrs = String::from(" class=\"ondine-json-value\"");
                 value_attrs.push_str(text_attrs);
                 for (key, value) in &view.rows {
                     let row_h = value.height.max(js_round(small * 1.5)) + ROW_PAD;
@@ -790,7 +791,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                         key,
                         x0 + CELL_PAD + key.width / 2.0,
                         y + row_h / 2.0,
-                        " class=\"melee-json-key\" fill=\"var(--_m)\"",
+                        " class=\"ondine-json-key\" fill=\"var(--_m)\"",
                         None,
                     ));
                     cells.push_str(&left_label(
@@ -813,12 +814,12 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                 body.push_str(ROUNDED);
                 body.push_str(SHAPE_ATTRS);
                 body.push_str(shape);
-                body.push_str("/><path class=\"melee-json-lines\" d=\"");
+                body.push_str("/><path class=\"ondine-json-lines\" d=\"");
                 body.push_str(&lines);
                 body.push_str("\" fill=\"none\" stroke=\"var(--_b)\"");
                 body.push_str(&view.style.line);
                 body.push_str("/>");
-                let mut attrs = String::from(" class=\"melee-label\" font-weight=\"var(--_hw)\"");
+                let mut attrs = String::from(" class=\"ondine-label\" font-weight=\"var(--_hw)\"");
                 attrs.push_str(text_attrs);
                 body.push_str(&label_svg(
                     &view.label,
@@ -832,7 +833,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                 body.push_str("\">");
                 body.push_str(&cells);
                 body.push_str("</g>");
-                "melee-json"
+                "ondine-json"
             }
             _ => {
                 let label_y = view.stereotype.height / 2.0;
@@ -852,7 +853,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                         let from = w / 2.0 - 15.0;
                         let to = w / 2.0 - 5.0;
                         let arc = |at: f64| (h / 2.0) * (1.0 - (at / (w / 2.0)).powi(2)).sqrt();
-                        body.push_str("<path class=\"melee-business\" d=\"M");
+                        body.push_str("<path class=\"ondine-business\" d=\"M");
                         push_point(&mut body, from, arc(from));
                         body.push('L');
                         push_point(&mut body, to, -arc(to));
@@ -860,7 +861,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                         body.push_str(&view.style.line);
                         body.push_str("/>");
                     }
-                    "melee-usecase"
+                    "ondine-usecase"
                 } else if note {
                     let r = w / 2.0;
                     let b = h / 2.0;
@@ -889,7 +890,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     );
                     body.push_str(&view.style.line);
                     body.push_str("/>");
-                    "melee-note"
+                    "ondine-note"
                 } else {
                     body.push_str("<rect x=\"");
                     push_num(&mut body, -w / 2.0);
@@ -904,7 +905,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     body.push_str(SHAPE_ATTRS);
                     body.push_str(shape);
                     body.push_str("/>");
-                    "melee-usecase"
+                    "ondine-usecase"
                 };
                 body.push_str(&label_svg(
                     &view.stereotype,
@@ -913,7 +914,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                     &stereotype_attrs,
                     None,
                 ));
-                let mut attrs = String::from(" class=\"melee-label\"");
+                let mut attrs = String::from(" class=\"ondine-label\"");
                 if note {
                     attrs.push_str(" font-size=\"");
                     push_number(&mut attrs, small);
@@ -924,7 +925,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
                 kind
             }
         };
-        nodes_out.push_str("<g class=\"melee-node ");
+        nodes_out.push_str("<g class=\"ondine-node ");
         nodes_out.push_str(kind);
         nodes_out.push_str(&classes);
         nodes_out.push_str("\" data-id=\"");
@@ -1045,7 +1046,7 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
         } else {
             ""
         };
-        edges_out.push_str("<g class=\"melee-edge melee-");
+        edges_out.push_str("<g class=\"ondine-edge ondine-");
         edges_out.push_str(edge.relationship_type);
         edges_out.push_str(&class_names(edge_classes(&edge.classes)));
         edges_out.push_str("\" data-id=\"");
@@ -1089,29 +1090,29 @@ fn draw(model: &UsecaseModel, config: &Value, options: &RenderOptions, turned: b
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !edges_out.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\">");
         content.push_str(&labels_out);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes_out);
     content.push_str("</g>");
 

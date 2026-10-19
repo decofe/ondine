@@ -450,9 +450,9 @@ fn draw(
             bounds.grow(x, y, x, y);
             let (x, y) = (px(end + TAIL, c), py(end + TAIL, c));
             bounds.grow(x, y, x, y);
-            branches.push_str("<g class=\"melee-branch\" data-id=\"");
+            branches.push_str("<g class=\"ondine-branch\" data-id=\"");
             branches.push_str(&esc_text(model.lanes.get(i).map_or("", String::as_str)));
-            branches.push_str("\"><path class=\"melee-lane\" d=\"M");
+            branches.push_str("\"><path class=\"ondine-lane\" d=\"M");
             point(&mut branches, -LABEL_GAP, c);
             branches.push('L');
             point(&mut branches, end + TAIL, c);
@@ -475,7 +475,7 @@ fn draw(
                     name,
                     cx,
                     cy,
-                    " class=\"melee-label\" fill=\"var(--_bg)\"",
+                    " class=\"ondine-label\" fill=\"var(--_bg)\"",
                     None,
                 ));
             }
@@ -519,7 +519,7 @@ fn draw(
             let c1 = at(&cross, parent.lane);
             let m1 = parent.m;
             if parent.lane == view.lane {
-                lines.push_str("<path class=\"melee-edge\" d=\"M");
+                lines.push_str("<path class=\"ondine-edge\" d=\"M");
                 point(&mut lines, m1, c1);
                 lines.push('L');
                 point(&mut lines, m2, c2);
@@ -592,11 +592,11 @@ fn draw(
                     point(&mut d, m2, c2);
                 }
             }
-            curves.push_str("<path class=\"melee-edge");
+            curves.push_str("<path class=\"ondine-edge");
             if merged {
-                curves.push_str(" melee-edge-merge");
+                curves.push_str(" ondine-edge-merge");
             } else if picked {
-                curves.push_str(" melee-edge-cherry-pick");
+                curves.push_str(" ondine-edge-cherry-pick");
             }
             curves.push_str("\" d=\"");
             curves.push_str(&d);
@@ -651,7 +651,7 @@ fn draw(
                     ax + k,
                     if flip { ay + k } else { ay + reach },
                 );
-                body.push_str("<g class=\"melee-commit-label\" transform=\"rotate(");
+                body.push_str("<g class=\"ondine-commit-label\" transform=\"rotate(");
                 body.push_str(if flip { "45" } else { "-45" });
                 body.push(' ');
                 push_num(&mut body, ax);
@@ -665,7 +665,7 @@ fn draw(
                 let cx = if vertical { x - DOT - 6.0 - w / 2.0 } else { x };
                 let cy = if vertical { y } else { y + DOT + 6.0 + h / 2.0 };
                 bounds.grow(cx - w / 2.0, cy - h / 2.0, cx + w / 2.0, cy + h / 2.0);
-                body.push_str("<g class=\"melee-commit-label\">");
+                body.push_str("<g class=\"ondine-commit-label\">");
                 back(&mut body, cx, cy);
                 body.push_str(&label_svg(label, cx, cy, "", None));
                 body.push_str("</g>");
@@ -686,7 +686,7 @@ fn draw(
             let cy = if vertical { y } else { y - offset - h / 2.0 };
             offset += if vertical { w + 4.0 } else { h + 3.0 };
             bounds.grow(left, cy - h / 2.0, left + w, cy + h / 2.0);
-            body.push_str("<g class=\"melee-tag\"><path d=\"M");
+            body.push_str("<g class=\"ondine-tag\"><path d=\"M");
             pair(&mut body, left, cy);
             body.push('L');
             pair(&mut body, left + NOTCH, cy - h / 2.0);
@@ -712,7 +712,7 @@ fn draw(
             body.push_str("</g>");
         }
 
-        commits.push_str("<g class=\"melee-commit melee-commit-");
+        commits.push_str("<g class=\"ondine-commit ondine-commit-");
         commits.push_str(
             CLASSES
                 .get(usize::from(r#type))
@@ -720,7 +720,7 @@ fn draw(
                 .unwrap_or(CLASSES[0]),
         );
         if commit.r#type == MERGE && r#type != MERGE {
-            commits.push_str(" melee-commit-merge");
+            commits.push_str(" ondine-commit-merge");
         }
         commits.push_str("\" data-id=\"");
         commits.push_str(&esc_text(&commit.id));
@@ -748,14 +748,14 @@ fn draw(
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");
     pair(&mut content, dx, dy);
     content.push_str(")\">");
     if !branches.is_empty() {
-        content.push_str("<g class=\"melee-branches\" fill=\"none\" font-size=\"");
+        content.push_str("<g class=\"ondine-branches\" fill=\"none\" font-size=\"");
         push_number(&mut content, medium);
         content.push_str("\">");
         content.push_str(&branches);
@@ -763,14 +763,14 @@ fn draw(
     }
     if !curves.is_empty() || !lines.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\">",
         );
         content.push_str(&curves);
         content.push_str(&lines);
         content.push_str("</g>");
     }
     if !commits.is_empty() {
-        content.push_str("<g class=\"melee-commits\" font-size=\"");
+        content.push_str("<g class=\"ondine-commits\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\" fill=\"var(--_m)\">");
         content.push_str(&commits);

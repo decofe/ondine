@@ -35,7 +35,7 @@ const STEM: f64 = 12.0;
 const BEND: f64 = 8.0;
 const ROW_GAP: f64 = 10.0;
 
-const LABEL_ATTRS: &str = " class=\"melee-label\"";
+const LABEL_ATTRS: &str = " class=\"ondine-label\"";
 
 /// A property of a YAML mapping, as JavaScript's `value.key` reads it.
 fn property<'v>(value: &'v Value, key: &str) -> Option<&'v Value> {
@@ -366,9 +366,9 @@ fn draw(
         if body.is_empty() {
             return;
         }
-        out.push_str("<g class=\"melee-branch melee-section-");
+        out.push_str("<g class=\"ondine-branch ondine-section-");
         push_num(out, section.unwrap_or(0) as f64);
-        out.push_str("\"><g class=\"melee-edges\" fill=\"none\" stroke=\"");
+        out.push_str("\"><g class=\"ondine-edges\" fill=\"none\" stroke=\"");
         out.push_str(color);
         out.push_str("\" stroke-width=\"1.5\">");
         out.push_str(edges);
@@ -434,7 +434,7 @@ fn draw(
             if let Some(slot) = trunk.get_mut(p) {
                 *slot = y2 - bend;
             }
-            edges.push_str("<path class=\"melee-edge\" d=\"M");
+            edges.push_str("<path class=\"ondine-edge\" d=\"M");
             push_num(&mut edges, x1);
             edges.push(',');
             push_num(&mut edges, y1);
@@ -473,7 +473,7 @@ fn draw(
                 };
             let y2 = top + at(&anchor, i);
             let mid = f64::midpoint(x1, x2);
-            edges.push_str("<path class=\"melee-edge\" d=\"M");
+            edges.push_str("<path class=\"ondine-edge\" d=\"M");
             push_num(&mut edges, x1);
             edges.push(',');
             push_num(&mut edges, y1);
@@ -550,7 +550,7 @@ fn draw(
         }
 
         let group = if i > 0 { &mut body } else { &mut out };
-        group.push_str("<g class=\"melee-node melee-shape-");
+        group.push_str("<g class=\"ondine-node ondine-shape-");
         group.push_str(if !shape.is_empty() {
             shape
         } else if pill {
@@ -559,7 +559,7 @@ fn draw(
             "text"
         });
         if i == 0 {
-            group.push_str(" melee-root");
+            group.push_str(" ondine-root");
         }
         group.push_str(&class_names(node.class.as_deref().unwrap_or("")));
         group.push_str("\" data-id=\"");
@@ -603,7 +603,7 @@ fn draw(
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");

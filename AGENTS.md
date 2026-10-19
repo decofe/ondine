@@ -1,19 +1,19 @@
 # Adapted from wevm/zyzz
 
 Source: https://github.com/wevm/zyzz/blob/main/AGENTS.md
-Source commit: `a1e869f5605d9196812e01945d8e64318e06d246`. Retrieved 2026-10-19. General TypeScript, Rust, module, testing, prose, and Git conventions are retained. Project principles, Rust architecture, documentation, UI, layout, and commands are adapted for Melee.
+Source commit: `a1e869f5605d9196812e01945d8e64318e06d246`. Retrieved 2026-10-19. General TypeScript, Rust, module, testing, prose, and Git conventions are retained. Project principles, Rust architecture, documentation, UI, layout, and commands are adapted for Ondine.
 
 # Agent Guidelines
 
 ## Project Principles
 
-- Melee renders Mermaid source to SVG. A Rust compiler owns preprocessing, parsing, diagram models, layout, and SVG emission. TypeScript owns the public API, WebAssembly loading, and DOM mounting.
+- Ondine renders Mermaid source to SVG. A Rust compiler owns preprocessing, parsing, diagram models, layout, and SVG emission. TypeScript owns the public API, WebAssembly loading, and DOM mounting.
 - Target the complete syntax of the pinned Mermaid release (12.1.0). Every diagram type must accept and reject the same input as Mermaid and build the same diagram model. Layout and appearance intentionally differ from Mermaid.
-- Pele (pinned in `test/vectors/README.md`) is the reference for coverage, layout quality, speed, and size. Melee must match or beat it on every shared vector. Never claim an advantage without matched evidence.
-- Render monochrome, monospace diagrams: pure foreground and background colors, square outlines, rounded orthogonal edges. Expose colors, fonts, and stroke widths as `--melee-*` CSS custom properties so schemes change without re-rendering.
+- Pele (pinned in `test/vectors/README.md`) is the reference for coverage, layout quality, speed, and size. Ondine must match or beat it on every shared vector. Never claim an advantage without matched evidence.
+- Render monochrome, monospace diagrams: pure foreground and background colors, square outlines, rounded orthogonal edges. Expose colors, fonts, and stroke widths as `--ondine-*` CSS custom properties so schemes change without re-rendering.
 - Measure text with a uniform monospace advance. Output must not depend on fonts, canvas, the DOM, or the host, so Node and browsers emit identical bytes.
-- Compile diagrams ahead of time, as Zyzz compiles styles. `melee/compiler` (Node), `melee/vite`, the `melee` CLI, and the image Worker produce SVG at build or request time. The root `melee` entrypoint only mounts precompiled SVG and stays under 20 kB gzip.
-- Offer in-browser compilation as an opt-in: `melee/compiler/wasm` loads caller-supplied WebAssembly modules, one per diagram type or `all`. Each module has a measured gzip budget in `scripts/size.ts`.
+- Compile diagrams ahead of time, as Zyzz compiles styles. `ondine/compiler` (Node), `ondine/vite`, the `ondine` CLI, and the image Worker produce SVG at build or request time. The root `ondine` entrypoint only mounts precompiled SVG and stays under 20 kB gzip.
+- Offer in-browser compilation as an opt-in: `ondine/compiler/wasm` loads caller-supplied WebAssembly modules, one per diagram type or `all`. Each module has a measured gzip budget in `scripts/size.ts`.
 - Build two profiles. Node, the CLI, and the Worker use the speed-optimized `all` module. Browsers use size-optimized modules built with the pinned nightly.
 - Emit trusted, inert SVG under Mermaid's strict security level. Escape every authored string, allow no scripts, event handlers, or external references, and keep IDs unique per render.
 - Keep modules small and extensible through explicit data and narrow functions. Avoid global registration, mutable singletons, and general plugin frameworks.
@@ -132,8 +132,8 @@ The compiler ports Pele (MIT, `obsidianmd/pele` at `458322a5b8abb1ae57ddf127c320
 - **JavaScript semantics:** Pele indexes strings in UTF-16. Compute any position, length, or comparison that reaches output or diagnostics in UTF-16 units. `Math.round` rounds halves toward positive infinity. `Array.prototype.sort` is stable, so use `sort_by`. `Map` and `Set` iterate in insertion order.
 - **No regular expressions:** Replace each Pele regular expression with a hand-written matcher with the same semantics, including case-insensitivity, anchoring, and greedy or lazy repetition. The `regex` crate is banned for size.
 - **Text widths:** Use the monospace branch of Pele's `metricsMeasurer` for every style: 0.6 em for each ASCII and other character, 1.2 em for wide characters, and 0 for zero-width characters.
-- **Theme:** Emit `--melee-*` custom properties in place of `--pele-*`. Defaults are monochrome: background `#fff`, foreground and lines `#000`, node fills equal to the background, square corners, and a monospace font stack.
-- **Evidence:** Derive expected values in tests by running Pele's TypeScript (for example `npx tsx` against a Pele checkout), never from the Rust port. Model parity tests compare Melee's model JSON with Pele's `parse()` output for every vector.
+- **Theme:** Emit `--ondine-*` custom properties in place of `--pele-*`. Defaults are monochrome: background `#fff`, foreground and lines `#000`, node fills equal to the background, square corners, and a monospace font stack.
+- **Evidence:** Derive expected values in tests by running Pele's TypeScript (for example `npx tsx` against a Pele checkout), never from the Rust port. Model parity tests compare Ondine's model JSON with Pele's `parse()` output for every vector.
 
 ## Alphabetical Ordering
 

@@ -6,14 +6,14 @@ import * as Path from 'node:path'
 import * as Zlib from 'node:zlib'
 import * as Esbuild from 'esbuild'
 
-describe('melee', () => {
+describe('ondine', () => {
   let bin: string
   let root: string
 
   // Node cannot resolve the source's `.js` specifiers to `.ts`, so the CLI runs as a bundle laid
   // out as the package is: `cli/bin` beside `internal/`, where the compiler module loads from.
   beforeAll(async () => {
-    const dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-cli-bin-'))
+    const dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-cli-bin-'))
     bin = Path.join(dir, 'cli/bin.mjs')
     Fs.mkdirSync(Path.join(dir, 'internal'))
     Fs.copyFileSync(
@@ -30,7 +30,7 @@ describe('melee', () => {
   })
 
   beforeEach(() => {
-    root = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-cli-'))
+    root = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-cli-'))
   })
 
   afterEach(() => {
@@ -46,7 +46,7 @@ describe('melee', () => {
     expect(result.status).toBe(0)
     expect(
       result.stdout.startsWith(
-        '<svg xmlns="http://www.w3.org/2000/svg" class="melee melee-flowchart"',
+        '<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart"',
       ),
     ).toBe(true)
   })
@@ -126,12 +126,12 @@ describe('melee', () => {
       expect(Fs.readFileSync(Path.join(root, 'README.md'), 'utf8')).toMatchInlineSnapshot(`
         "# Docs
 
-        <!-- melee:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+        <!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark">
           <img alt="Mermaid flowchart diagram" src="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light">
         </picture>
-        <!-- /melee -->
+        <!-- /ondine -->
 
         \`\`\`md
         \`\`\`mermaid
@@ -140,16 +140,16 @@ describe('melee', () => {
 
         - Item
 
-          <!-- melee:eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA -->
+          <!-- ondine:eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA -->
           <picture>
             <source media="(prefers-color-scheme: dark)" srcset="https://melee.broken-thunder-fb8b.workers.dev/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=dark">
             <img alt="Mermaid sequence diagram" src="https://melee.broken-thunder-fb8b.workers.dev/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=light">
           </picture>
-          <!-- /melee -->
+          <!-- /ondine -->
         "
       `)
 
-      const payload = /<!-- melee:([\w-]+) -->/.exec(
+      const payload = /<!-- ondine:([\w-]+) -->/.exec(
         Fs.readFileSync(Path.join(root, 'README.md'), 'utf8'),
       )?.[1]
 
@@ -178,12 +178,12 @@ describe('melee', () => {
 
       expect(result.status).toBe(0)
       expect(Fs.readFileSync(Path.join(root, 'README.md'), 'utf8')).toMatchInlineSnapshot(`
-        "<!-- melee:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+        "<!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="https://example.com/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark">
           <img alt="Mermaid flowchart diagram" src="https://example.com/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light">
         </picture>
-        <!-- /melee -->
+        <!-- /ondine -->
         "
       `)
     })
@@ -228,12 +228,12 @@ describe('melee', () => {
       expect(Fs.readFileSync(Path.join(root, 'docs/guide.md'), 'utf8')).toMatchInlineSnapshot(`
         "# Docs
 
-        <!-- melee:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+        <!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="guide-1.dark.svg">
           <img alt="Mermaid flowchart diagram" src="guide-1.light.svg">
         </picture>
-        <!-- /melee -->
+        <!-- /ondine -->
 
         \`\`\`md
         \`\`\`mermaid
@@ -242,16 +242,16 @@ describe('melee', () => {
 
         - Item
 
-          <!-- melee:eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA -->
+          <!-- ondine:eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA -->
           <picture>
             <source media="(prefers-color-scheme: dark)" srcset="guide-2.dark.svg">
             <img alt="Mermaid sequence diagram" src="guide-2.light.svg">
           </picture>
-          <!-- /melee -->
+          <!-- /ondine -->
         "
       `)
       expect(Fs.readFileSync(Path.join(root, 'docs/guide-1.dark.svg'), 'utf8')).toContain(
-        '<style>:root{--melee-bg:#000;--melee-fg:#fff;--melee-line:#fff}</style>',
+        '<style>:root{--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff}</style>',
       )
 
       const second = run('docs/guide.md', '--svg')
@@ -307,12 +307,12 @@ describe('melee', () => {
         ]
       `)
       expect(Fs.readFileSync(Path.join(root, 'docs/guide.md'), 'utf8')).toMatchInlineSnapshot(`
-        "<!-- melee:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+        "<!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
         <picture>
           <source media="(prefers-color-scheme: dark)" srcset="../assets/guide-1.dark.svg">
           <img alt="Mermaid flowchart diagram" src="../assets/guide-1.light.svg">
         </picture>
-        <!-- /melee -->
+        <!-- /ondine -->
         "
       `)
     })

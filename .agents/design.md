@@ -6,11 +6,11 @@ Parity impact uses three levels:
 
 - **Breaks all:** every vector of the type changes, so the type needs a recorded difference in `src/Parity.test.ts` or a matching normalization in `test/Pele.ts`.
 - **Breaks some:** only vectors using the feature change.
-- **Normalizable:** a mechanical rewrite in `test/Pele.ts` restores the comparison, as it already does for `--melee-radius` and series colors.
+- **Normalizable:** a mechanical rewrite in `test/Pele.ts` restores the comparison, as it already does for `--ondine-radius` and series colors.
 
 ## Orthogonal Edges
 
-Edges between nodes bend as cubic curves. Right-angle routing with a small fixed corner radius (or a `--melee-radius`-driven one) reads as drawn on a grid and matches the reference look.
+Edges between nodes bend as cubic curves. Right-angle routing with a small fixed corner radius (or a `--ondine-radius`-driven one) reads as drawn on a grid and matches the reference look.
 
 - **Affected:** flowchart, class, state, er, requirement, usecase, agentflow, block, mindmap, architecture (already mostly straight), c4 (already straight).
 - **Parity:** breaks all for curved types. Edge geometry is shared in `svg/edges.rs`, so one change covers most of them.
@@ -20,11 +20,11 @@ Edges between nodes bend as cubic curves. Right-angle routing with a small fixed
 `edge_label_svg` draws the background patch under edge labels with a literal `rx="3"`. Using `ROUNDED` (the themed radius, `0` by default) squares it off and keeps it themeable.
 
 - **Affected:** every type that labels edges (flowchart, class, state, er, requirement, usecase, agentflow, c4).
-- **Parity:** normalizable. Rewrite `rx="3"` on `melee-edge-label` rectangles in `test/Pele.ts`.
+- **Parity:** normalizable. Rewrite `rx="3"` on `ondine-edge-label` rectangles in `test/Pele.ts`.
 
 ## Fixed Corner Radii
 
-Several shapes carry literal radii that ignore `--melee-radius`: state nodes and composite states (`rx="12"`), sequence notes and activations, radar and pie legend swatches (`rx="2"`), ishikawa's head, git tags, and pills in mindmap. Routing them through `ROUNDED`, or squaring the ones that are not semantic (pill and stadium shapes stay round), makes the default square.
+Several shapes carry literal radii that ignore `--ondine-radius`: state nodes and composite states (`rx="12"`), sequence notes and activations, radar and pie legend swatches (`rx="2"`), ishikawa's head, git tags, and pills in mindmap. Routing them through `ROUNDED`, or squaring the ones that are not semantic (pill and stadium shapes stay round), makes the default square.
 
 - **Affected:** state, sequence, pie, radar, xychart, git, ishikawa, mindmap (non-pill shapes only), `svg/shapes.rs` users.
 - **Parity:** normalizable for literal `rx` values that map one to one, breaks some otherwise.
@@ -59,7 +59,7 @@ Node padding and rank gaps follow Pele, which is tuned for proportional fonts. M
 
 ## Arrowheads
 
-`ARROW` heads are small solid triangles at a 0.42 half-width ratio, which already matches the reference. Two refinements are worth considering: scaling the head with `--melee-stroke` is impossible without a marker element, so a fixed head tuned for 2px strokes (about 10% larger) keeps proportions at the new default width. Requirement's open `V` head for `satisfies` could become the solid head for consistency.
+`ARROW` heads are small solid triangles at a 0.42 half-width ratio, which already matches the reference. Two refinements are worth considering: scaling the head with `--ondine-stroke` is impossible without a marker element, so a fixed head tuned for 2px strokes (about 10% larger) keeps proportions at the new default width. Requirement's open `V` head for `satisfies` could become the solid head for consistency.
 
 - **Affected:** every type using `svg/edges.rs` markers, requirement.
 - **Parity:** breaks all for edge-drawing types.
@@ -73,17 +73,17 @@ Sankey labels overlap one another and the flows in the energy sample. Collision-
 
 ## Screenshot Review
 
-`src/Screenshot.test.ts` captures every vector of each type in light and dark. The review found two theme causes, which are fixed in `crates/compiler/src/svg/theme.rs`. `--melee-surface-alt` defaulted to the background, which hid grids, graticules, excluded days, finished work, and wardley's buy strategy. Series shades reached 16% of the foreground, so lines and washes faded and background-colored labels lost contrast.
+`src/Screenshot.test.ts` captures every vector of each type in light and dark. The review found two theme causes, which are fixed in `crates/compiler/src/svg/theme.rs`. `--ondine-surface-alt` defaulted to the background, which hid grids, graticules, excluded days, finished work, and wardley's buy strategy. Series shades reached 16% of the foreground, so lines and washes faded and background-colored labels lost contrast.
 
 The problems below remain. Each changes diagram content or layout, so each needs approval and a parity decision.
 
 ### Theme in Content
 
-- **Critical and muted states:** `--melee-critical` and `--melee-muted` default to the foreground, so gantt critical tasks match normal ones and kanban "Very High" matches "Very Low". Monochrome needs a second channel, such as a hatch or a heavier outline.
+- **Critical and muted states:** `--ondine-critical` and `--ondine-muted` default to the foreground, so gantt critical tasks match normal ones and kanban "Very High" matches "Very Low". Monochrome needs a second channel, such as a hatch or a heavier outline.
 - **Authored fills without text color:** a `fill` without `color` keeps the scheme's text color. White fills turn white text invisible in dark (state corpus 19 to 21, requirement corpus 8). Mid fills give poor contrast (flowchart corpus 107 and 108, block corpus 22 and 23, class corpus 32 to 34, er corpus 20 to 23, sequence `rect` corpus 32 and `box Purple` corpus 16).
 - **ER stripes:** even attribute rows overlay `var(--_bg)` at 0.6 opacity, so on an authored fill in dark the rows swing between dark and light.
 - **Sequence backdrops:** message label backdrops are `var(--_bg)` rects, which leave a patch where they cross an authored box fill (sequence corpus 16).
-- **Fixed radii:** sequence activation bars and git highlights use `rx="2"`, and git tags `rx="3"`, instead of `--melee-radius`, so they stay rounded under square defaults.
+- **Fixed radii:** sequence activation bars and git highlights use `rx="2"`, and git tags `rx="3"`, instead of `--ondine-radius`, so they stay rounded under square defaults.
 - **Series cycle:** eight shades repeat, so a ninth gitGraph branch matches `main` (gitGraph corpus 29). Shades 93% and 100% are also close.
 - **Treemap shades:** a section takes the shade of its top-level root, so a tree with one root draws every section and leaf in one shade (treemap corpus 1, 3, and 6).
 - **Eventmodeling slots:** processors (slot 6) and commands (slot 0) share near-equal shades under a 0.22 wash, so the two read as one kind.

@@ -5,7 +5,7 @@ Insert a precompiled diagram into an element, replacing its contents.
 `mount` sets the element's markup to the diagram's SVG. Compiled output is trusted, inert SVG, so mounting does no parsing or sanitizing. The [Mounting](/guides/mounting) guide covers common tasks.
 
 ```ts title="main.ts"
-import { mount } from 'melee'
+import { mount } from 'ondine'
 import flow from './flow.mmd'
 
 // Replaces the element's contents with the diagram
@@ -33,7 +33,7 @@ mount(element, diagram)
 The element to fill. Its existing children are replaced.
 
 ```ts
-import { mount } from 'melee'
+import { mount } from 'ondine'
 import flow from './flow.mmd'
 
 // Fills the first figure on the page
@@ -47,14 +47,14 @@ mount(document.querySelector('figure')!, flow)
 Precompiled SVG, or an object that carries it, such as a Vite import or a `render` result.
 
 ```ts
-import { mount } from 'melee'
+import { mount } from 'ondine'
 
 // Mounts SVG fetched from a CLI build
 const svg = await fetch('/diagrams/flow.svg').then((response) => response.text())
 mount(document.getElementById('flow')!, svg)
 ```
 
-Only pass SVG that Melee compiled. `mount` inserts the string as markup.
+Only pass SVG that Ondine compiled. `mount` inserts the string as markup.
 
 ## Returns
 
@@ -65,7 +65,7 @@ Only pass SVG that Melee compiled. `mount` inserts the string as markup.
 Removes the diagram by emptying the element.
 
 ```ts
-import { mount } from 'melee'
+import { mount } from 'ondine'
 import flow from './flow.mmd'
 
 const mounted = mount(document.getElementById('flow')!, flow)

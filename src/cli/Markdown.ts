@@ -1,7 +1,7 @@
 /**
- * Rewrites ` ```mermaid ` fences in Markdown to images of the diagrams Melee renders from them.
+ * Rewrites ` ```mermaid ` fences in Markdown to images of the diagrams Ondine renders from them.
  *
- * Each fence becomes a block between `<!-- melee:<payload> -->` and `<!-- /melee -->`, where the
+ * Each fence becomes a block between `<!-- ondine:<payload> -->` and `<!-- /ondine -->`, where the
  * payload is the source as UTF-8, zlib deflate, then base64url: the encoding the image Worker
  * decodes. The block holds a `<picture>` with light and dark sources, linking either the Worker
  * or SVG files written beside the Markdown. Later runs read the source back from the payload, so
@@ -19,8 +19,8 @@ export const defaultWorker = 'https://melee.broken-thunder-fb8b.workers.dev'
 const maxPath = 4096
 
 const schemes = {
-  dark: '--melee-bg:#000;--melee-fg:#fff;--melee-line:#fff',
-  light: '--melee-bg:#fff;--melee-fg:#000;--melee-line:#000',
+  dark: '--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff',
+  light: '--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000',
 } as const
 
 /** A diagram that could not be rendered, positioned in the Markdown file. */
@@ -101,12 +101,12 @@ export function update(text: string, options: update.Options): update.ReturnType
     if (!sources) return undefined
 
     return [
-      `<!-- melee:${payload} -->`,
+      `<!-- ondine:${payload} -->`,
       '<picture>',
       `  <source media="(prefers-color-scheme: dark)" srcset="${escape(sources.dark)}">`,
       `  <img alt="${escape(alt)}" src="${escape(sources.light)}">`,
       '</picture>',
-      '<!-- /melee -->',
+      '<!-- /ondine -->',
     ]
   })
 
@@ -202,10 +202,10 @@ function transform(text: string, replace: (diagram: Diagram) => readonly string[
   while (index < lines.length) {
     const line = lines[index] ?? ''
 
-    const marker = /^( *)<!-- melee:([\w-]+) -->\s*$/.exec(line)
+    const marker = /^( *)<!-- ondine:([\w-]+) -->\s*$/.exec(line)
     if (marker) {
       const indent = marker[1] ?? ''
-      const end = lines.findIndex((next, at) => at > index && /^ *<!-- \/melee -->\s*$/.test(next))
+      const end = lines.findIndex((next, at) => at > index && /^ *<!-- \/ondine -->\s*$/.test(next))
       const source = end === -1 ? undefined : decode(marker[2] ?? '')
 
       if (end !== -1 && source !== undefined) {
@@ -281,7 +281,7 @@ function title(svg: string): string | undefined {
   return match?.[1] ? unescape(match[1]) : undefined
 }
 
-/** Sets the `--melee-*` colors right after the root element opens, since images cannot inherit page styles. */
+/** Sets the `--ondine-*` colors right after the root element opens, since images cannot inherit page styles. */
 function theme(svg: string, style: string): string {
   const at = svg.indexOf('>', svg.indexOf('<svg')) + 1
   return `${svg.slice(0, at)}<style>:root{${style}}</style>${svg.slice(at)}`

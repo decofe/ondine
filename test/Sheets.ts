@@ -1,10 +1,10 @@
 /**
  * Renders the vectors of each diagram type for the screenshot sheets. The browser suite reaches
- * these through the browser commands in `vite.config.ts`, since `melee/compiler` reads its module
+ * these through the browser commands in `vite.config.ts`, since `ondine/compiler` reads its module
  * from disk.
  * @module
  */
-import { render, RenderError } from 'melee/compiler'
+import { render, RenderError } from 'ondine/compiler'
 import * as Vectors from './Vectors.js'
 
 /** The time gantt charts schedule against, so sheets do not depend on the clock. */

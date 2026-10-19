@@ -12,18 +12,18 @@ import * as Render from '../Render.js'
  * @example
  * ```ts
  * import { defineConfig } from 'vite'
- * import { melee } from 'melee/vite'
+ * import { ondine } from 'ondine/vite'
  *
  * export default defineConfig({
- *   plugins: [melee()],
+ *   plugins: [ondine()],
  * })
  * ```
  */
-export function melee(options: melee.Options = {}): Plugin {
+export function ondine(options: ondine.Options = {}): Plugin {
   const pattern = /\.(?:mmd|mermaid)$/
 
   return {
-    name: 'melee',
+    name: 'ondine',
     transform(code, id) {
       const file = id.split('?')[0] ?? id
       if (!pattern.test(file)) return null
@@ -49,7 +49,7 @@ export function melee(options: melee.Options = {}): Plugin {
   }
 }
 
-export declare namespace melee {
+export declare namespace ondine {
   /** Rendering options applied to every imported diagram. */
   type Options = Omit<Render.render.Options, 'idPrefix'>
 }
@@ -58,5 +58,5 @@ export declare namespace melee {
 function prefix(file: string): string {
   let hash = 0x811c9dc5
   for (let i = 0; i < file.length; i++) hash = Math.imul(hash ^ file.charCodeAt(i), 0x01000193)
-  return `melee-${(hash >>> 0).toString(36)}`
+  return `ondine-${(hash >>> 0).toString(36)}`
 }

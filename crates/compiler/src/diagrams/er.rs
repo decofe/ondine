@@ -276,7 +276,7 @@ mod json {
 
 #[cfg(test)]
 mod tests {
-    //! Parity with Pele's `er.parse` over the Melee vectors, every string literal of
+    //! Parity with Pele's `er.parse` over the Ondine vectors, every string literal of
     //! Pele's er compat specs, the documents those specs build at runtime, and edge cases, as
     //! recorded by running Pele's TypeScript.
 

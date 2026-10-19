@@ -323,7 +323,7 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
         let mut inner = String::new();
         if row.highlighted {
             let x = inset + row.x - HIGHLIGHT_OVERHANG;
-            inner.push_str("<rect class=\"melee-tree-highlight\" x=\"");
+            inner.push_str("<rect class=\"ondine-tree-highlight\" x=\"");
             push_num(&mut inner, x);
             inner.push_str("\" y=\"");
             push_num(&mut inner, top + row.top + 1.0);
@@ -343,7 +343,7 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
             let path = glyph(name)
                 .or_else(|| glyph(if directory { "folder" } else { "file" }))
                 .unwrap_or("");
-            inner.push_str("<svg class=\"melee-icon\" data-icon=\"");
+            inner.push_str("<svg class=\"ondine-icon\" data-icon=\"");
             inner.push_str(&esc_text(icon));
             inner.push_str("\" x=\"");
             push_num(&mut inner, inset + row.x);
@@ -363,7 +363,7 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
             ""
         };
         if let Some(label) = &row.label {
-            let mut attrs = String::from(" class=\"melee-label\"");
+            let mut attrs = String::from(" class=\"ondine-label\"");
             attrs.push_str(weight);
             inner.push_str(&left_label_svg(
                 label,
@@ -372,7 +372,7 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
                 &attrs,
             ));
         } else if !row.text.is_empty() {
-            inner.push_str("<text class=\"melee-label\" x=\"");
+            inner.push_str("<text class=\"ondine-label\" x=\"");
             push_num(&mut inner, inset + row.label_x);
             inner.push_str("\" y=\"");
             push_num(&mut inner, cy + baseline);
@@ -387,10 +387,10 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
                 description,
                 inset + row.label_x,
                 top + row.top + padding_y + row.label.as_ref().map_or(0.0, |label| label.height),
-                " class=\"melee-tree-description\" font-style=\"italic\" fill=\"var(--_m)\"",
+                " class=\"ondine-tree-description\" font-style=\"italic\" fill=\"var(--_m)\"",
             ));
         } else if let Some(description) = &node.description {
-            inner.push_str("<text class=\"melee-tree-description\" x=\"");
+            inner.push_str("<text class=\"ondine-tree-description\" x=\"");
             push_num(&mut inner, inset + desc_x);
             inner.push_str("\" y=\"");
             push_num(&mut inner, cy + baseline);
@@ -398,7 +398,7 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
             inner.push_str(&esc(&decode(description)));
             inner.push_str("</text>");
         }
-        body.push_str("<g class=\"melee-node melee-tree-");
+        body.push_str("<g class=\"ondine-node ondine-tree-");
         body.push_str(if directory { "dir" } else { "file" });
         body.push_str(&class_names(node.css_class.as_deref().unwrap_or("")));
         body.push_str("\" data-id=\"");
@@ -412,12 +412,12 @@ fn draw(model: &TreeViewModel, config: &Value, options: &RenderOptions, tight: b
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !guides.is_empty() {
         content.push_str(
-            "<g class=\"melee-tree-guides\" fill=\"none\" stroke=\"var(--_b)\" stroke-width=\"",
+            "<g class=\"ondine-tree-guides\" fill=\"none\" stroke=\"var(--_b)\" stroke-width=\"",
         );
         push_num(&mut content, line_thickness);
         content.push_str("\">");

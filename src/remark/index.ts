@@ -3,11 +3,11 @@ import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 
 /**
- * Replaces each ` ```mermaid ` fence with the SVG Melee renders from it, at build time.
+ * Replaces each ` ```mermaid ` fence with the SVG Ondine renders from it, at build time.
  *
  * The SVG is inserted as HTML elements (hast), so it works with `@mdx-js/mdx` in both its MDX and
  * Markdown formats, with `remark-rehype`, and with any framework MDX targets. Each diagram is a
- * `<div class="melee-diagram" data-melee-diagram="<type>">` around the `<svg>`. Element IDs are
+ * `<div class="ondine-diagram" data-ondine-diagram="<type>">` around the `<svg>`. Element IDs are
  * prefixed per file and diagram, so several diagrams can share a page. When the tree is written
  * back to Markdown, each diagram turns back into its fence.
  *
@@ -17,23 +17,23 @@ import * as Render from '../Render.js'
  * ```ts
  * import mdx from '@mdx-js/rollup'
  * import { defineConfig } from 'vite'
- * import { remarkMelee } from 'melee/remark'
+ * import { remarkOndine } from 'ondine/remark'
  *
  * export default defineConfig({
- *   plugins: [mdx({ remarkPlugins: [remarkMelee] })],
+ *   plugins: [mdx({ remarkPlugins: [remarkOndine] })],
  * })
  * ```
  */
-export function remarkMelee(
-  this: remarkMelee.Processor | void,
-  options: remarkMelee.Options = {},
-): (tree: remarkMelee.Node, file: remarkMelee.File) => undefined {
+export function remarkOndine(
+  this: remarkOndine.Processor | void,
+  options: remarkOndine.Options = {},
+): (tree: remarkOndine.Node, file: remarkOndine.File) => undefined {
   // Writes diagrams back as fences when the tree is serialized to Markdown, as in `llms.txt` output.
   const data = (this || undefined)?.data?.() as { [key: string]: unknown } | undefined
   if (data) {
     data['toMarkdownExtensions'] = [
       ...((data['toMarkdownExtensions'] as unknown[] | undefined) ?? []),
-      { handlers: { meleeDiagram: (node: remarkMelee.Node) => fence(String(node['value'])) } },
+      { handlers: { ondineDiagram: (node: remarkOndine.Node) => fence(String(node['value'])) } },
     ]
   }
 
@@ -41,7 +41,7 @@ export function remarkMelee(
     const path = file.path ?? '<unknown>'
     let count = 0
 
-    const visit = (node: remarkMelee.Node) => {
+    const visit = (node: remarkOndine.Node) => {
       const children = node.children
       if (!children) return
 
@@ -64,7 +64,7 @@ export function remarkMelee(
   }
 }
 
-export declare namespace remarkMelee {
+export declare namespace remarkOndine {
   /** The parts of a vfile the plugin reads. */
   type File = {
     /** The file path, used in error messages and element-ID prefixes. */
@@ -89,11 +89,11 @@ export declare namespace remarkMelee {
   }
 }
 
-/** A `meleeDiagram` node: hast data for HTML output, and the source for Markdown output. */
+/** A `ondineDiagram` node: hast data for HTML output, and the source for Markdown output. */
 function diagram(
-  node: remarkMelee.Node,
+  node: remarkOndine.Node,
   options: { options: Render.render.Options; path: string },
-): remarkMelee.Node {
+): remarkOndine.Node {
   const source = String(node['value'] ?? '')
 
   const result = (() => {
@@ -117,10 +117,10 @@ function diagram(
     data: {
       hChildren: [svg(result.svg)],
       hName: 'div',
-      hProperties: { className: ['melee-diagram'], dataMeleeDiagram: result.type },
+      hProperties: { className: ['ondine-diagram'], dataOndineDiagram: result.type },
     },
     position: node.position,
-    type: 'meleeDiagram',
+    type: 'ondineDiagram',
     value: source,
   }
 }
@@ -139,7 +139,7 @@ function fence(source: string): string {
 function prefix(file: string): string {
   let hash = 0x811c9dc5
   for (let i = 0; i < file.length; i++) hash = Math.imul(hash ^ file.charCodeAt(i), 0x01000193)
-  return `melee-${(hash >>> 0).toString(36)}`
+  return `ondine-${(hash >>> 0).toString(36)}`
 }
 
 /** A hast element or text node. */

@@ -1,5 +1,5 @@
-/** Renders every playground sample with Melee at build time, as a wall of diagram tiles. @module */
-import { render, RenderError } from 'melee/compiler'
+/** Renders every playground sample with Ondine at build time, as a wall of diagram tiles. @module */
+import { render, RenderError } from 'ondine/compiler'
 import groups from '../../../test/vectors/samples.json' with { type: 'json' }
 import { style } from '../zyzz.config.js'
 
@@ -37,7 +37,7 @@ export function Board() {
           key={tile.id}
           title={`Open “${tile.label}” in the playground`}
         >
-          {/* Melee emits inert SVG with every authored string escaped. */}
+          {/* Ondine emits inert SVG with every authored string escaped. */}
           <div {...styles.canvas()} dangerouslySetInnerHTML={{ __html: tile.svg }} />
           <span {...styles.caption()}>
             {tile.type} · {tile.label}
@@ -73,8 +73,8 @@ namespace styles {
 
   export const canvas = style({
     // Node fills match the tile surface, so diagrams sit on the same panel in both schemes.
-    '--melee-bg': 'var(--vocs-background-color-code-block) !custom',
-    '--melee-fg': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': 'var(--vocs-background-color-code-block) !custom',
+    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
     '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     backgroundColor: 'surface',
     display: 'flex',

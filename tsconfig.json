@@ -7,12 +7,12 @@
     "moduleResolution": "nodenext",
     "target": "esnext",
     "paths": {
-      "melee": ["./src/index.ts"],
-      "melee/compiler": ["./src/compiler/index.ts"],
-      "melee/compiler/wasm": ["./src/compiler/wasm.ts"],
-      "melee/compiler/wasm/all": ["./src/compiler/all.ts"],
-      "melee/remark": ["./src/remark/index.ts"],
-      "melee/vite": ["./src/vite/index.ts"]
+      "ondine": ["./src/index.ts"],
+      "ondine/compiler": ["./src/compiler/index.ts"],
+      "ondine/compiler/wasm": ["./src/compiler/wasm.ts"],
+      "ondine/compiler/wasm/all": ["./src/compiler/all.ts"],
+      "ondine/remark": ["./src/remark/index.ts"],
+      "ondine/vite": ["./src/vite/index.ts"]
     },
     "types": ["node", "vite-plus/test/globals"],
 

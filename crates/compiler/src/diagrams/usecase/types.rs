@@ -1,6 +1,6 @@
 //! The use case model. Port of Pele's `src/diagrams/usecase/types.ts`.
 //!
-//! Pele also records each statement's source positions for Mermaid's syntax tree. Nothing Melee
+//! Pele also records each statement's source positions for Mermaid's syntax tree. Nothing Ondine
 //! draws reads them, so they are left out.
 
 use super::json::JsonDoc;

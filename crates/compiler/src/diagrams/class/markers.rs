@@ -47,7 +47,7 @@ pub(crate) fn class_marker(
         RelationEnd::Type(1) => {
             let bx = x - dx * TRIANGLE;
             let by = y - dy * TRIANGLE;
-            out.push_str("<path class=\"melee-marker\" d=\"M");
+            out.push_str("<path class=\"ondine-marker\" d=\"M");
             push_point(&mut out, x, y);
             out.push('L');
             push_point(&mut out, bx + nx * HALF, by + ny * HALF);
@@ -59,7 +59,7 @@ pub(crate) fn class_marker(
             let mx = x - (dx * DIAMOND) / 2.0;
             let my = y - (dy * DIAMOND) / 2.0;
             let half = HALF - 1.0;
-            out.push_str("<path class=\"melee-marker\" d=\"M");
+            out.push_str("<path class=\"ondine-marker\" d=\"M");
             push_point(&mut out, x, y);
             out.push('L');
             push_point(&mut out, mx + nx * half, my + ny * half);
@@ -76,7 +76,7 @@ pub(crate) fn class_marker(
             out.push_str("/>");
         }
         RelationEnd::Type(4) => {
-            out.push_str("<circle class=\"melee-marker\" cx=\"");
+            out.push_str("<circle class=\"ondine-marker\" cx=\"");
             push_num(&mut out, x - dx * RING);
             out.push_str("\" cy=\"");
             push_num(&mut out, y - dy * RING);

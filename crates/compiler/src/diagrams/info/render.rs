@@ -8,8 +8,8 @@ use crate::svg::root::{Accessible, RenderOptions, svg_document};
 use crate::text::label::layout_label;
 use crate::text::measure::BOLD;
 
-/// The text drawn under the title. Pele draws its own name and version, so this names Melee's.
-const VERSION: &str = concat!("Melee v", env!("CARGO_PKG_VERSION"));
+/// The text drawn under the title. Pele draws its own name and version, so this names Ondine's.
+const VERSION: &str = concat!("Ondine v", env!("CARGO_PKG_VERSION"));
 
 /// Draws `model`.
 pub(crate) fn render(model: &InfoModel, options: &RenderOptions) -> Rendered {
@@ -30,14 +30,14 @@ pub(crate) fn render(model: &InfoModel, options: &RenderOptions) -> Rendered {
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&label_svg(
         &text,
         width / 2.0,
         pad + title_height + text.height / 2.0,
-        " class=\"melee-version\" fill=\"var(--_m)\"",
+        " class=\"ondine-version\" fill=\"var(--_m)\"",
         None,
     ));
 

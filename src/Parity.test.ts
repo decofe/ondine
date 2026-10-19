@@ -1,5 +1,5 @@
-/** @module Compares Melee's SVG with Pele's for every vector of each ported diagram type. */
-import { render, RenderError } from 'melee/compiler'
+/** @module Compares Ondine's SVG with Pele's for every vector of each ported diagram type. */
+import { render, RenderError } from 'ondine/compiler'
 import * as Pele from '../test/Pele.js'
 import * as Vectors from '../test/Vectors.js'
 
@@ -8,7 +8,7 @@ const now = Date.UTC(2024, 0, 15, 12)
 
 /** Types whose output differs from Pele's by design, with the reason. */
 const differences: Readonly<Record<string, string>> = {
-  info: "draws Melee's name and version where Pele draws its own",
+  info: "draws Ondine's name and version where Pele draws its own",
 }
 
 /** Every diagram type with vectors, in Pele's names. Unported types are skipped. */

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * @module Compares Melee's parsers with Mermaid 12.1.0 for every diagram type: the same accept or
+ * @module Compares Ondine's parsers with Mermaid 12.1.0 for every diagram type: the same accept or
  * reject decision on every corpus source and on seeded mutations of them, and for the types in
  * `Models.projections`, the same model. Disagreements pass only through the record in
  * `Divergences.ts`. `FUZZ` sets the number of mutations per type and `SEED` varies them.
@@ -20,7 +20,7 @@ async function check(type: Corpus.Type, sources: readonly string[]) {
   let compared = 0
 
   for (const source of sources) {
-    // Melee receives UTF-8, which cannot carry a lone surrogate.
+    // Ondine receives UTF-8, which cannot carry a lone surrogate.
     if (!source.isWellFormed()) continue
 
     const outcome = Oracle.compare(type, await oracle.parse(source))

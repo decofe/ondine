@@ -3,12 +3,12 @@
 /**
  * Mounts a precompiled diagram into `element`, replacing its contents.
  *
- * Diagrams compiled at build time (by `melee/vite`, the CLI, or the image Worker) are trusted,
+ * Diagrams compiled at build time (by `ondine/vite`, the CLI, or the image Worker) are trusted,
  * inert SVG, so mounting only inserts markup.
  *
  * @example
  * ```ts
- * import { mount } from 'melee'
+ * import { mount } from 'ondine'
  * import diagram from './flow.mmd'
  *
  * mount(document.getElementById('flow')!, diagram)

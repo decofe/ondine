@@ -1,5 +1,5 @@
 /**
- * @module The one record of where Melee intentionally parses differently from Mermaid 12.1.0.
+ * @module The one record of where Ondine intentionally parses differently from Mermaid 12.1.0.
  * The oracle suites accept a disagreement only when an entry here explains it, and check that
  * every entry's examples still disagree, so the record cannot go stale. Entries that Pele shares
  * say so, and quote Pele's `tests/compat/<type>/SKIPPED.md` where it records the same decision.
@@ -10,7 +10,7 @@ import type * as Model from './Model.js'
 
 /** One source and what each parser made of it. */
 export type Case = {
-  readonly melee: Model.Result
+  readonly ondine: Model.Result
   readonly mermaid: Mermaid.Result
   readonly source: string
   readonly type: Corpus.Type
@@ -23,15 +23,15 @@ export type Divergence = {
    * strings, numbers, and booleans after `Models.plain`, or `undefined` where one side lacks a
    * property.
    */
-  readonly equal?: ((melee: unknown, mermaid: unknown) => boolean) | undefined
+  readonly equal?: ((ondine: unknown, mermaid: unknown) => boolean) | undefined
   /** Sources that show the divergence. */
   readonly examples: readonly string[]
   /** A short kebab-case name. */
   readonly id: string
   /** A source Mermaid parses before each example, when the divergence needs earlier state. */
   readonly lead?: string | undefined
-  /** For a model divergence: rewrites Melee's projected model of `entry` before comparison. */
-  readonly melee?: ((projected: any, entry: Case) => unknown) | undefined
+  /** For a model divergence: rewrites Ondine's projected model of `entry` before comparison. */
+  readonly ondine?: ((projected: any, entry: Case) => unknown) | undefined
   /** For a model divergence: rewrites Mermaid's projected database before comparison. */
   readonly mermaid?: ((projected: any, entry: Case) => unknown) | undefined
   /**
@@ -39,9 +39,9 @@ export type Divergence = {
    * whose models it changes too broadly to rewrite.
    */
   readonly models?: ((entry: Case) => boolean) | undefined
-  /** Whether Pele parses these sources as Melee does. */
+  /** Whether Pele parses these sources as Ondine does. */
   readonly pele: boolean
-  /** Why Melee differs. */
+  /** Why Ondine differs. */
   readonly reason: string
   /** The diagram types it applies to, or every type. */
   readonly types: readonly Corpus.Type[] | 'every'
@@ -64,9 +64,9 @@ export const divergences: readonly Divergence[] = [
     id: 'mermaid-type-error',
     pele: true,
     reason:
-      "Mermaid's database throws a TypeError, such as reading a property of undefined, on input its grammar accepts. The error is a defect in Mermaid rather than a rule of the syntax, so Melee builds the diagram.",
+      "Mermaid's database throws a TypeError, such as reading a property of undefined, on input its grammar accepts. The error is a defect in Mermaid rather than a rule of the syntax, so Ondine builds the diagram.",
     types: 'every',
-    verdict: (entry) => entry.melee.ok && !entry.mermaid.ok && entry.mermaid.name === 'TypeError',
+    verdict: (entry) => entry.ondine.ok && !entry.mermaid.ok && entry.mermaid.name === 'TypeError',
   },
   {
     examples: [
@@ -86,29 +86,29 @@ export const divergences: readonly Divergence[] = [
     models: (entry) => yaml(entry.source),
     pele: true,
     reason:
-      "Mermaid reads front matter and `@{ }` data with js-yaml. Melee's YAML reader implements the subset Pele's does, without anchors, aliases, keys that contain `:` or `#`, a `#` right after a quoted scalar, mappings inside flow sequences, or quoted scalars over several lines, and reads a lone `:` as text (agentflow SKIPPED.md: \"Pele's YAML reader has no anchors or aliases and reads `*name` and a lone `:` as text, so it accepts the block\"). Each side accepts some documents the other rejects, and reads some differently.",
+      "Mermaid reads front matter and `@{ }` data with js-yaml. Ondine's YAML reader implements the subset Pele's does, without anchors, aliases, keys that contain `:` or `#`, a `#` right after a quoted scalar, mappings inside flow sequences, or quoted scalars over several lines, and reads a lone `:` as text (agentflow SKIPPED.md: \"Pele's YAML reader has no anchors or aliases and reads `*name` and a lone `:` as text, so it accepts the block\"). Each side accepts some documents the other rejects, and reads some differently.",
     types: 'every',
     verdict: (entry) =>
-      (entry.melee.ok && !entry.mermaid.ok && entry.mermaid.stage === 'yaml') ||
-      (!entry.melee.ok &&
+      (entry.ondine.ok && !entry.mermaid.ok && entry.mermaid.stage === 'yaml') ||
+      (!entry.ondine.ok &&
         entry.mermaid.ok &&
-        /not valid YAML/.test(entry.melee.message) &&
+        /not valid YAML/.test(entry.ondine.message) &&
         yaml(entry.source)),
   },
   {
-    equal: (melee, mermaid) =>
-      typeof melee === 'string' &&
+    equal: (ondine, mermaid) =>
+      typeof ondine === 'string' &&
       typeof mermaid === 'string' &&
       unicodeSpace.test(mermaid) &&
-      mermaid.trim() === melee,
+      mermaid.trim() === ondine,
     examples: ['flowchart TB\n  search@{ shape: rect\u2028 }\n'],
     id: 'yaml-unicode-space',
     pele: true,
     reason:
-      "js-yaml ends a plain scalar only at ASCII spaces, so `shape: rect\\u2028` names a shape Mermaid does not know. Melee's YAML reader trims the spaces JavaScript's `trim` removes, such as U+00A0 and U+2028, as Pele's does.",
+      "js-yaml ends a plain scalar only at ASCII spaces, so `shape: rect\\u2028` names a shape Mermaid does not know. Ondine's YAML reader trims the spaces JavaScript's `trim` removes, such as U+00A0 and U+2028, as Pele's does.",
     types: 'every',
     verdict: (entry) =>
-      entry.melee.ok && !entry.mermaid.ok && unicodeSpace.test(entry.mermaid.message),
+      entry.ondine.ok && !entry.mermaid.ok && unicodeSpace.test(entry.mermaid.message),
   },
   {
     examples: [
@@ -119,11 +119,11 @@ export const divergences: readonly Divergence[] = [
     id: 'detect-comments',
     pele: true,
     reason:
-      "Mermaid detects a diagram after removing a directive it cannot read, a bare `%%` line, or a comment written right after the type keyword. Melee's preprocessing and detection follow Pele's, which find no diagram in these sources.",
+      "Mermaid detects a diagram after removing a directive it cannot read, a bare `%%` line, or a comment written right after the type keyword. Ondine's preprocessing and detection follow Pele's, which find no diagram in these sources.",
     types: 'every',
     verdict: (entry) =>
-      !entry.melee.ok &&
-      entry.melee.code === 'unsupported-diagram' &&
+      !entry.ondine.ok &&
+      entry.ondine.code === 'unsupported-diagram' &&
       entry.mermaid.ok &&
       entry.source.includes('%%'),
   },
@@ -134,10 +134,10 @@ export const divergences: readonly Divergence[] = [
     id: 'theme-colors',
     pele: true,
     reason:
-      "Mermaid validates the colors of `themeVariables` while parsing and rejects one it cannot read. Melee draws in two colors set by `--melee-*` custom properties and ignores Mermaid's theme, as Pele does.",
+      "Mermaid validates the colors of `themeVariables` while parsing and rejects one it cannot read. Ondine draws in two colors set by `--ondine-*` custom properties and ignores Mermaid's theme, as Pele does.",
     types: 'every',
     verdict: (entry) =>
-      entry.melee.ok &&
+      entry.ondine.ok &&
       !entry.mermaid.ok &&
       entry.mermaid.message.startsWith('Unsupported color format'),
   },
@@ -148,21 +148,21 @@ export const divergences: readonly Divergence[] = [
     id: 'limits',
     pele: true,
     reason:
-      'Melee bounds the work a source can ask for, such as the style declarations a requirement diagram applies, and reports a limit error where Mermaid keeps going.',
+      'Ondine bounds the work a source can ask for, such as the style declarations a requirement diagram applies, and reports a limit error where Mermaid keeps going.',
     types: 'every',
-    verdict: (entry) => !entry.melee.ok && entry.melee.code === 'limit' && entry.mermaid.ok,
+    verdict: (entry) => !entry.ondine.ok && entry.ondine.code === 'limit' && entry.mermaid.ok,
   },
   {
     examples: ['gantt\ndateFormat YYYY-MM-DD\na : 1,2,3,4\n'],
     id: 'gantt-task-fields',
     pele: true,
     reason:
-      "Mermaid's parse accepts a task with more than three fields or with none after its tags, and its renderer then fails with a TypeError. Melee reports the task as a semantic error while parsing, as Pele's gantt database does.",
+      "Mermaid's parse accepts a task with more than three fields or with none after its tags, and its renderer then fails with a TypeError. Ondine reports the task as a semantic error while parsing, as Pele's gantt database does.",
     types: ['gantt'],
     verdict: (entry) =>
-      !entry.melee.ok &&
+      !entry.ondine.ok &&
       entry.mermaid.ok &&
-      /has too many fields|needs a duration or an end date/.test(entry.melee.message),
+      /has too many fields|needs a duration or an end date/.test(entry.ondine.message),
   },
   {
     examples: ['%%{init: {"config": {"wrap": true}}}%%\nsequenceDiagram\nA->>B: x\n'],
@@ -170,12 +170,12 @@ export const divergences: readonly Divergence[] = [
     models: (entry) => /%%\{\s*init(?:ialize)?\b[^]*?["']config["']\s*:/.test(entry.source),
     pele: true,
     reason:
-      'Mermaid moves the `config` object of an `init` directive into the section of the detected diagram type, so `%%{init: {"config": {"wrap": true}}}%%` wraps a sequence diagram. Melee reads `config` as a section of its own, as Pele does.',
+      'Mermaid moves the `config` object of an `init` directive into the section of the detected diagram type, so `%%{init: {"config": {"wrap": true}}}%%` wraps a sequence diagram. Ondine reads `config` as a section of its own, as Pele does.',
     types: 'every',
   },
   {
-    equal: (melee, mermaid) =>
-      typeof melee === 'string' && typeof mermaid === 'string' && /[<>&]/.test(melee),
+    equal: (ondine, mermaid) =>
+      typeof ondine === 'string' && typeof mermaid === 'string' && /[<>&]/.test(ondine),
     examples: [
       'classDiagram\nCar -- Person : < owns\n',
       'stateDiagram-v2\n  A\n  note left of A : short<br/>note\n',
@@ -183,10 +183,10 @@ export const divergences: readonly Divergence[] = [
     ],
     id: 'sanitized-text',
     // Mermaid keys some maps by sanitized ids, which the projections cannot match.
-    models: (entry) => entry.melee.ok && markedIds(entry.melee.model),
+    models: (entry) => entry.ondine.ok && markedIds(entry.ondine.model),
     pele: true,
     reason:
-      'Mermaid\'s databases pass text through DOMPurify, which escapes `<` and `>`, rewrites `<br/>` as `<br>`, and drops unknown tags. Melee stores text as written and escapes it when writing SVG, as Pele does (flowchart SKIPPED.md: "Expects the label `<` to be stored as `&lt;`, which is DOMPurify\'s serialization"). Text containing `<`, `>`, or `&` is therefore not compared.',
+      'Mermaid\'s databases pass text through DOMPurify, which escapes `<` and `>`, rewrites `<br/>` as `<br>`, and drops unknown tags. Ondine stores text as written and escapes it when writing SVG, as Pele does (flowchart SKIPPED.md: "Expects the label `<` to be stored as `&lt;`, which is DOMPurify\'s serialization"). Text containing `<`, `>`, or `&` is therefore not compared.',
     types: 'every',
   },
   {
@@ -205,7 +205,7 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      "Mermaid's block grammar reads an arrow that ends a line as an edge without a start, and adds a block without an id. Melee continues the edge on the next line, as Pele does.",
+      "Mermaid's block grammar reads an arrow that ends a line as an edge without a start, and adds a block without an id. Ondine continues the edge on the next line, as Pele does.",
     types: ['block'],
   },
   {
@@ -221,7 +221,7 @@ export const divergences: readonly Divergence[] = [
       ),
     pele: true,
     reason:
-      'Mermaid reads two arguments written without a comma between them, such as `"gray"$descr="V"`, by shifting later arguments into other slots. Melee keeps each argument in the slot its comma-separated position gives it, as Pele does.',
+      'Mermaid reads two arguments written without a comma between them, such as `"gray"$descr="V"`, by shifting later arguments into other slots. Ondine keeps each argument in the slot its comma-separated position gives it, as Pele does.',
     types: ['c4'],
   },
   {
@@ -230,39 +230,39 @@ export const divergences: readonly Divergence[] = [
     ],
     id: 'c4-deployment-sprite',
     models: (entry) =>
-      entry.melee.ok &&
+      entry.ondine.ok &&
       (
-        entry.melee.model as { boundaries: { nodeType?: string; sprite?: string }[] }
+        entry.ondine.model as { boundaries: { nodeType?: string; sprite?: string }[] }
       ).boundaries.some(
         (boundary) => boundary.nodeType !== undefined && boundary.sprite !== undefined,
       ),
     pele: true,
     reason:
-      "Mermaid's `addDeploymentNode` takes a sprite argument and drops it, keeping only tags and link. Melee keeps the sprite of a deployment node, as Pele does.",
+      "Mermaid's `addDeploymentNode` takes a sprite argument and drops it, keeping only tags and link. Ondine keeps the sprite of a deployment node, as Pele does.",
     types: ['c4'],
   },
   {
     examples: ['C4Context\n  Boundary(global, "Global") {\n    Person(p, "P")\n  }\n'],
     id: 'c4-global-boundary',
-    melee: (projected) => {
+    ondine: (projected) => {
       const boundaries = projected.model.boundaries as { alias: string }[]
       if (!boundaries.slice(1).some((boundary) => boundary.alias === 'global')) return projected
       return { ...projected, model: { ...projected.model, boundaries: boundaries.slice(1) } }
     },
     pele: true,
     reason:
-      'A boundary the diagram names `global` updates the boundary Mermaid starts every C4 diagram with. Melee adds it as a boundary inside that one, as Pele does.',
+      'A boundary the diagram names `global` updates the boundary Mermaid starts every C4 diagram with. Ondine adds it as a boundary inside that one, as Pele does.',
     types: ['c4'],
   },
   {
     // `parseInt` reads `0x` prefixes, and NaN is written as null, which `Models.plain` drops.
-    equal: (melee, mermaid) =>
+    equal: (ondine, mermaid) =>
       (typeof mermaid === 'string' &&
-        (typeof melee === 'number' || melee === undefined) &&
-        (melee ?? NaN).toString() === Number.parseInt(mermaid).toString()) ||
-      (typeof melee === 'string' &&
+        (typeof ondine === 'number' || ondine === undefined) &&
+        (ondine ?? NaN).toString() === Number.parseInt(mermaid).toString()) ||
+      (typeof ondine === 'string' &&
         typeof mermaid === 'number' &&
-        Number.parseInt(melee).toString() === mermaid.toString()),
+        Number.parseInt(ondine).toString() === mermaid.toString()),
     examples: [
       'C4Context\n  Rel(a, b, "x")\n  UpdateRelStyle(a, b, $offsetY="60", $offsetX="90")\n',
       'C4Context\n  Rel(a, b, "x")\n  UpdateRelStyle(a, b, "blue", "blue", "5", $offsetYthe="-10")\n',
@@ -270,13 +270,13 @@ export const divergences: readonly Divergence[] = [
     id: 'c4-named-offsets',
     pele: true,
     reason:
-      'Mermaid parses whatever named argument fills an offset slot of `UpdateRelStyle` as an integer, and keeps the text of a named offset written in another slot. Melee parses `offsetX` and `offsetY` as integers wherever they appear and keeps other names as text, as Pele does.',
+      'Mermaid parses whatever named argument fills an offset slot of `UpdateRelStyle` as an integer, and keeps the text of a named offset written in another slot. Ondine parses `offsetX` and `offsetY` as integers wherever they appear and keeps other names as text, as Pele does.',
     types: ['c4'],
   },
   {
     examples: ['C4Context\nPerson(customerA, $sprite="users")\n'],
     id: 'c4-named-slot',
-    melee: (projected) => {
+    ondine: (projected) => {
       // A named argument in the alias or label slot also fills the field it names. Without it,
       // Mermaid leaves the field unset, or empty for a description.
       const strip = (el: Record<string, unknown>) => {
@@ -300,15 +300,15 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      'Mermaid keeps a named argument written in the alias or label slot, such as `Person(a, $sprite="users")`, as that slot\'s value. Melee also applies it to the field it names, as Pele does ("A named one fills the field it names, whichever slot it is in").',
+      'Mermaid keeps a named argument written in the alias or label slot, such as `Person(a, $sprite="users")`, as that slot\'s value. Ondine also applies it to the field it names, as Pele does ("A named one fills the field it names, whichever slot it is in").',
     types: ['c4'],
   },
   {
     examples: ['classDiagram\n  class A:::someclass\n  classDef some fill:#f96\n'],
     id: 'class-style-substring',
     models: (entry) => {
-      if (!entry.melee.ok) return false
-      const model = entry.melee.model as {
+      if (!entry.ondine.ok) return false
+      const model = entry.ondine.model as {
         classes: { cssClasses: string }[]
         styleClasses: { id: string }[]
       }
@@ -320,7 +320,7 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      "Mermaid's `classDef` styles every class whose class list contains the definition's name as a substring, so `classDef some` styles a class marked `:::someclass`. Melee styles classes whose list holds the name itself, as Pele does.",
+      "Mermaid's `classDef` styles every class whose class list contains the definition's name as a substring, so `classDef some` styles a class marked `:::someclass`. Ondine styles classes whose list holds the name itself, as Pele does.",
     types: ['class'],
   },
   {
@@ -330,10 +330,10 @@ export const divergences: readonly Divergence[] = [
     ],
     id: 'gantt-schedule-type-error',
     models: (entry) => {
-      if (!entry.mermaid.ok || !entry.melee.ok) return false
+      if (!entry.mermaid.ok || !entry.ondine.ok) return false
       // Mermaid's database keeps the last task of an earlier chart after `clear` (see
       // gantt-stale-task-ids), and schedules a first task without a start after it.
-      const first = (entry.melee.model as { tasks: { raw: { start?: string } }[] }).tasks[0]
+      const first = (entry.ondine.model as { tasks: { raw: { start?: string } }[] }).tasks[0]
       if (first !== undefined && (first.raw.start ?? '') === '') return true
 
       const db = entry.mermaid.db as { getTasks: () => { processed: boolean }[] }
@@ -345,7 +345,7 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      'Mermaid\'s gantt database throws a TypeError while scheduling some charts it parsed, such as one whose first task has no start, and its renderer then fails. Melee schedules them, starting such a task today, as Pele does ("Mermaid fails with a TypeError when the first task has no start. It starts today here.").',
+      'Mermaid\'s gantt database throws a TypeError while scheduling some charts it parsed, such as one whose first task has no start, and its renderer then fails. Ondine schedules them, starting such a task today, as Pele does ("Mermaid fails with a TypeError when the first task has no start. It starts today here.").',
     types: ['gantt'],
   },
   {
@@ -356,8 +356,8 @@ export const divergences: readonly Divergence[] = [
     // The example resolves `id4` to this chart's task.
     lead: 'gantt\ndateFormat YYYY-MM-DD\ntask4 : id4,2013-01-05,2d\n',
     models: (entry) => {
-      if (!entry.melee.ok) return false
-      const tasks = (entry.melee.model as { tasks: { id: string; raw: Record<string, string> }[] })
+      if (!entry.ondine.ok) return false
+      const tasks = (entry.ondine.model as { tasks: { id: string; raw: Record<string, string> }[] })
         .tasks
       const ids = new Set(tasks.map((task) => task.id))
       const unknown = (list: string, separator: RegExp) =>
@@ -377,22 +377,22 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      "Mermaid's gantt database keeps the tasks of earlier diagrams by id after `clear`, so an `after`, `until`, or `click` reference to an id the chart lacks can resolve to a task of an earlier chart. Melee resolves references within the chart, as Pele does.",
+      "Mermaid's gantt database keeps the tasks of earlier diagrams by id after `clear`, so an `after`, `until`, or `click` reference to an id the chart lacks can resolve to a task of an earlier chart. Ondine resolves references within the chart, as Pele does.",
     types: ['gantt'],
   },
   {
     examples: ['kanban\n  root\n    child1\n  root\n    child2\n'],
     id: 'kanban-duplicate-columns',
     models: (entry) => {
-      if (!entry.melee.ok) return false
-      const ids = (entry.melee.model as { sections: { id: string }[] }).sections.map(
+      if (!entry.ondine.ok) return false
+      const ids = (entry.ondine.model as { sections: { id: string }[] }).sections.map(
         (section) => section.id,
       )
       return new Set(ids).size < ids.length
     },
     pele: true,
     reason:
-      "Mermaid lists the cards of every column with a column's id under each column with that id, so two columns that share an id each show both columns' cards. Melee keeps each card in the column it was written in, as Pele does.",
+      "Mermaid lists the cards of every column with a column's id under each column with that id, so two columns that share an id each show both columns' cards. Ondine keeps each card in the column it was written in, as Pele does.",
     types: ['kanban'],
   },
   {
@@ -406,13 +406,13 @@ export const divergences: readonly Divergence[] = [
     },
     pele: true,
     reason:
-      "Mermaid lays packet rows out with the configured `bitsPerRow` as written, so a fractional width gives fractional bit positions and text gives none. Melee rounds it down to a whole number between 1 and 4096, or uses 32, as Pele's `buildPacket` does.",
+      "Mermaid lays packet rows out with the configured `bitsPerRow` as written, so a fractional width gives fractional bit positions and text gives none. Ondine rounds it down to a whole number between 1 and 4096, or uses 32, as Pele's `buildPacket` does.",
     types: ['packet'],
   },
   {
     examples: ['sequenceDiagram\n  participant A\n  details A: details-1\n'],
     id: 'sequence-details',
-    melee: (projected) => ({
+    ondine: (projected) => ({
       ...projected,
       model: {
         ...projected.model,
@@ -426,33 +426,33 @@ export const divergences: readonly Divergence[] = [
     }),
     pele: true,
     reason:
-      'Mermaid reads the properties a `details` statement names from the page element with that id. Melee has no page and keeps the id, as Pele does (sequence SKIPPED.md: "Pele has no page to read; it parses the statement and keeps the id").',
+      'Mermaid reads the properties a `details` statement names from the page element with that id. Ondine has no page and keeps the id, as Pele does (sequence SKIPPED.md: "Pele has no page to read; it parses the statement and keeps the id").',
     types: ['sequence'],
   },
   {
-    equal: (melee, mermaid) =>
-      typeof melee === 'string' &&
+    equal: (ondine, mermaid) =>
+      typeof ondine === 'string' &&
       (typeof mermaid === 'number' || typeof mermaid === 'boolean' || Array.isArray(mermaid)) &&
-      String(mermaid) === melee,
+      String(mermaid) === ondine,
     examples: ['graph TD\n  A@{ label: [a, b], form: 3e21 }\n'],
     id: 'shape-data-text',
     pele: true,
     reason:
-      'Mermaid keeps the YAML types of `@{ }` values, so a label can be a list and a property a number. Melee keeps each value as the text JavaScript would convert it to, as Pele does.',
+      'Mermaid keeps the YAML types of `@{ }` values, so a label can be a list and a property a number. Ondine keeps each value as the text JavaScript would convert it to, as Pele does.',
     types: ['agentflow', 'flowchart', 'swimlane'],
   },
   {
     examples: ['stateDiagram\n  direction TB\n  A --> B\n  direction LR\n'],
     id: 'state-last-direction',
-    melee: (projected, entry) => {
-      if (!entry.melee.ok) return projected
-      const doc = (entry.melee.model as { rootDoc: { stmt?: string; value?: string }[] }).rootDoc
+    ondine: (projected, entry) => {
+      if (!entry.ondine.ok) return projected
+      const doc = (entry.ondine.model as { rootDoc: { stmt?: string; value?: string }[] }).rootDoc
       const first = doc.find((item) => item.stmt === 'dir')
       return { ...projected, model: { ...projected.model, direction: first?.value ?? 'TB' } }
     },
     pele: true,
     reason:
-      'Mermaid\'s state database reports the first `direction` statement of the root document, which its renderer lays out with. Melee lays out with the last one, as Pele\'s `StateDb.direction` does ("its last `direction` statement").',
+      'Mermaid\'s state database reports the first `direction` statement of the root document, which its renderer lays out with. Ondine lays out with the last one, as Pele\'s `StateDb.direction` does ("its last `direction` statement").',
     types: ['state'],
   },
   {
@@ -461,13 +461,13 @@ export const divergences: readonly Divergence[] = [
     models: (entry) => /--\s*}/.test(entry.source),
     pele: true,
     reason:
-      "Mermaid leaves a composite state's statements unsplit when a `--` divider is the last of them, and keeps the divider as an empty state. Melee places the statements before it in one concurrent region, as Pele does.",
+      "Mermaid leaves a composite state's statements unsplit when a `--` divider is the last of them, and keeps the divider as an empty state. Ondine places the statements before it in one concurrent region, as Pele does.",
     types: ['state'],
   },
 ]
 
 /**
- * Whether the front matter or an `@{ }` block of `source` uses YAML that Melee's reader lacks:
+ * Whether the front matter or an `@{ }` block of `source` uses YAML that Ondine's reader lacks:
  * anchors and aliases, plain keys containing `:` or `#`, a `#` right after a quoted scalar,
  * mappings inside flow sequences, and double-quoted scalars that continue onto another line.
  */

@@ -167,7 +167,7 @@ importers:
 
   site:
     dependencies:
-      melee:
+      ondine:
         specifier: workspace:*
         version: link:..
       mermaid:
@@ -222,7 +222,7 @@ importers:
 
   worker:
     dependencies:
-      melee:
+      ondine:
         specifier: workspace:*
         version: link:..
     devDependencies:

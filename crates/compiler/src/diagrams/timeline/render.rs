@@ -258,7 +258,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
     push_number(&mut font_size, small);
     font_size.push('"');
     let event = |out: &mut String, label: &Label, color: &str, x: f64, y: f64, h: f64| {
-        out.push_str("<g class=\"melee-node melee-event\">");
+        out.push_str("<g class=\"ondine-node ondine-event\">");
         push_box(
             out,
             x,
@@ -277,7 +277,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
         out.push_str("</g>");
     };
     let dot = |out: &mut String, x: f64, y: f64, color: &str| {
-        out.push_str("<circle class=\"melee-dot\" cx=\"");
+        out.push_str("<circle class=\"ondine-dot\" cx=\"");
         push_num(out, x);
         out.push_str("\" cy=\"");
         push_num(out, y);
@@ -287,13 +287,13 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
     };
     let open = |out: &mut String, group: &Group| {
         if let Some(name) = section_name(group) {
-            out.push_str("<g class=\"melee-cluster melee-section\" data-id=\"");
+            out.push_str("<g class=\"ondine-cluster ondine-section\" data-id=\"");
             out.push_str(&esc_text(trim(name)));
             out.push_str("\">");
         }
     };
     let open_period = |out: &mut String, i: usize| {
-        out.push_str("<g class=\"melee-node melee-period\" data-id=\"");
+        out.push_str("<g class=\"ondine-node ondine-period\" data-id=\"");
         out.push_str(&esc_text(trim(
             periods.get(i).map_or("", |p| p.text.as_str()),
         )));
@@ -355,7 +355,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
                 }
                 open_period(&mut body, i);
                 period_svg(&mut body, i, &color, left, y, h);
-                body.push_str("<path class=\"melee-edge\" d=\"");
+                body.push_str("<path class=\"ondine-edge\" d=\"");
                 body.push_str(&d);
                 body.push('"');
                 body.push_str(LINE);
@@ -377,7 +377,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
         }
         if drawn {
             let tip = y + TAIL + ARROW;
-            let mut axis = String::from("<path class=\"melee-axis\" d=\"M");
+            let mut axis = String::from("<path class=\"ondine-axis\" d=\"M");
             push_num(&mut axis, axis_x);
             axis.push(',');
             push_num(&mut axis, top);
@@ -459,7 +459,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
                 bottom = bottom.max(ey - EVENT_GAP);
                 open_period(&mut body, i);
                 period_svg(&mut body, i, &color, x, periods_y, chip_h);
-                body.push_str("<path class=\"melee-edge\" d=\"");
+                body.push_str("<path class=\"ondine-edge\" d=\"");
                 body.push_str(&d);
                 body.push('"');
                 body.push_str(LINE);
@@ -475,7 +475,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
         }
         if drawn {
             let tip = left + body_w;
-            let mut axis = String::from("<path class=\"melee-axis\" d=\"M");
+            let mut axis = String::from("<path class=\"ondine-axis\" d=\"M");
             push_num(&mut axis, left);
             axis.push(',');
             push_num(&mut axis, axis_y);
@@ -495,7 +495,7 @@ fn draw(model: &TimelineDb, config: &Value, options: &RenderOptions, vertical: b
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&body);

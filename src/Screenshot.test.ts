@@ -1,5 +1,5 @@
 /**
- * Screenshot sheets: every vector of each diagram type, compiled by `melee/compiler`, mounted on
+ * Screenshot sheets: every vector of each diagram type, compiled by `ondine/compiler`, mounted on
  * one labelled page, and captured in light and dark in Chromium.
  * @module
  */
@@ -8,7 +8,7 @@ import '@fontsource/geist-mono/400.css'
 import '@fontsource/geist-mono/400-italic.css'
 import '@fontsource/geist-mono/700.css'
 import '@fontsource/geist-mono/700-italic.css'
-import { mount } from 'melee'
+import { mount } from 'ondine'
 import { commands, page } from 'vite-plus/test/browser'
 import type * as Sheets from '../test/Sheets.js'
 
@@ -34,9 +34,9 @@ const style = document.createElement('style')
 style.textContent = `
   *, *::before, *::after { animation: none !important; caret-color: transparent !important; transition: none !important; }
   html, body { margin: 0; padding: 0; }
-  .sheet { --melee-font: 'Geist Mono'; background: var(--melee-bg); box-sizing: border-box; color: var(--melee-fg); display: flex; flex-wrap: wrap; font: 14px 'Geist Mono'; gap: 16px; padding: 16px; width: 1600px; }
+  .sheet { --ondine-font: 'Geist Mono'; background: var(--ondine-bg); box-sizing: border-box; color: var(--ondine-fg); display: flex; flex-wrap: wrap; font: 14px 'Geist Mono'; gap: 16px; padding: 16px; width: 1600px; }
   .sheet h1 { flex-basis: 100%; font-size: 20px; margin: 0; }
-  .sheet figure { border: 1px dashed color-mix(in srgb, var(--melee-fg) 30%, var(--melee-bg)); margin: 0; max-width: 100%; padding: 8px; }
+  .sheet figure { border: 1px dashed color-mix(in srgb, var(--ondine-fg) 30%, var(--ondine-bg)); margin: 0; max-width: 100%; padding: 8px; }
   .sheet figcaption { font-size: 12px; margin-bottom: 8px; }
   .sheet figure > div > svg { display: block; height: auto; max-width: 100%; }
   .sheet .error { white-space: pre-wrap; }
@@ -53,8 +53,8 @@ for (const type of types) {
 
         const sheet = document.createElement('main')
         sheet.className = 'sheet'
-        sheet.style.setProperty('--melee-bg', colors.bg)
-        sheet.style.setProperty('--melee-fg', colors.fg)
+        sheet.style.setProperty('--ondine-bg', colors.bg)
+        sheet.style.setProperty('--ondine-fg', colors.fg)
         const heading = document.createElement('h1')
         heading.textContent = `${type} · ${scheme}`
         sheet.append(heading)

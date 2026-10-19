@@ -1,17 +1,17 @@
-# remarkMelee
+# remarkOndine
 
-Replace each ` ```mermaid ` fence with the SVG Melee renders from it.
+Replace each ` ```mermaid ` fence with the SVG Ondine renders from it.
 
 The plugin renders every `code` node whose language is `mermaid` and replaces it with HTML elements, so the page holds SVG and no compiler. Fences in other languages are left alone.
 
 ```ts title="vite.config.ts"
 import mdx from '@mdx-js/rollup'
 import { defineConfig } from 'vite'
-import { remarkMelee } from 'melee/remark'
+import { remarkOndine } from 'ondine/remark'
 
 export default defineConfig({
   // Compiles Mermaid fences in .md and .mdx files
-  plugins: [mdx({ remarkPlugins: [remarkMelee] })],
+  plugins: [mdx({ remarkPlugins: [remarkOndine] })],
 })
 ```
 
@@ -19,7 +19,7 @@ export default defineConfig({
 
 ```ts
 // Returns a remark transformer
-remarkMelee(options?)
+remarkOndine(options?)
 ```
 
 ## Parameters
@@ -34,11 +34,11 @@ Rendering options applied to every diagram. Every [`render` option](/api/compile
 ```ts title="vite.config.ts"
 import mdx from '@mdx-js/rollup'
 import { defineConfig } from 'vite'
-import { remarkMelee } from 'melee/remark'
+import { remarkOndine } from 'ondine/remark'
 
 export default defineConfig({
   // Lays out every diagram for a 640-pixel column
-  plugins: [mdx({ remarkPlugins: [[remarkMelee, { maxWidth: 640 }]] })],
+  plugins: [mdx({ remarkPlugins: [[remarkOndine, { maxWidth: 640 }]] })],
 })
 ```
 
@@ -48,12 +48,12 @@ export default defineConfig({
 
 - **Type:** `(tree, file) => undefined{:ts}`
 
-A transformer that replaces each fence with a `meleeDiagram` node. It becomes this HTML, as hast elements rather than a markup string, so `@mdx-js/mdx` in both formats and `remark-rehype` keep it without raw HTML support:
+A transformer that replaces each fence with a `ondineDiagram` node. It becomes this HTML, as hast elements rather than a markup string, so `@mdx-js/mdx` in both formats and `remark-rehype` keep it without raw HTML support:
 
 ```html
 <!-- One diagram, with its detected type -->
-<div class="melee-diagram" data-melee-diagram="flowchart">
-  <svg class="melee melee-flowchart">…</svg>
+<div class="ondine-diagram" data-ondine-diagram="flowchart">
+  <svg class="ondine ondine-flowchart">…</svg>
 </div>
 ```
 

@@ -1,11 +1,11 @@
-/** @module Node lane for Melee: reads the speed-optimized module named by `BENCH_WASM` and renders through `melee/compiler/wasm`. */
-import { create } from 'melee/compiler/wasm'
+/** @module Node lane for Ondine: reads the speed-optimized module named by `BENCH_WASM` and renders through `ondine/compiler/wasm`. */
+import { create } from 'ondine/compiler/wasm'
 import * as Fs from 'node:fs'
 import type * as Harness from '../Harness.js'
 
 let renderer: create.ReturnType | undefined
 
-/** Melee as `melee/compiler` loads it in Node. */
+/** Ondine as `ondine/compiler` loads it in Node. */
 export const lane: Harness.Lane = {
   async: false,
   async prepare() {
@@ -14,7 +14,7 @@ export const lane: Harness.Lane = {
     })
   },
   render(source) {
-    if (!renderer) throw new Error('The Melee lane renders only after `prepare`.')
+    if (!renderer) throw new Error('The Ondine lane renders only after `prepare`.')
     return renderer.render(source)
   },
 }

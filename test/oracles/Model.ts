@@ -1,6 +1,6 @@
 /**
  * @module Loads the test-only compiler module that `scripts/build-wasm.ts` writes to
- * `test/oracles/model.generated.wasm` and parses Mermaid source into Melee's model JSON.
+ * `test/oracles/model.generated.wasm` and parses Mermaid source into Ondine's model JSON.
  */
 import * as Fs from 'node:fs'
 import * as Path from 'node:path'
@@ -34,7 +34,7 @@ export function create(): create.ReturnType {
 export declare namespace create {
   type ReturnType = {
     /**
-     * Parses `source` with Melee's parsers. `options` takes the render options that reach
+     * Parses `source` with Ondine's parsers. `options` takes the render options that reach
      * parsing, such as `maxEdges`.
      */
     readonly parse: (source: string, options?: Options) => Result

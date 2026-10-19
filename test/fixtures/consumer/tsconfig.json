@@ -9,7 +9,7 @@
     "noUncheckedIndexedAccess": true,
     "strict": true,
     "target": "esnext",
-    "types": ["melee/vite/client", "node"],
+    "types": ["ondine/vite/client", "node"],
     "verbatimModuleSyntax": true
   },
   "include": ["modules.ts", "render.ts", "src", "vite.config.ts"]

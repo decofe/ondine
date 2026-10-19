@@ -7,7 +7,7 @@ import * as ChildProcess from 'node:child_process'
 import * as Fs from 'node:fs'
 import * as Os from 'node:os'
 import * as Path from 'node:path'
-import { render, RenderError } from 'melee/compiler'
+import { render, RenderError } from 'ondine/compiler'
 
 const root = Path.resolve(import.meta.dirname, '../..')
 const site = Path.resolve(import.meta.dirname, '..')
@@ -222,7 +222,7 @@ for (const entry of entries) {
 
     if (entry.status === 'not-ported') return `${heading}\n\n${fence('txt', sample.source)}`
     if (error !== undefined)
-      return `${heading}\n\nMelee reports an error for this source:\n\n${fence('txt', error)}\n\n${fence('txt', sample.source)}`
+      return `${heading}\n\nOndine reports an error for this source:\n\n${fence('txt', error)}\n\n${fence('txt', sample.source)}`
     return `${heading}\n\n${fence('mermaid', sample.source)}`
   })
 
@@ -238,12 +238,12 @@ for (const entry of entries) {
     ].join('\n'),
     'The [Compatibility](/introduction/compatibility) page defines each status.',
     entry.status === 'not-ported'
-      ? '> [!NOTE]\n> Melee does not render this type yet. The examples below show the Mermaid source only.'
+      ? '> [!NOTE]\n> Ondine does not render this type yet. The examples below show the Mermaid source only.'
       : '',
     '## Examples',
     entry.status === 'not-ported'
       ? 'The playground samples for this type.'
-      : 'The playground samples for this type, rendered by Melee when the documentation builds.',
+      : 'The playground samples for this type, rendered by Ondine when the documentation builds.',
     ...examples,
   ]
   Fs.writeFileSync(
@@ -278,11 +278,11 @@ Fs.writeFileSync(
 
 # Compatibility
 
-Diagram types Melee renders, measured against the shared vector corpus.
+Diagram types Ondine renders, measured against the shared vector corpus.
 
 ## Overview
 
-Melee targets every diagram type in Mermaid 12.1.0. Each type is ported from Pele, and the parity suite (\`src/Parity.test.ts\`) renders every vector with both and compares the SVG content, width, and height.
+Ondine targets every diagram type in Mermaid 12.1.0. Each type is ported from Pele, and the parity suite (\`src/Parity.test.ts\`) renders every vector with both and compares the SVG content, width, and height.
 
 ${ported} of ${entries.length} types render today, and ${passed} of ${vectors} vectors match Pele. Error vectors match when both report the same message.
 
@@ -349,7 +349,7 @@ type Status = 'differs' | 'matches' | 'not-ported' | 'partial'
 
 /** Runs the parity suite and summarizes it by diagram type. */
 function parity() {
-  const directory = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-parity-'))
+  const directory = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-parity-'))
 
   try {
     const output = Path.join(directory, 'parity.json')

@@ -1,6 +1,6 @@
 /**
- * @module Types for Mermaid files imported through the `melee/vite` plugin. Reference it with
- * `/// <reference types="melee/vite/client" />` or list it in `compilerOptions.types`.
+ * @module Types for Mermaid files imported through the `ondine/vite` plugin. Reference it with
+ * `/// <reference types="ondine/vite/client" />` or list it in `compilerOptions.types`.
  */
 
 declare module '*.mermaid' {

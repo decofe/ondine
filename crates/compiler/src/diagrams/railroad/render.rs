@@ -729,7 +729,7 @@ fn place(
                 if !item.text.is_empty() {
                     drawing
                         .nodes
-                        .push_str("<text class=\"melee-edge-label melee-count\" x=\"");
+                        .push_str("<text class=\"ondine-edge-label ondine-count\" x=\"");
                     push_num(&mut drawing.nodes, middle);
                     drawing.nodes.push_str("\" y=\"");
                     push_num(&mut drawing.nodes, loop_y + COUNT_SIZE + 3.0);
@@ -776,7 +776,7 @@ fn push_leaf(out: &mut String, item: &LaidOut, x: f64, y: f64, leaves: &Leaves<'
 
     match item.kind {
         Kind::Terminal => {
-            out.push_str("<g class=\"melee-node melee-terminal\">");
+            out.push_str("<g class=\"ondine-node ondine-terminal\">");
             out.push_str(&shape);
             out.push_str(" rx=\"");
             push_num(out, leaves.box_top);
@@ -791,7 +791,7 @@ fn push_leaf(out: &mut String, item: &LaidOut, x: f64, y: f64, leaves: &Leaves<'
             out.push_str("</text></g>");
         }
         Kind::NonTerminal => {
-            out.push_str("<g class=\"melee-node melee-nonterminal\" data-id=\"");
+            out.push_str("<g class=\"ondine-node ondine-nonterminal\" data-id=\"");
             out.push_str(&esc_text(&item.id));
             out.push_str("\">");
             out.push_str(&shape);
@@ -808,7 +808,7 @@ fn push_leaf(out: &mut String, item: &LaidOut, x: f64, y: f64, leaves: &Leaves<'
         _ => {
             // The shown text is `? {text} ?`, with ASCII marks at both ends.
             let inner = text.get(2..text.len().saturating_sub(2)).unwrap_or("");
-            out.push_str("<g class=\"melee-node melee-special\">");
+            out.push_str("<g class=\"ondine-node ondine-special\">");
             out.push_str(&shape);
             out.push_str(" rx=\"");
             out.push_str(RADIUS);
@@ -920,9 +920,9 @@ fn draw(model: &RailroadModel, config: &Value, options: &RenderOptions, tight: b
         drawing.line(left + laid.width, baseline, end);
         place(&mut drawing, root, left, baseline, &m, &turns, &leaves);
 
-        rules.push_str("<g class=\"melee-rule\" data-id=\"");
+        rules.push_str("<g class=\"ondine-rule\" data-id=\"");
         rules.push_str(&esc_text(&rule.name));
-        rules.push_str("\"><text class=\"melee-rule-name\" x=\"");
+        rules.push_str("\"><text class=\"ondine-rule-name\" x=\"");
         push_num(&mut rules, pad);
         rules.push_str("\" y=\"");
         push_num(&mut rules, top + head_height / 2.0 + head_size * 0.35);
@@ -930,24 +930,26 @@ fn draw(model: &RailroadModel, config: &Value, options: &RenderOptions, tight: b
         push_num(&mut rules, head_size);
         rules.push_str("\" font-weight=\"var(--_hw)\" text-anchor=\"start\">");
         rules.push_str(&esc(&name));
-        rules.push_str("</text><path class=\"melee-edge melee-track\" d=\"");
+        rules.push_str("</text><path class=\"ondine-edge ondine-track\" d=\"");
         rules.push_str(&drawing.track);
         rules.push_str("\" fill=\"none\" stroke=\"var(--_l)\"");
         rules.push_str(&stroke);
         rules.push_str("/>");
         if !drawing.arrows.is_empty() {
-            rules.push_str("<path class=\"melee-marker\" d=\"");
+            rules.push_str("<path class=\"ondine-marker\" d=\"");
             rules.push_str(&drawing.arrows);
             rules.push_str("\" fill=\"var(--_l)\"/>");
         }
         if radius > 0.0 {
-            rules.push_str("<circle class=\"melee-marker melee-start\" cx=\"");
+            rules.push_str("<circle class=\"ondine-marker ondine-start\" cx=\"");
             push_num(&mut rules, pad + radius);
             rules.push_str("\" cy=\"");
             push_num(&mut rules, baseline);
             rules.push_str("\" r=\"");
             push_num(&mut rules, radius);
-            rules.push_str("\" fill=\"var(--_l)\"/><circle class=\"melee-marker melee-end\" cx=\"");
+            rules.push_str(
+                "\" fill=\"var(--_l)\"/><circle class=\"ondine-marker ondine-end\" cx=\"",
+            );
             push_num(&mut rules, end + radius);
             rules.push_str("\" cy=\"");
             push_num(&mut rules, baseline);
@@ -970,11 +972,11 @@ fn draw(model: &RailroadModel, config: &Value, options: &RenderOptions, tight: b
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !rules.is_empty() {
-        content.push_str("<g class=\"melee-rules\" transform=\"translate(0.5,0.5)\" font-size=\"");
+        content.push_str("<g class=\"ondine-rules\" transform=\"translate(0.5,0.5)\" font-size=\"");
         push_num(&mut content, size);
         content.push_str("\" text-anchor=\"middle\">");
         content.push_str(&rules);

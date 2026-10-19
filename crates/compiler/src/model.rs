@@ -1,4 +1,4 @@
-//! Parsed models as JSON, for the tests that compare Melee's parsers with Pele's and Mermaid's.
+//! Parsed models as JSON, for the tests that compare Ondine's parsers with Pele's and Mermaid's.
 //! Release modules leave this out with the `model` feature.
 
 use crate::error::{Code, Error};

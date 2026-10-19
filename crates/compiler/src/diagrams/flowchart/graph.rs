@@ -162,7 +162,7 @@ pub(crate) fn build(model: &FlowDb, default_curve: Option<&str>) -> FlowGraph {
         }
     }
 
-    // A subgraph's color index follows declaration order through the nesting. Melee's
+    // A subgraph's color index follows declaration order through the nesting. Ondine's
     // monochrome theme does not read it, so only the traversal Pele performs is skipped.
 
     let any_collapsed = subgraphs

@@ -11,7 +11,7 @@ export type Settings = {
   readonly config: Harness.Config
   /** `performance.now()` before the lane's module began to load. */
   readonly start: number
-  /** The URL of the WebAssembly module Melee compiles. */
+  /** The URL of the WebAssembly module Ondine compiles. */
   readonly wasm: string
 }
 

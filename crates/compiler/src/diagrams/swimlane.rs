@@ -137,11 +137,11 @@ fn draw_lane(
         c.x
     };
     let cy = if sideways { c.y } else { top + c.pad_top / 2.0 };
-    let mut attrs = String::from(" class=\"melee-cluster-label\" fill=\"var(--_m)\"");
+    let mut attrs = String::from(" class=\"ondine-cluster-label\" fill=\"var(--_m)\"");
     attrs.push_str(&style.text);
     let text = label_svg(label, cx, cy, &attrs, None);
 
-    let mut out = String::from("<g class=\"melee-cluster melee-lane");
+    let mut out = String::from("<g class=\"ondine-cluster ondine-lane");
     out.push_str(classes);
     out.push_str("\" data-id=\"");
     out.push_str(id);

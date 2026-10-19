@@ -440,7 +440,7 @@ pub(crate) fn to_json(model: &Model) -> String {
 }
 
 /// Pele's `semanticModel`: the diagram with presentation-only controls left out, for tools that
-/// read what it means. Melee exposes no model API, so only the parity tests read it.
+/// read what it means. Ondine exposes no model API, so only the parity tests read it.
 #[cfg(feature = "model")]
 mod semantic {
     use super::db::{AgentflowDb, PRESENTATION_KEYS};
@@ -831,7 +831,7 @@ mod tests {
         }
     }
 
-    /// Melee's model through the accessors Pele's reference projection reads.
+    /// Ondine's model through the accessors Pele's reference projection reads.
     #[cfg(feature = "model")]
     fn project(model: &Json) -> Json {
         let text = |key: &str| member(model, key).map_or_else(|| Json::Str(String::new()), clone);
@@ -988,7 +988,7 @@ mod tests {
         Json::Obj(out)
     }
 
-    /// Melee's projected model for `src` through the whole pipeline, or the first line of its
+    /// Ondine's projected model for `src` through the whole pipeline, or the first line of its
     /// error, as Pele's `peleReference` builds it with Mermaid's palette of 12 and `basis` curve.
     #[cfg(feature = "model")]
     fn reference_of(src: &str) -> Result<Json, String> {
