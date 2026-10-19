@@ -62,6 +62,17 @@ Without file arguments, the command renders standard input to standard output.
 cat flow.mmd | npx ondine > flow.svg
 ```
 
+### Print in the Terminal
+
+The `--print` option shows a diagram in the terminal and writes no files. Install the optional `@resvg/resvg-wasm` peer dependency first.
+
+```sh
+# Installs the rasterizer, then previews a diagram
+npm install --save-dev @resvg/resvg-wasm
+echo 'flowchart LR
+  A --> B' | ondine --print
+```
+
 ### Fail on Errors
 
 The command reports each invalid diagram as `file:line:column: message`. It renders the remaining files and then exits with code 1.

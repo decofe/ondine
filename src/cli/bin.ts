@@ -6,6 +6,7 @@ import * as Util from 'node:util'
 import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 import * as Markdown from './Markdown.js'
+import * as Terminal from './Terminal.js'
 
 const usage = `Usage: ondine [files...] [options]
 
@@ -19,6 +20,8 @@ so later runs re-render their own output and --restore turns it back into a fenc
 
 Options:
   -o, --out-dir <dir>   Directory for rendered files
+  -p, --print           Print Mermaid files and standard input in the terminal
+                        instead of writing SVG (requires @resvg/resvg-wasm)
       --svg             Link SVG files from Markdown instead of the Worker
       --worker <url>    Worker origin for Markdown images
                         (default: ${Markdown.defaultWorker})
@@ -32,6 +35,7 @@ const { positionals, values } = Util.parseArgs({
     check: { type: 'boolean' },
     help: { short: 'h', type: 'boolean' },
     'out-dir': { short: 'o', type: 'string' },
+    print: { short: 'p', type: 'boolean' },
     restore: { type: 'boolean' },
     svg: { type: 'boolean' },
     worker: { type: 'string' },
@@ -45,7 +49,8 @@ if (values.help) {
 
 if (positionals.length === 0) {
   const source = Fs.readFileSync(0, 'utf8')
-  process.stdout.write(render(source, '<stdin>') ?? '')
+  const svg = render(source, '<stdin>')
+  if (svg !== undefined) process.stdout.write(values.print ? await print(svg) : svg)
   process.exit(process.exitCode ?? 0)
 }
 
@@ -58,9 +63,28 @@ for (const file of positionals) {
   const svg = render(Fs.readFileSync(file, 'utf8'), file)
   if (svg === undefined) continue
 
+  if (values.print) {
+    process.stdout.write(await print(svg))
+    continue
+  }
+
   const name = `${Path.basename(file).replace(/\.(?:mmd|mermaid)$/, '')}.svg`
   const output = Path.join(values['out-dir'] ?? Path.dirname(file), name)
   write(file, output, svg)
+}
+
+/** Prints `svg` in the terminal, or reports why it cannot and exits with 1. */
+async function print(svg: string): Promise<string> {
+  try {
+    return await Terminal.print(svg, {
+      columns: process.stdout.columns ?? 80,
+      protocol: Terminal.detect(process.env),
+    })
+  } catch (error) {
+    if (!(error instanceof Terminal.PrintError)) throw error
+    console.error(error.message)
+    process.exit(1)
+  }
 }
 
 /** Renders `source`, or reports the error with its location and returns `undefined`. */

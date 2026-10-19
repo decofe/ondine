@@ -8,3 +8,4 @@ src/internal/*.generated.wasm
 test/oracles/*.generated.wasm
 bench/results
 .wrangler
+.bin-*

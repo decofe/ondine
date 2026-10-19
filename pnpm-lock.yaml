@@ -158,6 +158,9 @@ importers:
       '@mermaid-js/parser':
         specifier: 'catalog:'
         version: 2.0.1
+      '@resvg/resvg-wasm':
+        specifier: 'catalog:'
+        version: 2.6.2
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2

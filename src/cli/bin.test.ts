@@ -10,10 +10,13 @@ describe('ondine', () => {
   let bin: string
   let root: string
 
+  let dir: string
+
   // Node cannot resolve the source's `.js` specifiers to `.ts`, so the CLI runs as a bundle laid
-  // out as the package is: `cli/bin` beside `internal/`, where the compiler module loads from.
+  // out as the package is: `cli/bin` beside `internal/`, where the compiler module loads from. The
+  // bundle stays inside the repository, so it resolves the optional `@resvg/resvg-wasm` peer.
   beforeAll(async () => {
-    const dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-cli-bin-'))
+    dir = Fs.mkdtempSync(Path.join(import.meta.dirname, '.bin-'))
     bin = Path.join(dir, 'cli/bin.mjs')
     Fs.mkdirSync(Path.join(dir, 'internal'))
     Fs.copyFileSync(
@@ -23,10 +26,15 @@ describe('ondine', () => {
     await Esbuild.build({
       bundle: true,
       entryPoints: [Path.join(import.meta.dirname, 'bin.ts')],
+      external: ['@resvg/resvg-wasm'],
       format: 'esm',
       outfile: bin,
       platform: 'node',
     })
+  })
+
+  afterAll(() => {
+    Fs.rmSync(dir, { force: true, recursive: true })
   })
 
   beforeEach(() => {
@@ -49,6 +57,44 @@ describe('ondine', () => {
         '<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart"',
       ),
     ).toBe(true)
+  })
+
+  test('prints a diagram with the Kitty graphics protocol', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '--print'], {
+      encoding: 'utf8',
+      env: { ...process.env, ONDINE_TERMINAL: 'kitty' },
+      input: 'flowchart LR\n  A --> B\n',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(JSON.stringify(result.stdout.slice(0, 22))).toMatchInlineSnapshot(
+      `""\\u001b_Ga=T,f=100,m=1;iVBOR""`,
+    )
+    expect(result.stdout.endsWith('\x1b\\\n')).toMatchInlineSnapshot(`true`)
+  })
+
+  test('prints a diagram as an iTerm2 inline image', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '-p'], {
+      encoding: 'utf8',
+      env: { ...process.env, TERM_PROGRAM: 'iTerm.app' },
+      input: 'flowchart LR\n  A --> B\n',
+    })
+
+    expect(JSON.stringify(result.stdout.slice(0, 23))).toMatchInlineSnapshot(
+      `""\\u001b]1337;File=inline=1;si""`,
+    )
+  })
+
+  test('prints a diagram as braille in other terminals', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '--print'], {
+      encoding: 'utf8',
+      env: { ...process.env, ONDINE_TERMINAL: 'text' },
+      input: 'flowchart LR\n  A --> B\n',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(/^[\u2800-\u28ff\n]+$/.test(result.stdout)).toMatchInlineSnapshot(`true`)
+    expect(result.stdout.split('\n').length > 3).toMatchInlineSnapshot(`true`)
   })
 
   test('renders files into an output directory', () => {

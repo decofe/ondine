@@ -20,6 +20,7 @@
     "@fontsource/geist-mono": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@mermaid-js/parser": "catalog:",
+    "@resvg/resvg-wasm": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -406,9 +407,13 @@
   ],
   "dependencies": {},
   "peerDependencies": {
+    "@resvg/resvg-wasm": "catalog:",
     "vite": "catalog:"
   },
   "peerDependenciesMeta": {
+    "@resvg/resvg-wasm": {
+      "optional": true
+    },
     "vite": {
       "optional": true
     }

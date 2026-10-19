@@ -115,6 +115,23 @@ Writes and removes nothing. If a run would change a file, the command reports `f
 ondine README.md --svg --check
 ```
 
+### --print
+
+Prints each Mermaid file, or standard input, in the terminal and writes no files. The command needs the optional `@resvg/resvg-wasm` peer dependency and a monospace system font.
+
+| Terminal                 | Output                  |
+| ------------------------ | ----------------------- |
+| Kitty, Ghostty           | Kitty graphics protocol |
+| iTerm2, WezTerm, VS Code | iTerm2 inline image     |
+| Other terminals          | Braille dots            |
+
+Set `ONDINE_TERMINAL` to `kitty`, `iterm`, or `text` to select the output.
+
+```sh
+# Prints the diagram in the terminal
+ondine flow.mmd --print
+```
+
 ### --help
 
 - **Alias:** `-h`
