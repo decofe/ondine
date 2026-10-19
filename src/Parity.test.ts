@@ -6,6 +6,11 @@ import * as Vectors from '../test/Vectors.js'
 /** The time gantt charts schedule against, on both sides, so output does not depend on the clock. */
 const now = Date.UTC(2024, 0, 15, 12)
 
+/** Types whose output differs from Pele's by design, with the reason. */
+const differences: Readonly<Record<string, string>> = {
+  info: "draws Melee's name and version where Pele draws its own",
+}
+
 /** Every diagram type with vectors, in Pele's names. Unported types are skipped. */
 const types = Vectors.types()
 
@@ -27,7 +32,11 @@ describe('render', () => {
   for (const type of types) {
     const vectors = Vectors.of(type)
 
-    describe.skipIf(vectors[0] === undefined || !ported(vectors[0].source))(type, () => {
+    const difference = differences[type]
+
+    describe.skipIf(
+      difference !== undefined || vectors[0] === undefined || !ported(vectors[0].source),
+    )(difference === undefined ? type : `${type} (${difference})`, () => {
       for (const vector of vectors) {
         test(vector.label, () => {
           const expected = Pele.render(vector.source, { now })
