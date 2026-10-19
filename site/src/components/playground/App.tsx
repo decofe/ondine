@@ -16,8 +16,8 @@ const views: readonly { readonly label: string; readonly value: View }[] = [
 ]
 
 /** Lays out the editor and preview, and owns their shared state. */
-export function App() {
-  const [source, setSource] = useState(() => Share.read() ?? Samples.initial)
+export function App(props: App.Props) {
+  const [source, setSource] = useState(() => props.source ?? Samples.initial)
   const [view, setView] = useState<View>('diagram')
   const [searching, setSearching] = useState(false)
   const [outcome, setOutcome] = useState<Outcome | undefined>()
@@ -118,7 +118,7 @@ export function App() {
               <button
                 {...styles.search()}
                 onClick={async () => {
-                  await navigator.clipboard.writeText(Share.link(source))
+                  await navigator.clipboard.writeText(await Share.link(source))
                   flash('Link copied')
                 }}
                 type="button"
@@ -142,6 +142,13 @@ export function App() {
       <Search onClose={() => setSearching(false)} onOpen={setSource} open={searching} />
     </div>
   )
+}
+
+export declare namespace App {
+  type Props = {
+    /** Source from a share link. Defaults to the starter diagram. */
+    readonly source?: string | undefined
+  }
 }
 
 /** A square button that shows a 16-unit outline icon, named by `label` for assistive technology and tooltips. */

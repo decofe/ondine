@@ -1,5 +1,6 @@
 /** Mounts the playground app in the browser, sized to the viewport below the masthead. @module */
 import { lazy, Suspense, useEffect, useState } from 'react'
+import * as Share from './playground/Share.js'
 import { style } from '../zyzz.config.js'
 
 // The playground compiles in the browser with Ondine. Leaving it out of the server build keeps the
@@ -9,23 +10,19 @@ const App = import.meta.env.SSR
   ? undefined
   : lazy(((chunk) => async () => ({ default: (await chunk).App }))(import('./playground/App.js')))
 
-// Only the first render on the client must match the server's loading state. Later visits mount at once.
-let hydrated = false
-
 export function Playground() {
-  // The app reads its source from the URL fragment, so it mounts after hydration.
-  const [mounted, setMounted] = useState(hydrated)
+  // The app reads its source from the URL, which decodes asynchronously, so it mounts after hydration.
+  const [shared, setShared] = useState<{ source: string | undefined }>()
 
   useEffect(() => {
-    hydrated = true
-    setMounted(true)
+    void Share.read().then((source) => setShared({ source }))
   }, [])
 
   return (
     <div {...styles.frame()}>
-      {mounted && App ? (
+      {shared && App ? (
         <Suspense fallback={<p {...styles.loading()}>Loading the playground…</p>}>
-          <App />
+          <App source={shared.source} />
         </Suspense>
       ) : (
         <p {...styles.loading()}>Loading the playground…</p>

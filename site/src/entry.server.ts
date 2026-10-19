@@ -12,7 +12,7 @@ const handle = createStartHandler(defaultStreamHandler)
 export default {
   async fetch(request: Request, options?: Parameters<typeof handle>[1]) {
     const url = new URL(request.url)
-    if (Image.matches(url)) return Image.respond(request)
+    if (Image.matches(url)) return Image.respond(request, { preview: negotiate(request).preview })
 
     const read = ['GET', 'HEAD'].includes(request.method)
     if (read) {

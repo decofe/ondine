@@ -6,7 +6,16 @@ import * as Head from '../Head.js'
 
 export const Route = createFileRoute('/playground')({
   component: Page,
-  head: () => Head.page(Head.pages.playground),
+  // A shared diagram previews as its own card, drawn by the image Worker from the `d` payload.
+  head: (entry) => {
+    const payload = entry.match.search.d
+    if (payload === undefined || !/^[\w-]{1,4090}$/.test(payload))
+      return Head.page(Head.pages.playground)
+    return Head.page({ ...Head.pages.playground, image: `/${payload}.png` })
+  },
+  validateSearch: (search: Record<string, unknown>): { d?: string | undefined } => ({
+    d: typeof search.d === 'string' ? search.d : undefined,
+  }),
 })
 
 function Page() {

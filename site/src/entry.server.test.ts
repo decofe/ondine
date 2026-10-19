@@ -206,6 +206,58 @@ describe('fetch', () => {
     )
   })
 
+  test('draws diagram images on PNG cards', async () => {
+    const response = await fetch(`${origin}/${encode('flowchart LR\n  A --> B')}.png`)
+    const source = await fetch(`${origin}/png?source=${encodeURIComponent('pie\n  "A" : 1')}`)
+    const invalid = await fetch(`${origin}/${encode('not a diagram')}.png`)
+    const png = Buffer.from(await response.arrayBuffer())
+
+    expect(response.headers.get('content-type')).toMatchInlineSnapshot(`"image/png"`)
+    // A PNG's IHDR chunk holds its width and height at bytes 16 through 23.
+    expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toMatchInlineSnapshot(`
+      [
+        1200,
+        630,
+      ]
+    `)
+    expect(source.status).toMatchInlineSnapshot(`200`)
+    expect(invalid.status).toMatchInlineSnapshot(`400`)
+    expect(invalid.headers.get('content-type')).toMatchInlineSnapshot(`"image/png"`)
+  })
+
+  test('answers link previewers on SVG addresses with the PNG card', async () => {
+    const path = `/svg?source=${encodeURIComponent('flowchart LR\n  A --> B')}&scheme=dark`
+    const preview = await fetch(`${origin}${path}`, { headers: { 'user-agent': 'Slackbot 1.0' } })
+    const image = await fetch(`${origin}${path}`)
+
+    expect(preview.headers.get('content-type')).toMatchInlineSnapshot(`"text/html; charset=utf-8"`)
+    expect((await preview.text()).match(/<meta[^>]*og:image"[^>]*>/)?.[0]).toMatchInlineSnapshot(
+      `"<meta content="http://localhost:3161/png?source=flowchart+LR%0A++A+--%3E+B" property="og:image">"`,
+    )
+    expect(image.headers.get('content-type')).toMatchInlineSnapshot(
+      `"image/svg+xml; charset=utf-8"`,
+    )
+    expect(image.headers.get('vary')).toMatchInlineSnapshot(`"User-Agent"`)
+  })
+
+  test('previews a shared playground diagram as its PNG card', async () => {
+    const html = await (
+      await fetch(`${origin}/playground?d=${encode('flowchart LR\n  A --> B')}`)
+    ).text()
+    const plain = await (await fetch(`${origin}/playground`)).text()
+
+    expect(html.match(/<meta[^>]*og:image"[^>]*>/g)).toMatchInlineSnapshot(`
+      [
+        "<meta content="https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.png" property="og:image"/>",
+      ]
+    `)
+    expect(plain.match(/<meta[^>]*og:image"[^>]*>/g)).toMatchInlineSnapshot(`
+      [
+        "<meta content="https://ondine.sh/og/playground.png" property="og:image"/>",
+      ]
+    `)
+  })
+
   test('pins a diagram image scheme', async () => {
     const response = await fetch(`${origin}/${encode('not a diagram')}.svg?scheme=dark`)
 

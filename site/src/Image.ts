@@ -1,25 +1,30 @@
 /**
- * Serves Ondine diagrams as SVG images for Markdown hosts such as GitHub.
+ * Serves Ondine diagrams as images for Markdown hosts such as GitHub, and as Open Graph cards.
  *
  * `GET /<payload>.svg` renders the Mermaid source in `payload`, encoded as Kroki does: UTF-8, zlib
  * deflate, then base64url. `GET /svg?source=<source>` reads percent-encoded source instead, which
  * authors and agents can write without a compressor. One adaptive SVG follows the embedder's color
  * scheme. `?scheme=light` or `?scheme=dark` pins one scheme for `<picture>` sources.
+ *
+ * `GET /<payload>.png` and `GET /png?source=<source>` draw the diagram on a 1200x630 PNG card. Link
+ * previewers that request an SVG address receive an HTML page whose `og:image` is that card.
  * @module
  */
 import { Render, RenderError } from 'ondine/compiler/wasm'
-// Every diagram type, optimized for speed. Workers download nothing per request.
-import module from 'ondine/compiler/wasm/all.fast.wasm'
+// Every diagram type, optimized for size so the Worker fits resvg under the 3 MB limit. Workers
+// download nothing per request.
+import module from 'ondine/compiler/wasm/all.wasm'
+import * as Card from './Card.js'
 
 /** Thrown when a request path does not hold a decodable payload. */
 export class PayloadError extends Error {
   override name = 'Image.PayloadError'
 }
 
-/** Matches a payload path and captures its payload. Static assets such as `/favicon.svg` are served before the Worker runs. */
-const payloadPath = /^\/([\w-]+)\.svg$/
-/** Reads percent-encoded source from the `source` query parameter. */
-const sourcePath = '/svg'
+/** Matches a payload path and captures its payload and format. Static assets such as `/favicon.svg` are served before the Worker runs. */
+const payloadPath = /^\/([\w-]+)\.(png|svg)$/
+/** Matches a path that reads percent-encoded source from the `source` query parameter. */
+const sourcePath = /^\/(png|svg)$/
 
 // Camo rejects proxied URLs over about 8 kB, and it hex-encodes the origin URL, doubling it.
 const maxPath = 4096
@@ -33,18 +38,24 @@ const schemes = {
   light: '--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000',
 } as const
 
-/** Whether `url` names a diagram image: a payload path or the `/svg` source path. */
+/** Whether `url` names a diagram image: a payload path or a `/svg` or `/png` source path. */
 export function matches(url: URL): boolean {
-  return url.pathname === sourcePath || payloadPath.test(url.pathname)
+  return sourcePath.test(url.pathname) || payloadPath.test(url.pathname)
 }
 
-/** Answers a request whose URL {@link matches} with the rendered diagram, or with an SVG error card and status 400. */
-export async function respond(request: Request): Promise<Response> {
+/**
+ * Answers a request whose URL {@link matches} with the rendered diagram, or with an error card and
+ * status 400. A `preview` request for SVG receives an HTML page that names the PNG card as its
+ * `og:image`, since link previews do not draw SVG.
+ */
+export async function respond(request: Request, options: respond.Options = {}): Promise<Response> {
   if (request.method !== 'GET' && request.method !== 'HEAD')
     return new Response('Method not allowed', { headers: { allow: 'GET, HEAD' }, status: 405 })
 
   const url = new URL(request.url)
-  if (!matches(url)) return new Response('Not found', { status: 404 })
+  const format = (payloadPath.exec(url.pathname) ?? sourcePath.exec(url.pathname))?.at(-1)
+  if (format !== 'png' && format !== 'svg') return new Response('Not found', { status: 404 })
+  if (format === 'svg' && options.preview) return preview(url)
 
   const scheme = url.searchParams.get('scheme')
   const style = (() => {
@@ -68,16 +79,61 @@ export async function respond(request: Request): Promise<Response> {
       return text
     })()
     const { svg } = renderer.render(source)
+    // Output depends only on the URL and the deployed compiler, so caches may keep it for a day.
+    const cache = 'public, max-age=86400, stale-while-revalidate=604800'
 
-    return image(theme(svg, style), {
-      // Output depends only on the URL and the deployed compiler, so caches may keep it for a day.
-      'cache-control': 'public, max-age=86400, stale-while-revalidate=604800',
-    })
+    if (format === 'png')
+      return cached(request, async () => image(await Card.png(svg), { 'cache-control': cache }))
+    return image(theme(svg, style), { 'cache-control': cache, vary: 'User-Agent' })
   } catch (error) {
     if (!(error instanceof PayloadError || error instanceof RenderError)) throw error
 
-    return image(theme(card(error.message), style), { 'cache-control': 'public, max-age=300' }, 400)
+    const headers = { 'cache-control': 'public, max-age=300' }
+    if (format === 'png') return image(await Card.png(card(error.message)), headers, 400)
+    return image(theme(card(error.message), style), { ...headers, vary: 'User-Agent' }, 400)
   }
+}
+
+export declare namespace respond {
+  type Options = {
+    /** Whether a link previewer, such as Slackbot, sent the request. */
+    preview?: boolean | undefined
+  }
+}
+
+/**
+ * Answers `GET` from the data center's cache, storing a successful response on a miss.
+ * Rasterizing a card costs far more CPU than compiling its diagram.
+ */
+async function cached(request: Request, fn: () => Promise<Response>): Promise<Response> {
+  // Workers expose the zone cache as `caches.default`, which the DOM types do not declare.
+  const cache = (caches as unknown as { default: Cache }).default
+  if (request.method === 'GET') {
+    const hit = await cache.match(request)
+    if (hit) return hit
+  }
+
+  const response = await fn()
+  if (request.method === 'GET') await cache.put(request, response.clone())
+  return response
+}
+
+/** Answers a link previewer with a page whose Open Graph image is the PNG card for the same diagram. */
+function preview(url: URL): Response {
+  const card = new URL(url)
+  card.pathname = url.pathname.replace(/svg$/, 'png')
+  card.searchParams.delete('scheme')
+  const attribute = (value: string) => escape(value).replaceAll('"', '&quot;')
+
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Mermaid Diagram · Ondine</title><meta content="Mermaid Diagram" property="og:title"><meta content="Ondine" property="og:site_name"><meta content="${attribute(card.href)}" property="og:image"><meta content="Mermaid diagram" property="og:image:alt"><meta content="630" property="og:image:height"><meta content="image/png" property="og:image:type"><meta content="1200" property="og:image:width"><meta content="summary_large_image" name="twitter:card"><meta content="${attribute(card.href)}" name="twitter:image"></head><body><img alt="Mermaid diagram" src="${attribute(url.href)}"></body></html>`
+
+  return new Response(html, {
+    headers: {
+      'cache-control': 'public, max-age=86400',
+      'content-type': 'text/html; charset=utf-8',
+      vary: 'User-Agent',
+    },
+  })
 }
 
 /** Decodes a base64url zlib payload into source text, enforcing {@link maxSource}. */
@@ -142,12 +198,16 @@ function escape(text: string): string {
   return text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 }
 
-function image(svg: string, headers: Record<string, string>, status = 200): Response {
-  return new Response(svg, {
+function image(
+  body: string | Uint8Array<ArrayBuffer>,
+  headers: Record<string, string>,
+  status = 200,
+): Response {
+  return new Response(body, {
     headers: {
       ...headers,
       'content-security-policy': "default-src 'none'; style-src 'unsafe-inline'",
-      'content-type': 'image/svg+xml; charset=utf-8',
+      'content-type': typeof body === 'string' ? 'image/svg+xml; charset=utf-8' : 'image/png',
       'x-content-type-options': 'nosniff',
     },
     status,

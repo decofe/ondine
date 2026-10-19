@@ -36,6 +36,9 @@ catalogs:
     '@remotion/cli':
       specifier: 4.0.536
       version: 4.0.536
+    '@resvg/resvg-wasm':
+      specifier: 2.6.2
+      version: 2.6.2
     '@shikijs/transformers':
       specifier: 4.4.3
       version: 4.4.3
@@ -215,6 +218,9 @@ importers:
       '@fontsource/ibm-plex-mono':
         specifier: 'catalog:'
         version: 5.3.0
+      '@resvg/resvg-wasm':
+        specifier: 'catalog:'
+        version: 2.6.2
       '@tanstack/react-router':
         specifier: 'catalog:'
         version: 1.170.35(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -2245,6 +2251,10 @@ packages:
 
   '@remotion/zod-types@4.0.536':
     resolution: {integrity: sha512-vj0R7dMnEWfXKxlvEuKe0zIiHhp55N3q70ct6y81zzki0QuOL82Hw89caiUuNmdmeW/xLjqW8jQc550yA31bqw==}
+
+  '@resvg/resvg-wasm@2.6.2':
+    resolution: {integrity: sha512-FqALmHI8D4o6lk/LRWDnhw95z5eO+eAa6ORjVg09YRR7BkcM6oPHU9uyC0gtQG5vpFLvgpeU4+zEAz2H8APHNw==}
+    engines: {node: '>= 10'}
 
   '@rolldown/binding-android-arm-eabi@1.2.14':
     resolution: {integrity: sha512-aWR+XKH9+rW7m5fWq/5360J3mHycrx/o6xZM2DQFdJnTMdyP7/WzxPjhtLbVWdKo2y612/4U1bWqb3HQhiF7vg==}
@@ -7255,6 +7265,8 @@ snapshots:
     transitivePeerDependencies:
       - react
       - react-dom
+
+  '@resvg/resvg-wasm@2.6.2': {}
 
   '@rolldown/binding-android-arm-eabi@1.2.14':
     optional: true

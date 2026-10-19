@@ -8,6 +8,7 @@ import * as Module from 'node:module'
 import { render as compile } from 'ondine/compiler'
 import { render as rasterize } from 'takumi-js'
 import * as Head from './Head.js'
+import * as Svg from './Svg.js'
 
 /** A page's Open Graph card. */
 export type Card = {
@@ -52,7 +53,9 @@ export async function create(options: create.Options) {
           <Default
             diagram={{
               height: diagram.height,
-              src: dataUrl(flatten(diagram.svg)),
+              src: dataUrl(
+                Svg.flatten(diagram.svg, { '--ondine-font': "'IBM Plex Mono', monospace" }),
+              ),
               width: diagram.width,
             }}
             logo={dataUrl(logo)}
@@ -268,68 +271,4 @@ declare namespace Sheet {
 
 function dataUrl(svg: string | Uint8Array): string {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
-}
-
-/**
- * Replaces each `var()` in a diagram with the value its root style declares, or its fallback.
- * Takumi rasterizes SVG without CSS custom properties. `--ondine-font` names the registered Plex
- * Mono so labels match the card.
- */
-function flatten(svg: string): string {
-  const root = /<svg[^>]*\sstyle="([^"]*)"/.exec(svg)?.[1] ?? ''
-  const properties = new Map<string, string>()
-  for (const declaration of split(root, ';')) {
-    const at = declaration.indexOf(':')
-    const name = declaration.slice(0, at).trim()
-    if (name.startsWith('--')) properties.set(name, declaration.slice(at + 1).trim())
-  }
-  properties.set('--ondine-font', "'IBM Plex Mono', monospace")
-
-  function resolve(text: string, depth: number): string {
-    let output = ''
-    let index = 0
-    while (true) {
-      const start = text.indexOf('var(', index)
-      // Declarations reference each other a few levels deep, never in cycles.
-      if (start < 0 || depth > 8) return output + text.slice(index)
-
-      const end = close(text, start + 3)
-      const inner = text.slice(start + 4, end)
-      const comma = inner.indexOf(',')
-      const name = (comma < 0 ? inner : inner.slice(0, comma)).trim()
-      const fallback = comma < 0 ? '' : inner.slice(comma + 1)
-      output += text.slice(index, start) + resolve(properties.get(name) ?? fallback, depth + 1)
-      index = end + 1
-    }
-  }
-
-  return resolve(svg, 0)
-}
-
-/** Returns the index of the parenthesis closing the one at `open`. */
-function close(text: string, open: number): number {
-  let depth = 0
-  for (let index = open; index < text.length; index++) {
-    if (text[index] === '(') depth++
-    if (text[index] === ')' && --depth === 0) return index
-  }
-  return text.length
-}
-
-/** Splits text at a separator outside parentheses. */
-function split(text: string, separator: string): string[] {
-  const parts: string[] = []
-  let depth = 0
-  let last = 0
-  for (let index = 0; index < text.length; index++) {
-    const char = text[index]
-    if (char === '(') depth++
-    if (char === ')') depth--
-    if (char === separator && depth === 0) {
-      parts.push(text.slice(last, index))
-      last = index + 1
-    }
-  }
-  parts.push(text.slice(last))
-  return parts
 }

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "catalog:",
+    "@resvg/resvg-wasm": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:",
     "ondine": "workspace:*",

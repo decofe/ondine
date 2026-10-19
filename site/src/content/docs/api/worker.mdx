@@ -15,6 +15,8 @@ The Worker at `https://ondine.sh` compiles the Mermaid source encoded in the req
 ```txt
 GET /<payload>.svg?scheme=light|dark
 GET /svg?source=<source>&scheme=light|dark
+GET /<payload>.png
+GET /png?source=<source>
 ```
 
 `HEAD` is also accepted. Other methods return `405` with an `allow: GET, HEAD` header, and other paths return `404`.
@@ -62,6 +64,16 @@ Pins one color scheme. Without it, the image switches with `prefers-color-scheme
 ```
 
 ## Response
+
+### PNG Cards
+
+The `.png` and `/png` forms draw the diagram on a 1200x630 card in the light scheme, sized for link previews. Link previewers such as Slackbot that request an SVG address receive an HTML page whose `og:image` is the card.
+
+```md
+<!-- Shows the diagram where SVG images are not displayed -->
+
+![Flow](https://ondine.sh/png?source=flowchart%20LR%0A%20%20A%20--%3E%20B)
+```
 
 ### Success
 

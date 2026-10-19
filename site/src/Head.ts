@@ -65,7 +65,7 @@ export function page(options: page.Options) {
     meta: [
       { title },
       { content: description, name: 'description' },
-      ...meta({ image: image(path), title }),
+      ...meta({ image: options.image ?? image(path), title }),
       { content: description, property: 'og:description' },
       { content: title, property: 'og:title' },
       { content: url, property: 'og:url' },
@@ -77,6 +77,8 @@ export declare namespace page {
   type Options = {
     /** Summary for search results and link previews. */
     description: string
+    /** Preview image path. Defaults to the page's card from {@link image}. */
+    image?: string | undefined
     /** Path without a query string, such as `/docs/guides/vite`. */
     path: string
     /** Document title, including the site name. */

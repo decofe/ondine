@@ -20,6 +20,7 @@ catalog:
   '@mdx-js/rollup': '^3.1.1'
   '@mermaid-js/parser': '2.0.1'
   '@remotion/cli': '4.0.536'
+  '@resvg/resvg-wasm': '2.6.2'
   '@shikijs/transformers': '4.4.3'
   '@tanstack/react-router': '1.170.35'
   '@tanstack/react-start': '1.168.52'
