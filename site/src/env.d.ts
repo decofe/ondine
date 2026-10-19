@@ -1,4 +1,4 @@
-/** Declares the build-time values and virtual modules that `vite.config.ts` provides. @module */
+/** Declares the build-time values, virtual modules, and module types that `vite.config.ts` provides. @module */
 
 /** MDX page metadata prepared during the build. Each page chunk carries its own highlighted code. */
 declare const __DOCS__: {
@@ -48,4 +48,10 @@ declare module 'virtual:showcase' {
 declare module 'virtual:search-index' {
   const index: string
   export default index
+}
+
+/** The Cloudflare plugin compiles `.wasm` imports ahead of time. */
+declare module '*.wasm' {
+  const module: WebAssembly.Module
+  export default module
 }

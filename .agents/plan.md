@@ -33,7 +33,7 @@ Sub-microsecond rendering is not reachable: one cache miss costs about 100 ns. T
 
 GitHub renders ` ```mermaid ` fences with its own Mermaid viewer, so Ondine reaches GitHub through images:
 
-- `worker/` serves `GET /<zlib+base64url>.svg?scheme=light|dark` from a Cloudflare Worker that runs the WebAssembly compiler. Paths are limited to 4,096 characters and inflated source to 64 KiB. Errors return an SVG error card with status 400. Responses cache for a day with `stale-while-revalidate`.
+- The site Worker (`site/src/Image.ts`, deployed at `ondine.sh`) serves `GET /<zlib+base64url>.svg?scheme=light|dark` from the Cloudflare Worker that runs the WebAssembly compiler. Paths are limited to 4,096 characters and inflated source to 64 KiB. Errors return an SVG error card with status 400. Responses cache for a day with `stale-while-revalidate`.
 - READMEs embed light and dark variants with `<picture>` and `prefers-color-scheme`.
 - Workers refuse runtime WebAssembly compilation, so the Worker imports the build's `.wasm` file through `Render.create({ modules })`.
 

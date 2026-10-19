@@ -1,8 +1,10 @@
-/** Exercises the documentation Worker over HTTP: pages, Markdown twins, agent negotiation, and crawler files. @module */
+/** Exercises the site Worker over HTTP: pages, Markdown twins, agent negotiation, crawler files, and diagram images. @module */
 import * as ChildProcess from 'node:child_process'
+import * as Zlib from 'node:zlib'
 import { afterAll, beforeAll, describe, expect, test } from 'vite-plus/test'
 
 const origin = 'http://localhost:3161'
+const encode = (source: string | Buffer) => Zlib.deflateSync(source).toString('base64url')
 let server: ChildProcess.ChildProcess | undefined
 
 beforeAll(async () => {
@@ -131,5 +133,70 @@ describe('fetch', () => {
     const html = await (await fetch(`${origin}/examples`)).text()
 
     expect(html.match(/<a[^>]*href="\/playground#source=/g)?.length).toMatchInlineSnapshot(`167`)
+  })
+
+  test('renders diagram images through the precompiled module with an adaptive scheme', async () => {
+    const response = await fetch(`${origin}/${encode('not a diagram')}.svg`)
+
+    expect(response.status).toMatchInlineSnapshot(`400`)
+    expect(response.headers.get('cache-control')).toMatchInlineSnapshot(`"public, max-age=300"`)
+    expect(response.headers.get('content-security-policy')).toMatchInlineSnapshot(
+      `"default-src 'none'; style-src 'unsafe-inline'"`,
+    )
+    expect(response.headers.get('content-type')).toMatchInlineSnapshot(
+      `"image/svg+xml; charset=utf-8"`,
+    )
+    expect(response.headers.get('x-content-type-options')).toMatchInlineSnapshot(`"nosniff"`)
+    expect(await response.text()).toMatchInlineSnapshot(
+      `"<svg xmlns="http://www.w3.org/2000/svg" width="394" height="64" viewBox="0 0 394 64"><style>:root{--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000}@media (prefers-color-scheme:dark){:root{--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff}}</style><rect width="100%" height="100%" fill="var(--ondine-bg)" stroke="var(--ondine-line)" stroke-width="2"/><text font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" fill="var(--ondine-fg)" xml:space="preserve"><tspan x="12" y="26">Ondine could not render this diagram.</tspan><tspan x="12" y="46">No diagram type detected for the given text.</tspan></text></svg>"`,
+    )
+  })
+
+  test('pins a diagram image scheme', async () => {
+    const response = await fetch(`${origin}/${encode('not a diagram')}.svg?scheme=dark`)
+
+    expect((await response.text()).match(/<style>.*?<\/style>/)?.[0]).toMatchInlineSnapshot(
+      `"<style>:root{--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff}</style>"`,
+    )
+  })
+
+  test('rejects malformed diagram image payloads', async () => {
+    const notBase64 = await fetch(`${origin}/a.svg`)
+    expect(notBase64.status).toMatchInlineSnapshot(`400`)
+    expect((await notBase64.text()).match(/Payload[^<]*/)?.[0]).toMatchInlineSnapshot(
+      `"Payload is not base64url."`,
+    )
+
+    const notDeflate = await fetch(
+      `${origin}/${Buffer.from('flowchart').toString('base64url')}.svg`,
+    )
+    expect(notDeflate.status).toMatchInlineSnapshot(`400`)
+    expect((await notDeflate.text()).match(/Payload[^<]*/)?.[0]).toMatchInlineSnapshot(
+      `"Payload is not zlib-deflated UTF-8."`,
+    )
+  })
+
+  test('caps inflated diagram image source', async () => {
+    const response = await fetch(`${origin}/${encode(Buffer.alloc(65 * 1024, 'a'))}.svg`)
+
+    expect(response.status).toMatchInlineSnapshot(`400`)
+    expect((await response.text()).match(/Source[^<]*/)?.[0]).toMatchInlineSnapshot(
+      `"Source exceeds 65536 bytes."`,
+    )
+  })
+
+  test('caps the diagram image path length', async () => {
+    const response = await fetch(`${origin}/${'a'.repeat(4096)}.svg`)
+
+    expect((await response.text()).match(/Payload[^<]*/)?.[0]).toMatchInlineSnapshot(
+      `"Payload exceeds 4096 characters."`,
+    )
+  })
+
+  test('rejects other methods for diagram images', async () => {
+    const response = await fetch(`${origin}/${encode('flowchart')}.svg`, { method: 'POST' })
+
+    expect(response.status).toMatchInlineSnapshot(`405`)
+    expect(response.headers.get('allow')).toMatchInlineSnapshot(`"GET, HEAD"`)
   })
 })

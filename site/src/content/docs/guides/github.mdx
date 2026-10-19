@@ -14,9 +14,6 @@ sequenceDiagram
   Worker-->>README: image/svg+xml
 ```
 
-> [!NOTE]
-> The Worker deploys from `worker/` in the repository. Its public address is not published yet, so the examples below use `https://melee.broken-thunder-fb8b.workers.dev`.
-
 ## Walkthrough
 
 The steps below encode a diagram and embed it with light and dark variants.
@@ -39,7 +36,7 @@ Without a `scheme` parameter, one image follows the viewer's color scheme throug
 ```md title="README.md"
 <!-- Follows the reader's color scheme -->
 
-![Request flow](https://melee.broken-thunder-fb8b.workers.dev/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+![Request flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
 ```
 
 ### Pin Each Scheme
@@ -51,12 +48,9 @@ GitHub draws images inside a page whose scheme may differ from the system's. A `
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=dark"
+    srcset="https://ondine.sh/<payload>.svg?scheme=dark"
   />
-  <img
-    alt="Request flow"
-    src="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=light"
-  />
+  <img alt="Request flow" src="https://ondine.sh/<payload>.svg?scheme=light" />
 </picture>
 ```
 
@@ -84,9 +78,11 @@ Paths over 4,096 characters and sources over 64 KiB after inflating are rejected
 
 ### Deploy a Worker
 
+The image Worker is part of the documentation site in `site/` and answers at `https://ondine.sh`.
+
 ```sh
-# Builds the compiler and deploys worker/ with Wrangler
-pnpm --dir worker deploy
+# Builds the site with the image route and deploys it with Wrangler
+pnpm --dir site run deploy
 ```
 
 ## More

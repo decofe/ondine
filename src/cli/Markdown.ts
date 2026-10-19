@@ -13,7 +13,7 @@ import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
 
 /** The image Worker that `worker` mode links when no other is given. */
-export const defaultWorker = 'https://melee.broken-thunder-fb8b.workers.dev'
+export const defaultWorker = 'https://ondine.sh'
 
 // Matches the Worker's limit on request paths, which keeps URLs under GitHub's image proxy limit.
 const maxPath = 4096

@@ -1,6 +1,7 @@
-/** Answers robots.txt, the sitemap, and the llms.txt files, and negotiates Markdown for agents and HTML for browsers at the home page and documentation pages. @module */
+/** Answers diagram images, robots.txt, the sitemap, and the llms.txt files, and negotiates Markdown for agents and HTML for browsers at the home page and documentation pages. @module */
 import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
 import * as Head from './Head.js'
+import * as Image from './Image.js'
 import * as Llms from './Llms.js'
 import * as Markdown from './Markdown.js'
 import * as Sitemap from './Sitemap.js'
@@ -11,6 +12,8 @@ const handle = createStartHandler(defaultStreamHandler)
 export default {
   async fetch(request: Request, options?: Parameters<typeof handle>[1]) {
     const url = new URL(request.url)
+    if (Image.path.test(url.pathname)) return Image.respond(request)
+
     const read = ['GET', 'HEAD'].includes(request.method)
     if (read) {
       if (url.pathname === '/llms.txt') return Llms.index(request)

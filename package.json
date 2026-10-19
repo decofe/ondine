@@ -8,7 +8,7 @@
     "changeset:version": "changeset version",
     "check": "vp check --fix",
     "check:size": "node scripts/size.ts",
-    "check:types": "tsc && pnpm --dir site generate-routes && tsc -p site",
+    "check:types": "tsc && pnpm --dir site generate-routes && tsc -p site && pnpm --dir video diagrams && tsc -p video",
     "dev": "pnpm build:wasm && zile dev",
     "postinstall": "zile dev",
     "test": "pnpm build:wasm && vp test",

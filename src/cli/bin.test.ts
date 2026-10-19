@@ -128,8 +128,8 @@ describe('ondine', () => {
 
         <!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
         <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark">
-          <img alt="Mermaid flowchart diagram" src="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light">
+          <source media="(prefers-color-scheme: dark)" srcset="https://ondine.sh/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark">
+          <img alt="Mermaid flowchart diagram" src="https://ondine.sh/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light">
         </picture>
         <!-- /ondine -->
 
@@ -142,8 +142,8 @@ describe('ondine', () => {
 
           <!-- ondine:eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA -->
           <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="https://melee.broken-thunder-fb8b.workers.dev/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=dark">
-            <img alt="Mermaid sequence diagram" src="https://melee.broken-thunder-fb8b.workers.dev/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=light">
+            <source media="(prefers-color-scheme: dark)" srcset="https://ondine.sh/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=dark">
+            <img alt="Mermaid sequence diagram" src="https://ondine.sh/eNorTi0sTc1LTnXJTEwvSszlUlBw1LWzc7JSyMgEAIeXCLA.svg?scheme=light">
           </picture>
           <!-- /ondine -->
         "

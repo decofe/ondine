@@ -1,7 +1,7 @@
 /** Builds the per-page metadata that search engines and link previews read. @module */
 
 /** Production origin. Canonical and preview URLs on every deployment point here, so previews stay out of search results. */
-export const origin = 'https://melee-docs.broken-thunder-fb8b.workers.dev'
+export const origin = 'https://ondine.sh'
 
 /** Returns a page's title, description, and canonical URL as route `head` tags. */
 export function page(options: page.Options) {

@@ -2,7 +2,6 @@ packages:
   - '.'
   - site
   - video
-  - worker
 
 allowBuilds:
   es5-ext: false

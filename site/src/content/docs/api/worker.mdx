@@ -2,16 +2,13 @@
 
 Serve diagrams as SVG images from a Cloudflare Worker, for Markdown hosts such as GitHub.
 
-The Worker in `worker/` compiles the Mermaid source encoded in the request path with every diagram type. Its compiler module is precompiled by Wrangler, so requests download nothing. The [GitHub Images](/docs/guides/github) guide covers common tasks.
+The Worker at `https://ondine.sh` compiles the Mermaid source encoded in the request path with every diagram type. It ships with the documentation site in `site/`, and its compiler module is precompiled at build time, so requests download nothing. The [GitHub Images](/docs/guides/github) guide covers common tasks.
 
 ```md title="README.md"
 <!-- Renders a two-node flowchart that follows the reader's scheme -->
 
-![Flow](https://melee.broken-thunder-fb8b.workers.dev/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+![Flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
 ```
-
-> [!NOTE]
-> The Worker's public address is not published yet. Examples use `https://melee.broken-thunder-fb8b.workers.dev`.
 
 ## Request
 
@@ -45,9 +42,9 @@ Pins one color scheme. Without it, the image switches with `prefers-color-scheme
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=dark"
+    srcset="https://ondine.sh/<payload>.svg?scheme=dark"
   />
-  <img alt="Flow" src="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=light" />
+  <img alt="Flow" src="https://ondine.sh/<payload>.svg?scheme=light" />
 </picture>
 ```
 
@@ -79,6 +76,6 @@ Status `400` with an SVG card that reads "Ondine could not render this diagram."
 ## Deploy
 
 ```sh
-# Builds the compiler modules and deploys with Wrangler
-pnpm --dir worker deploy
+# Builds the site, including the image route, and deploys it with Wrangler
+pnpm --dir site run deploy
 ```

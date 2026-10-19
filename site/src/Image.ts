@@ -12,8 +12,11 @@ import module from 'ondine/compiler/wasm/all.fast.wasm'
 
 /** Thrown when a request path does not hold a decodable payload. */
 export class PayloadError extends Error {
-  override name = 'Worker.PayloadError'
+  override name = 'Image.PayloadError'
 }
+
+/** Matches an image path and captures its payload. Static assets such as `/favicon.svg` are served before the Worker runs. */
+export const path = /^\/([\w-]+)\.svg$/
 
 // Camo rejects proxied URLs over about 8 kB, and it hex-encodes the origin URL, doubling it.
 const maxPath = 4096
@@ -27,42 +30,37 @@ const schemes = {
   light: '--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000',
 } as const
 
-export default {
-  async fetch(request: Request): Promise<Response> {
-    if (request.method !== 'GET' && request.method !== 'HEAD')
-      return new Response('Method not allowed', { headers: { allow: 'GET, HEAD' }, status: 405 })
+/** Answers a request whose pathname matches {@link path} with the rendered diagram, or with an SVG error card and status 400. */
+export async function respond(request: Request): Promise<Response> {
+  if (request.method !== 'GET' && request.method !== 'HEAD')
+    return new Response('Method not allowed', { headers: { allow: 'GET, HEAD' }, status: 405 })
 
-    const url = new URL(request.url)
-    const match = /^\/([\w-]+)\.svg$/.exec(url.pathname)
-    if (!match?.[1]) return new Response('Not found', { status: 404 })
+  const url = new URL(request.url)
+  const match = path.exec(url.pathname)
+  if (!match?.[1]) return new Response('Not found', { status: 404 })
 
-    const scheme = url.searchParams.get('scheme')
-    const style = (() => {
-      if (scheme === 'dark' || scheme === 'light') return `:root{${schemes[scheme]}}`
-      return `:root{${schemes.light}}@media (prefers-color-scheme:dark){:root{${schemes.dark}}}`
-    })()
+  const scheme = url.searchParams.get('scheme')
+  const style = (() => {
+    if (scheme === 'dark' || scheme === 'light') return `:root{${schemes[scheme]}}`
+    return `:root{${schemes.light}}@media (prefers-color-scheme:dark){:root{${schemes.dark}}}`
+  })()
 
-    try {
-      if (url.pathname.length > maxPath)
-        throw new PayloadError(`Payload exceeds ${maxPath} characters.`)
+  try {
+    if (url.pathname.length > maxPath)
+      throw new PayloadError(`Payload exceeds ${maxPath} characters.`)
 
-      const source = await inflate(match[1])
-      const { svg } = renderer.render(source)
+    const source = await inflate(match[1])
+    const { svg } = renderer.render(source)
 
-      return image(theme(svg, style), {
-        // Output depends only on the URL and the deployed compiler, so caches may keep it for a day.
-        'cache-control': 'public, max-age=86400, stale-while-revalidate=604800',
-      })
-    } catch (error) {
-      if (!(error instanceof PayloadError || error instanceof RenderError)) throw error
+    return image(theme(svg, style), {
+      // Output depends only on the URL and the deployed compiler, so caches may keep it for a day.
+      'cache-control': 'public, max-age=86400, stale-while-revalidate=604800',
+    })
+  } catch (error) {
+    if (!(error instanceof PayloadError || error instanceof RenderError)) throw error
 
-      return image(
-        theme(card(error.message), style),
-        { 'cache-control': 'public, max-age=300' },
-        400,
-      )
-    }
-  },
+    return image(theme(card(error.message), style), { 'cache-control': 'public, max-age=300' }, 400)
+  }
 }
 
 /** Decodes a base64url zlib payload into source text, enforcing {@link maxSource}. */
