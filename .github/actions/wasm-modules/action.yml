@@ -16,7 +16,7 @@ runs:
         key: wasm-${{ hashFiles('crates/**', 'Cargo.lock', 'Cargo.toml', 'rust-toolchain.toml', 'scripts/build-wasm.ts', 'pnpm-lock.yaml') }}
         path: |
           src/internal/*.generated.*
-          src/internal/.stamp
+          target/wasm.stamp
           test/oracles/model.generated.wasm
 
     - name: Install toolchains

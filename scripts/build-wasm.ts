@@ -71,7 +71,8 @@ write(
   manifest(Fs.readFileSync(Path.join(root, 'package.json'), 'utf8')),
 )
 
-const stampFile = Path.join(root, 'src/internal/.stamp')
+// The stamp stays outside `src/`, which the package publishes.
+const stampFile = Path.join(root, 'target/wasm.stamp')
 const stamp = inputs()
 const modelFile = Path.join(root, 'test/oracles/model.generated.wasm')
 const outputs = [
