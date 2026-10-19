@@ -1,6 +1,5 @@
 /** The playground shell: source on the left, rendered views on the right. @module */
 import { useCallback, useEffect, useState } from 'react'
-import { global } from 'zyzz/web'
 import { Diagram, type Engine, type Outcome } from './Diagram.js'
 import { Editor } from './Editor.js'
 import { Menu } from './Menu.js'
@@ -8,20 +7,6 @@ import * as Samples from './Samples.js'
 import { Search } from './Search.js'
 import * as Share from './Share.js'
 import { style } from './zyzz.config.js'
-
-global({
-  body: {
-    backgroundColor: 'light-dark(#ffffff, #000000)',
-    color: 'light-dark(#111111, #ededed)',
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-    margin: 0,
-  },
-  html: { colorScheme: 'light dark' },
-  'button:focus-visible, input:focus-visible, textarea:focus-visible': {
-    outline: '2px solid currentColor',
-    outlineOffset: '2px',
-  },
-})
 
 /** The views the preview offers. */
 type View = 'compare' | 'melee' | 'mermaid' | 'svg'
@@ -168,10 +153,18 @@ export function App() {
 }
 
 namespace styles {
+  // The shell carries its own type, colors, and focus rings so it renders the same embedded in another page.
   export const page = style({
+    '& :is(button, input, textarea):focus-visible': {
+      outline: '2px solid currentColor',
+      outlineOffset: '2px',
+    },
+    backgroundColor: 'background',
+    color: 'text',
     display: 'flex',
     flexDirection: 'column',
-    height: '100dvh !custom',
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !custom',
+    height: '100% !custom',
   })
 
   export const header = style({

@@ -96,4 +96,8 @@ export default defineConfig({
   ],
   socials: [{ icon: 'github', link: 'https://github.com/wevm/melee' }],
   title: 'Melee',
+  topNav: [
+    { link: '/examples', text: 'Examples' },
+    { link: '/playground', text: 'Playground' },
+  ],
 })

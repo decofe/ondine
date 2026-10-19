@@ -18,5 +18,7 @@ const base = defineVars({
 /** Helpers bound to the playground tokens. */
 export const { style } = defineConfig({
   defaultVars: 'mono',
+  // The site compiles this config beside its own, so their scopes need distinct names.
+  id: 'playground',
   vars: { mono: base },
 })

@@ -45,7 +45,7 @@ Structured like `wevm/zyzz`:
 - `crates/wasm/`: thin `cdylib` adapter, `wasm32-wasip1`, size profile (`opt-level = "z"`), inlined into the package as generated TypeScript.
 - `src/`: TypeScript API (`render`, `mount`, errors), flat PascalCase modules with colocated tests.
 - `test/vectors/`: imported corpus with Mermaid and Pele notices.
-- `playground/`: Vite app. `site/`: Vocs docs. `bench/`: comparisons with Pele and Mermaid.
+- `site/`: Vocs docs, including the playground page. `bench/`: comparisons with Pele and Mermaid.
 - `AGENTS.md` adapted from zyzz, `.agents/plan.md` (this file), `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, and a Cargo workspace as in zyzz.
 
 ## Test vectors
@@ -109,7 +109,7 @@ All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte f
 - [x] `melee/remark`: compiles ` ```mermaid ` fences in `.md` and `.mdx` builds.
 - [x] `melee/vite`: imports `.mmd` files as precompiled SVG.
 - [x] `melee/compiler` (Node) and `melee/compiler/wasm` (browsers and Workers).
-- [x] Deploy the Worker and the playground to Cloudflare on every push to `main`.
+- [x] Deploy the Worker and the docs (with the playground) to Cloudflare on every push to `main`.
 
 ### 6. Speed and size
 
