@@ -62,3 +62,53 @@ Compiler code is about 250 kB of the remaining module. The largest functions are
 - **Case mapping:** `char::to_lowercase` keeps a 1.2 kB table. JavaScript's `toLowerCase` semantics need it.
 - **Hypotenuse:** libm's `hypot` and `fma` hold 2.3 kB. Replacing them can change edge coordinates.
 - **Static data:** 18.7 kB of strings and lookup tables remain, mostly error messages, keywords, and shape names.
+
+## Shared Core
+
+Every per-type module repeats preprocessing, YAML, detection, text, SVG builders, layout, and the allocator. A prototype loaded that code once, as a `core` module plus one module per type. It was not adopted: per-type modules stay smaller for one type, render faster, and need no relinking step.
+
+Measured at `5e01202` on a 4-core Intel Xeon at 2.10 GHz with Node 24.22.0, Binaryen 132, and `nightly-2026-06-29`. Sizes are gzip level 9 and Brotli quality 11 of each `.wasm`, summed over the modules a page fetches.
+
+### Download
+
+| Page                                      | Per-type gzip | Split gzip | Change | Per-type Brotli | Split Brotli | Change |
+| ----------------------------------------- | ------------: | ---------: | -----: | --------------: | -----------: | -----: |
+| 1 type, mean of 33                        |        78,766 |     86,991 | +10.4% |          68,275 |       75,961 | +11.3% |
+| 1 type, `info`                            |        38,372 |     43,681 | +13.8% |          33,460 |       38,214 | +14.2% |
+| 1 type, `flowchart`                       |       137,951 |    146,479 |  +6.2% |         116,859 |      124,993 |  +7.0% |
+| 2 types, mean of 528 pairs                |       157,533 |    134,075 | -14.9% |         136,551 |      117,220 | -14.2% |
+| 3 types, mean of 5,456 triples            |       236,299 |    180,569 | -23.6% |         204,826 |      157,980 | -22.9% |
+| 3 types, `flowchart`, `sequence`, `class` |       341,389 |    288,005 | -15.6% |         291,651 |      247,656 | -15.1% |
+| All 33 types, `all` against every split   |       637,015 |  1,398,791 |  +120% |         512,746 |    1,231,149 |  +140% |
+
+The split core is 39,299 bytes gzip. A page with one type pays for code that is shared and so cannot be specialized: `info` needs 72,103 bytes of code alone and 79,750 split. `agentflow` is worst at +29%, since it loads the whole `flowchart` module. Every type together is still smallest as `all`.
+
+### Prototype
+
+The prototype built the all-types size module once with `-Clink-arg=--emit-relocs` and `-Clink-arg=--no-merge-data-segments`. Relocations labeled every function and data segment with the types whose `render_input` reaches it. The optimized module was then rewritten into modules that import `memory`, the table, and the stack pointer from `core`.
+
+- **Placement:** Code reached by one type lives in its module. Code shared by fewer than 20 types is copied into each of them, and wider code lives in `core`. `agentflow` and `swimlane` import from `flowchart`.
+- **Data:** Read-only segments follow the same rule. Copies are safe because each writes the same bytes to the same address.
+- **Inlining:** Core functions under about 1 kB of text are copied into the modules that call them, so engines can inline them. In a run without the copies, `flowchart` rendered 20% slower.
+- **Output:** SVG, links, and errors were byte-identical to the per-type modules on every vector.
+
+### Render Speed
+
+Each lane rendered every vector of one type in 41 rounds that alternate the per-type and split modules, under TurboFan only (`node --no-liftoff`). The table gives the median of each round's split-to-per-type ratio over two runs.
+
+| Types                                                         | Split time |
+| ------------------------------------------------------------- | ---------: |
+| `flowchart`, `state`                                          | 1.05–1.08× |
+| `agentflow`, `class`, `requirement`                           | 1.02–1.10× |
+| `er`, `sequence`, `swimlane`, `treemap`, `usecase`, `xychart` | 1.03–1.06× |
+| Remaining types                                               | 0.92–1.05× |
+
+Calls into `core` cross instances, which engines do not inline.
+
+### Rejected Splits
+
+| Option                                              | Result                                                                                                                                                                                                 |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `wasm-split --multi-split`                          | Keeps all data and every function shared by two types in the primary, 177,699 bytes gzip. `flowchart` costs 207,823. The npm Binaryen has no `wasm-split`                                              |
+| Dynamic linking                                     | `rustc` drops the `dylib` crate type for `wasm32-unknown-unknown`. `--shared` with `-Crelocation-model=pic` is unstable in `wasm-ld`, needs a PIC `std`, and needs a JavaScript loader for relocations |
+| A core for preprocessing at the JavaScript boundary | Preprocessing, detection, and YAML are 24 kB of the 72.5 kB of core code. Each type module would still carry the allocator, `std`, text, and SVG code                                                  |
