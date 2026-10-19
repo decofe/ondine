@@ -8,7 +8,7 @@ No. Ondine is a separate compiler written in Rust. It follows Mermaid 12.1.0's s
 
 ## Why Do Diagrams Look Different?
 
-Layout and appearance differ from Mermaid by design. Ondine draws monochrome, monospace diagrams with square outlines and rounded orthogonal edges, and themes them through `--ondine-*` CSS custom properties.
+Layout and appearance differ from Mermaid by design. Ondine draws diagrams with square outlines and rounded orthogonal edges, and themes them through `--ondine-*` CSS custom properties.
 
 ## Can Diagrams Use Color?
 
@@ -27,7 +27,7 @@ No. Theme variables in front matter or `%%{init}%%` directives do not set Ondine
 
 ## Which Diagram Types Work?
 
-[Compatibility](/docs/introduction/compatibility) lists every Mermaid type with its status. A type that is not ported yet throws a `RenderError` with code `unsupported-diagram`.
+Every Mermaid type has a page under [Diagrams](/docs/diagrams/flowchart) with its status. A type that is not ported yet throws a `RenderError` with code `unsupported-diagram`.
 
 ## Does Mounting Need the Compiler?
 

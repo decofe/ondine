@@ -4,7 +4,7 @@ Set a diagram's colors, font, corners, and strokes with CSS custom properties, w
 
 ## Overview
 
-Every compiled diagram reads its appearance from `--ondine-*` custom properties on the root `<svg>` or any ancestor. Unset properties fall back to monochrome defaults: a white background, black foreground, square corners, and a monospace font.
+Every compiled diagram reads its appearance from `--ondine-*` custom properties on the root `<svg>` or any ancestor. Unset properties fall back to the defaults: a white background, black foreground, square corners, and a monospace font.
 
 Two properties theme a whole diagram. Node fills follow `--ondine-bg`, while lines, borders, and text follow `--ondine-fg`.
 
@@ -196,11 +196,5 @@ Diagrams served as images cannot read page styles. The [image Worker](/docs/guid
     icon="image"
     to="/docs/guides/github"
     description="Embed diagrams in READMEs with light and dark variants."
-  />
-  <Card
-    title="Concepts & Principles"
-    icon="book-open"
-    to="/docs/introduction/concepts"
-    description="See how measurement and theme variables fit together."
   />
 </Cards>

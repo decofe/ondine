@@ -12,9 +12,9 @@ export const Route = createFileRoute('/')({
   component: Page,
   head: () =>
     Head.page({
-      description: 'Monochrome Mermaid diagrams, compiled to SVG ahead of time with Rust.',
+      description: 'Mermaid diagrams, compiled to SVG ahead of time with Rust.',
       path: '/',
-      title: 'Ondine · Monochrome Mermaid Diagrams',
+      title: 'Ondine · Mermaid Diagrams, Compiled',
     }),
 })
 
@@ -35,8 +35,8 @@ function Page() {
             <span {...styles.outlined()}>SVG</span>
           </p>
           <p>
-            Ondine compiles Mermaid source to monochrome, monospace SVG ahead of time. A Rust
-            compiler parses, lays out, and emits each diagram once, while the site or README builds.
+            Ondine compiles Mermaid source to SVG ahead of time. A Rust compiler parses, lays out,
+            and emits each diagram once, while the site or README builds.
           </p>
           <p>
             Pages ship the SVG and a 210-byte runtime. Colors, fonts, and strokes are CSS custom
@@ -119,8 +119,7 @@ namespace styles {
 
   // A dotted halftone band, as catalogs separate a heading from its listing.
   export const halftone = style({
-    backgroundImage:
-      'radial-gradient(circle, light-dark(#8c8c8c, #6b6b6b) 0.6px, transparent 0.8px) !custom',
+    backgroundImage: 'radial-gradient(circle, #8c8c8c 0.6px, transparent 0.8px) !custom',
     backgroundSize: '3px 3px !custom',
     border: 'none',
     height: '0.75rem !custom',
@@ -141,7 +140,7 @@ namespace styles {
   })
 
   export const title = style({
-    fontFamily: 'mono',
+    fontFamily: 'sans',
     fontSize: '1.125rem !custom',
     fontWeight: '700 !custom',
   })
@@ -178,7 +177,7 @@ namespace styles {
     border: '1px solid',
     borderColor: 'rule',
     boxShadow: 'hard',
-    color: 'light-dark(#ffffff, #000000) !custom',
+    color: '#ffffff !custom',
     paddingBlock: 'xs',
     paddingInline: 'md',
     textDecoration: 'none',
@@ -200,9 +199,9 @@ namespace styles {
 
   export const plate = style({
     // The plate takes the sheet's colors, so the diagram follows the color scheme without re-rendering.
-    '--ondine-bg': 'light-dark(#ffffff, #000000) !custom',
-    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
-    '--ondine-line': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': '#ffffff !custom',
+    '--ondine-fg': '#000000 !custom',
+    '--ondine-line': '#000000 !custom',
     '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     border: '1px solid',
     borderColor: 'faint',

@@ -4,7 +4,7 @@ Compile Mermaid diagrams to SVG ahead of time and mount them with a 210-byte run
 
 ## Overview
 
-Ondine renders Mermaid source to monochrome, monospace SVG. A Rust compiler parses, lays out, and draws each diagram at build time, so pages ship SVG markup instead of a diagram renderer.
+Ondine renders Mermaid source to SVG. A Rust compiler parses, lays out, and draws each diagram at build time, so pages ship SVG markup instead of a diagram renderer.
 
 ```mermaid
 flowchart LR
@@ -18,9 +18,6 @@ The compiler runs through the Vite plugin, the `ondine` CLI, the Node API, an im
 ## Install
 
 Install Ondine with the project's package manager.
-
-> [!NOTE]
-> Ondine is not published to npm yet. The commands below apply once the first release ships.
 
 <Tabs>
 <Tab title="pnpm">
@@ -135,11 +132,5 @@ The compiler module loads on the first call, and later calls reuse it.
     icon="shapes"
     to="/docs/diagrams/flowchart"
     description="Browse every diagram type with rendered examples."
-  />
-  <Card
-    title="Compatibility"
-    icon="list-checks"
-    to="/docs/introduction/compatibility"
-    description="See which Mermaid diagram types render today."
   />
 </Cards>
