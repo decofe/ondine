@@ -1,10 +1,10 @@
 # Getting Started
 
-Compile Mermaid diagrams to SVG ahead of time and mount them with a 210-byte runtime.
+Install Ondine and render a first Mermaid diagram.
 
 ## Overview
 
-Ondine renders Mermaid source to SVG. A Rust compiler parses, lays out, and draws each diagram at build time. Pages then ship SVG markup and no diagram renderer.
+Ondine is a fast, small diagram engine for Mermaid syntax, written in Rust. It compiles diagrams to SVG ahead of time, so pages ship the SVG and a 210-byte runtime.
 
 ```mermaid
 flowchart LR
@@ -13,13 +13,7 @@ flowchart LR
   svg --> page[Page]
 ```
 
-The compiler runs in these integrations:
-
-- **Vite:** The Vite plugin compiles diagram imports.
-- **CLI:** The `ondine` CLI writes SVG files.
-- **Node:** The Node API returns SVG to scripts and servers.
-- **Worker:** An image Worker serves SVG to Markdown hosts.
-- **Browser:** If a page must compile at runtime, a WebAssembly module compiles in the browser.
+The compiler runs in Vite, the CLI, Node, the image Worker, and the browser.
 
 ## Install
 
@@ -54,7 +48,7 @@ yarn add ondine
 
 ## Setup
 
-Select the integration that matches the build. Each integration runs the same compiler and emits the same bytes.
+Select the integration that matches the build. Each integration runs the same compiler.
 
 <Tabs>
 <Tab title="Vite">

@@ -1,4 +1,4 @@
-/** Introduces Ondine with diagrams it compiled during the build. @module */
+/** Introduces Ondine: its pitch, highlights, a diagram per featured type, and starting points. @module */
 import { createFileRoute } from '@tanstack/react-router'
 import showcase from 'virtual:showcase'
 import { Link } from '../components/Link.js'
@@ -24,16 +24,25 @@ function Page() {
       <section {...styles.hero()}>
         <div {...styles.copy()}>
           <h1 {...styles.title()}>Ondine</h1>
-          <p>
-            Ondine compiles Mermaid source to SVG ahead of time. A Rust compiler parses, lays out,
-            and emits each diagram once, while the site or README builds.
+          <p {...styles.lead()}>
+            A fast, small diagram engine for Mermaid syntax, written in Rust.
           </p>
-          <p>
-            Pages ship the SVG and a 210-byte runtime. Colors, fonts, and strokes are CSS custom
-            properties, so a color scheme changes without rendering again. Node and browsers emit
-            identical bytes.
-          </p>
-          <p>Every diagram on this site was compiled by Ondine.</p>
+          <ul {...styles.highlights()}>
+            <li>
+              <strong>Mermaid syntax:</strong> reads the same source as Mermaid, for 33 diagram
+              types.
+            </li>
+            <li>
+              <strong>Fast:</strong> compiles most diagrams in under a millisecond.
+            </li>
+            <li>
+              <strong>Small:</strong> pages ship the SVG and a 210-byte runtime.
+            </li>
+            <li>
+              <strong>Anywhere:</strong> runs in Vite, Node, the CLI, browsers, and Cloudflare
+              Workers.
+            </li>
+          </ul>
           <p {...styles.calls()}>
             <Link href="/docs/introduction/getting-started" {...styles.primary()}>
               Get Started →
@@ -126,6 +135,20 @@ namespace styles {
 
   export const copy = style({
     '& > p': { fontSize: '1.0625rem !custom', lineHeight: '1.65 !custom', marginBlock: 'md' },
+  })
+
+  export const lead = style({
+    fontSize: '1.375rem !custom',
+    fontWeight: '700 !custom',
+    lineHeight: '1.35 !custom',
+  })
+
+  export const highlights = style({
+    '& > li': { marginBlock: 'xs' },
+    fontSize: '1.0625rem !custom',
+    lineHeight: '1.6 !custom',
+    marginBlock: 'md',
+    paddingLeft: 'lg',
   })
 
   export const title = style({

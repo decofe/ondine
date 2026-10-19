@@ -14,7 +14,7 @@ export const pages = {
     title: 'Examples · Ondine',
   },
   home: {
-    description: 'Mermaid diagrams, compiled to SVG ahead of time with Rust.',
+    description: 'A fast, small diagram engine for Mermaid syntax, written in Rust.',
     path: '/',
     title: 'Ondine · Mermaid Diagrams, Compiled',
   },

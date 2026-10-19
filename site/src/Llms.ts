@@ -4,7 +4,12 @@ import * as Manifest from './Manifest.js'
 import * as Markdown from './Markdown.js'
 
 // Opens both files with the llms.txt title and summary.
-const header = ['# Ondine', '', '> Mermaid diagrams, compiled to SVG ahead of time with Rust.', '']
+const header = [
+  '# Ondine',
+  '',
+  '> A fast, small diagram engine for Mermaid syntax, written in Rust.',
+  '',
+]
 
 /**
  * Answers `/llms.txt` with the site summary and one link per documentation page, grouped as in the sidebar.

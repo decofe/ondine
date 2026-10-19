@@ -50,8 +50,7 @@ export function Shell(props: Shell.Props) {
 
         <footer {...styles.footer()}>
           <span>
-            Ondine · <a href="https://github.com/wevm/ondine/blob/main/LICENSE">MIT License</a> ·
-            Every diagram on this site was compiled by Ondine.
+            Ondine · <a href="https://github.com/wevm/ondine/blob/main/LICENSE">MIT License</a>
           </span>
         </footer>
       </div>
