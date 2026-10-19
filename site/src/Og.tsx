@@ -50,7 +50,6 @@ export async function create(options: create.Options) {
       const node =
         card.path === '/' ? (
           <Default
-            description={card.description}
             diagram={{
               height: diagram.height,
               src: dataUrl(flatten(diagram.svg)),
@@ -86,9 +85,9 @@ const colors = {
   shade: '#a3a3a3',
 } as const
 
-/** The site's default card: the tagline over a flowchart Ondine compiled. */
+/** The site's default card: the pitch over a flowchart Ondine compiled. */
 function Default(props: Default.Props) {
-  const { description, diagram, logo } = props
+  const { diagram, logo } = props
   const width = content
   const height = Math.round((diagram.height / diagram.width) * width)
 
@@ -96,10 +95,12 @@ function Default(props: Default.Props) {
     <Sheet>
       <Masthead logo={logo} label="ondine.sh" />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 36 }}>
-        <div style={{ fontSize: 64, fontWeight: 700, letterSpacing: -2, lineHeight: 1.05 }}>
-          Mermaid in. SVG out.
+        <div style={{ fontSize: 56, fontWeight: 700, letterSpacing: -2, lineHeight: 1.05 }}>
+          Fast, tiny Mermaid compiler.
         </div>
-        <div style={{ color: colors.muted, fontSize: 28, lineHeight: 1.35 }}>{description}</div>
+        <div style={{ color: colors.muted, fontSize: 28, lineHeight: 1.35 }}>
+          Compiles to SVG ahead of time. Pages ship 210 bytes.
+        </div>
       </div>
       <div style={{ display: 'flex', flex: 1, alignItems: 'flex-end' }}>
         <img height={height} src={diagram.src} width={width} />
@@ -111,8 +112,6 @@ function Default(props: Default.Props) {
 declare namespace Default {
   /** Properties for the Default component. */
   type Props = {
-    /** Tagline under the headline. */
-    description: string
     /** The flowchart, as a data URL with its natural size. */
     diagram: { height: number; src: string; width: number }
     /** The logo, as a data URL. */
