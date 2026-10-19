@@ -113,7 +113,7 @@ All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte f
 
 ### 6. Speed and size
 
-- [ ] Benchmarks against Pele and Mermaid on the full corpus, cold and warm, in Node and Chrome.
+- [x] Benchmarks against Pele and Mermaid on the full corpus, cold and warm, in Node and Chrome: `pnpm bench:compare`, with one run recorded in `bench/comparison.md`.
 - [ ] Per-type gzip budgets for in-browser modules, enforced in CI, with each floor recorded.
 - [ ] Size work: build-std with immediate abort, generic and inlining audits, string data, and shared-module splitting.
 
