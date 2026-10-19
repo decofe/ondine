@@ -10,12 +10,7 @@ import { style } from '../zyzz.config.js'
 
 export const Route = createFileRoute('/')({
   component: Page,
-  head: () =>
-    Head.page({
-      description: 'Mermaid diagrams, compiled to SVG ahead of time with Rust.',
-      path: '/',
-      title: 'Ondine · Mermaid Diagrams, Compiled',
-    }),
+  head: () => Head.page(Head.pages.home),
 })
 
 function Page() {

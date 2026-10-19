@@ -1,7 +1,8 @@
 /**
  * Builds the documentation with TanStack Start for Cloudflare Workers. Reads every MDX page once to
  * collect page metadata, Markdown twins, and the search index, highlights code with Shiki, and
- * renders ` ```mermaid ` fences and the examples board with Ondine.
+ * renders ` ```mermaid ` fences and the examples board with Ondine, and draws each page's Open Graph
+ * image with Takumi.
  * @module
  */
 import * as Fs from 'node:fs/promises'
@@ -32,6 +33,8 @@ import {
 } from 'shiki'
 import { defineConfig, type ViteDevServer } from 'vite'
 import { zyzz } from 'zyzz/vite'
+import * as Head from './src/Head.js'
+import * as Og from './src/Og.js'
 import * as Search from './src/Search.js'
 
 export default defineConfig(async () => {
@@ -156,6 +159,23 @@ export default defineConfig(async () => {
   const examples = await board()
   const showcase = `export default ${JSON.stringify(feature(examples))}`
 
+  const og = await Og.create({ root: new URL('./', import.meta.url) })
+  const cards: readonly Og.Card[] = [
+    { description: Head.pages.home.description, path: Head.pages.home.path, title: 'Ondine' },
+    ...[Head.pages.examples, Head.pages.playground].map((page) => ({
+      description: page.description,
+      path: page.path,
+      title: page.title.replace(/ · Ondine$/, ''),
+    })),
+    ...Object.entries(docs.pages).map(([page, entry]) => ({
+      description: entry.description,
+      path: `/docs/${page}`,
+      section: section(page),
+      title: entry.title,
+    })),
+  ]
+  const images = new Map(cards.map((card) => [Head.image(card.path), card]))
+
   return {
     define: {
       __DOCS__: JSON.stringify(docs),
@@ -276,6 +296,26 @@ export default defineConfig(async () => {
           return undefined
         },
       },
+      {
+        name: 'docs-og',
+        // Development renders a card per request. Builds emit every card beside the client assets.
+        configureServer(server: ViteDevServer) {
+          server.middlewares.use((request, response, next) => {
+            const card = images.get(request.url?.split('?')[0] ?? '')
+            if (!card) return next()
+
+            og.render(card).then((png) => {
+              response.setHeader('Content-Type', 'image/png')
+              response.end(png)
+            }, next)
+          })
+        },
+        async generateBundle() {
+          if (this.environment.name !== 'client') return
+          for (const [path, card] of images)
+            this.emitFile({ fileName: path.slice(1), source: await og.render(card), type: 'asset' })
+        },
+      },
       tanstackStart({ server: { entry: './entry.server.ts' } }),
       react(),
     ],
@@ -333,6 +373,13 @@ function feature(examples: Awaited<ReturnType<typeof board>>) {
   })
 
   return { hero, tabs }
+}
+
+/** Names a documentation page's sidebar group from its first path segment, such as `Guides`. */
+function section(page: string): string {
+  const segment = page.split('/')[0] ?? ''
+  if (segment === 'api') return 'API'
+  return segment.charAt(0).toUpperCase() + segment.slice(1)
 }
 
 /** Matches a GitHub alert marker, such as `[!NOTE]`, at the start of a blockquote. */

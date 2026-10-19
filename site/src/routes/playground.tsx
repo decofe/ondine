@@ -6,12 +6,7 @@ import * as Head from '../Head.js'
 
 export const Route = createFileRoute('/playground')({
   component: Page,
-  head: () =>
-    Head.page({
-      description: 'Edit Mermaid and preview the diagram Ondine renders in the browser.',
-      path: '/playground',
-      title: 'Playground · Ondine',
-    }),
+  head: () => Head.page(Head.pages.playground),
 })
 
 function Page() {

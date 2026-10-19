@@ -37,6 +37,7 @@
     "mdast-util-to-markdown": "catalog:",
     "remark-gfm": "catalog:",
     "shiki": "catalog:",
+    "takumi-js": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

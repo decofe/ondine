@@ -135,6 +135,44 @@ describe('fetch', () => {
     expect(html.match(/<a[^>]*href="\/playground#source=/g)?.length).toMatchInlineSnapshot(`167`)
   })
 
+  test('links each page to its Open Graph card and serves it as a PNG', async () => {
+    const html = await (await fetch(`${origin}/docs/guides/vite`)).text()
+    const image = await fetch(`${origin}/og/docs/guides/vite.png`)
+    const png = Buffer.from(await image.arrayBuffer())
+
+    expect(html.match(/<meta[^>]*(?:og:image|twitter:)[^>]*>/g)).toMatchInlineSnapshot(`
+      [
+        "<meta content="https://ondine.sh/og/docs/guides/vite.png" property="og:image"/>",
+        "<meta content="Vite · Guides · Ondine" property="og:image:alt"/>",
+        "<meta content="630" property="og:image:height"/>",
+        "<meta content="image/png" property="og:image:type"/>",
+        "<meta content="1200" property="og:image:width"/>",
+        "<meta content="summary_large_image" name="twitter:card"/>",
+        "<meta content="https://ondine.sh/og/docs/guides/vite.png" name="twitter:image"/>",
+      ]
+    `)
+    expect(image.headers.get('content-type')).toMatchInlineSnapshot(`"image/png"`)
+    // A PNG's IHDR chunk holds its width and height at bytes 16 through 23.
+    expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toMatchInlineSnapshot(`
+      [
+        1200,
+        630,
+      ]
+    `)
+  })
+
+  test('uses the default Open Graph card on the home page', async () => {
+    const html = await (await fetch(`${origin}/`)).text()
+    const image = await fetch(`${origin}/og.png`)
+
+    expect(html.match(/<meta[^>]*og:image"[^>]*>/g)).toMatchInlineSnapshot(`
+      [
+        "<meta content="https://ondine.sh/og.png" property="og:image"/>",
+      ]
+    `)
+    expect(image.status).toMatchInlineSnapshot(`200`)
+  })
+
   test('renders diagram images through the precompiled module with an adaptive scheme', async () => {
     const response = await fetch(`${origin}/${encode('not a diagram')}.svg`)
 

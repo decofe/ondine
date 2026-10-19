@@ -22,6 +22,7 @@ export const Route = createRootRoute({
       { content: 'Ondine', property: 'og:site_name' },
       { content: 'website', property: 'og:type' },
       { content: `${Head.origin}/`, property: 'og:url' },
+      ...Head.meta({ image: Head.image('/'), title: 'Ondine' }),
     ],
   }),
   notFoundComponent: NotFound,

@@ -7,12 +7,7 @@ import { style } from '../zyzz.config.js'
 
 export const Route = createFileRoute('/examples')({
   component: Page,
-  head: () =>
-    Head.page({
-      description: 'Every playground sample, rendered by Ondine when the documentation builds.',
-      path: '/examples',
-      title: 'Examples · Ondine',
-    }),
+  head: () => Head.page(Head.pages.examples),
   // The board is a separate chunk, so other pages never download its diagrams.
   loader: async () => (await import('virtual:examples')).default,
 })
