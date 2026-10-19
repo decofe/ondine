@@ -69,6 +69,45 @@ An invalid diagram is reported as `file:line:column: message`, and the command e
 npx melee diagrams/*.mmd -o public/diagrams || exit 1
 ```
 
+### Render Markdown
+
+Each ` ```mermaid ` fence in a `.md` or `.markdown` file is rewritten in place to a `<picture>` with light and dark images. By default the images link the [image Worker](/guides/github), which suits READMEs on GitHub.
+
+```sh
+# Rewrites the fences in README.md to Worker images
+npx melee README.md
+```
+
+Each rewritten fence becomes a block between `<!-- melee:<payload> -->` and `<!-- /melee -->`. The payload is the encoded source, so a later run re-renders the block instead of adding another, and an unchanged file is left untouched.
+
+### Link SVG Files
+
+`--svg` writes `<name>-<n>.light.svg` and `<name>-<n>.dark.svg` beside the Markdown, or in `--out-dir`, and links them. Files a previous run wrote and no block links anymore are removed.
+
+```sh
+# Writes docs/assets/guide-1.light.svg and docs/assets/guide-1.dark.svg
+npx melee docs/guide.md --svg --out-dir docs/assets
+```
+
+### Edit a Diagram
+
+`--restore` turns each block back into its ` ```mermaid ` fence and removes its SVG files. Edit the fence, then render again.
+
+```sh
+# Restores the fences, then renders them again after editing
+npx melee README.md --restore
+npx melee README.md
+```
+
+### Check in CI
+
+`--check` writes nothing and exits with code 1 when a file is out of date, naming each one.
+
+```sh
+# Fails when README.md has unrendered fences
+npx melee README.md --check
+```
+
 ### Add a Script
 
 ```json title="package.json"

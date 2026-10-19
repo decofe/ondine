@@ -64,6 +64,18 @@ GitHub draws images inside a page whose scheme may differ from the system's. A `
 
 ## Recipes
 
+### Rewrite a README
+
+The [CLI](/guides/cli#render-markdown) rewrites every ` ```mermaid ` fence in a Markdown file to the `<picture>` above, keeping the source in the block so later runs re-render it.
+
+```sh
+# Rewrites the fences in README.md, then fails CI when it goes stale
+npx melee README.md
+npx melee README.md --check
+```
+
+`--worker` links another deployment, and `--svg` commits SVG files instead of linking the Worker.
+
 ### Read Errors
 
 Invalid source returns status 400 with an SVG card that states the error, so a broken diagram explains itself in the README.
