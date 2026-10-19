@@ -2,8 +2,11 @@
 
 /** A compiled diagram module. */
 export type Instance = {
-  /** Renders `source` with JSON `options`, returning the decoded result. */
-  readonly render: (source: string, options: string) => Result
+  /**
+   * Renders `source` with JSON `options`, or empty for defaults, at `now` in milliseconds since
+   * the epoch, returning the decoded result.
+   */
+  readonly render: (source: string, options: string, now: number) => Result
 }
 
 /** A decoded result from the module's `render` export. */
@@ -41,6 +44,7 @@ type Exports = {
     sourceLen: number,
     options: number,
     optionsLen: number,
+    now: number,
   ) => number
   readonly reset: () => void
 }
@@ -74,7 +78,7 @@ export function instantiate(input: string | WebAssembly.Module): Instance {
       : encoder.encodeInto(text, reader.bytes.subarray(at, at + text.length * 3)).written
 
   return {
-    render(source, options) {
+    render(source, options, now) {
       exports.reset()
 
       // Source and options share one allocation.
@@ -84,7 +88,7 @@ export function instantiate(input: string | WebAssembly.Module): Instance {
       const optionsAt = sourceAt + sourceLength
       const optionsLength = write(options, optionsAt)
 
-      const at = exports.render(sourceAt, sourceLength, optionsAt, optionsLength)
+      const at = exports.render(sourceAt, sourceLength, optionsAt, optionsLength, now)
       fresh().at = at
       return decode(reader)
     },

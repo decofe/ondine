@@ -80,13 +80,17 @@ const DEFAULT_OUTPUT_LIMIT: f64 = 4_000_000.0;
 const DEFAULT_MAX_EDGES: f64 = 5_000.0;
 
 /// Renders Mermaid `source` to SVG. `options` is a JSON object with Pele's `RenderOptions`
-/// fields, or empty for defaults.
+/// fields, or empty for defaults. `now` is the time a gantt chart schedules against when
+/// `options` sets none, in milliseconds since the epoch. A non-finite `now` means the epoch.
 ///
 /// # Errors
 ///
 /// Returns an [`Error`] for unsupported diagram types, syntax errors, and exceeded limits.
-pub fn render(source: &str, options: &str) -> Result<Rendered, Error> {
-    let options = options_from_json(options)?;
+pub fn render(source: &str, options: &str, now: f64) -> Result<Rendered, Error> {
+    let mut options = options_from_json(options)?;
+    if options.now.is_none() && now.is_finite() {
+        options.now = Some(now);
+    }
 
     let limit = options.limit.unwrap_or(DEFAULT_LIMIT);
     if exceeds(source, limit) {
@@ -127,7 +131,6 @@ pub fn render(source: &str, options: &str) -> Result<Rendered, Error> {
         Some(yaml::Value::Object(entries))
             if entries.iter().any(|(key, value)| key == "useMaxWidth" && *value == yaml::Value::Bool(false))
     );
-    let mut options = options;
     options.responsive = Some(options.responsive.unwrap_or(!fixed));
 
     let mut source = preprocess::encode_entities(if diagram.keep_comments {

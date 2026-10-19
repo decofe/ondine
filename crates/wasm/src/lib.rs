@@ -1,8 +1,9 @@
 //! WebAssembly adapter for the compiler.
 //!
 //! The host calls `reset`, copies source and options into memory returned by `alloc`, then calls
-//! `render`. The result is one buffer of length-prefixed fields: a status byte (0 for success, 1
-//! for an error) followed by little-endian `u32` lengths and UTF-8 bytes.
+//! `render` with them and the current time. The result is one buffer of length-prefixed fields: a
+//! status byte (0 for success, 1 for an error) followed by little-endian `u32` lengths and UTF-8
+//! bytes.
 //!
 //! - Success fields: type, width, height, links (`href`, `id`, and `internal` repeated), SVG.
 //! - Error fields: code, type, line, column, snippet, message.
@@ -188,14 +189,15 @@ mod exports {
         ptr
     }
 
-    /// Renders the UTF-8 source and options the host wrote, and returns the result's address.
-    /// The result's fields carry their lengths.
+    /// Renders the UTF-8 source and options the host wrote at `now`, and returns the result's
+    /// address. The result's fields carry their lengths.
     #[unsafe(no_mangle)]
     extern "C" fn render(
         source: *const u8,
         source_len: usize,
         options: *const u8,
         options_len: usize,
+        now: f64,
     ) -> *const u8 {
         // SAFETY: the host wrote `source_len` and `options_len` bytes inside memory from `alloc`.
         let (source, options) = unsafe {
@@ -206,7 +208,7 @@ mod exports {
         };
 
         let result = match (core::str::from_utf8(source), core::str::from_utf8(options)) {
-            (Ok(source), Ok(options)) => compiler::render(source, options),
+            (Ok(source), Ok(options)) => compiler::render(source, options, now),
             _ => Err(compiler::Error {
                 code: compiler::Code::Limit,
                 column: 0,

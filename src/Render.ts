@@ -76,11 +76,14 @@ export function create(options: create.Options): create.ReturnType {
       if (first === undefined) throw new Error('Render.create needs at least one module.')
 
       const json = serialize(renderOptions)
-      const result = first.render(source, json)
+      // The compiler reads no clock. Like JSON, it reads a time that is not a number as none.
+      const time = renderOptions.now ?? Date.now()
+      const now = typeof time === 'number' ? time : Number.NaN
+      const result = first.render(source, json, now)
       // A module reports the detected type when it does not include it.
       if (!result.ok && result.code === 'unsupported-diagram' && result.type !== undefined) {
         const owner = instance(result.type)
-        if (owner) return unwrap(owner.render(source, json))
+        if (owner) return unwrap(owner.render(source, json, now))
       }
       return unwrap(result)
     },
@@ -143,9 +146,10 @@ export declare namespace render {
   }
 }
 
-/** Options as the compiler reads them. The compiler reads no clock, so the current time is passed in. */
+/** Options as the compiler reads them, without the time, which is passed apart. Empty for none. */
 function serialize(options: render.Options): string {
-  return JSON.stringify({ ...options, now: options.now ?? Date.now() })
+  for (const _ in options) return JSON.stringify({ ...options, now: undefined })
+  return ''
 }
 
 function unwrap(result: Wasm.Result): render.ReturnType {
