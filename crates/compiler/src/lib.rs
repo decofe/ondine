@@ -208,7 +208,11 @@ fn schemes(list: Option<&Vec<String>>) -> Option<Vec<&str>> {
     reason = "source lengths stay far below 2^52"
 )]
 fn utf16_len(text: &str) -> f64 {
-    text.encode_utf16().count() as f64
+    // Each scalar starts with one non-continuation byte, and only four-byte scalars need a second
+    // UTF-16 unit. Counting bytes avoids decoding the whole SVG.
+    text.bytes()
+        .map(|byte| usize::from(byte & 0xc0 != 0x80) + usize::from(byte >= 0xf0))
+        .sum::<usize>() as f64
 }
 
 /// Reads host options from JSON. Unknown fields are ignored, as in Pele.
