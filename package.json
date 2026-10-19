@@ -11,18 +11,22 @@
     "dev": "pnpm build:wasm && zile dev",
     "postinstall": "zile dev",
     "test": "pnpm build:wasm && vp test",
-    "test:packed": "pnpm build:wasm && vp test run --config scripts/packed-consumer.config.ts"
+    "test:packed": "pnpm build:wasm && vp test run --config scripts/packed-consumer.config.ts",
+    "test:screenshots": "pnpm build:wasm && vp test --run --project screenshots --update"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
+    "@fontsource/geist-mono": "catalog:",
     "@mdx-js/rollup": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
     "binaryen": "catalog:",
     "esbuild": "catalog:",
     "mermaid": "catalog:",
     "pele": "catalog:",
+    "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:",

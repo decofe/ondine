@@ -87,7 +87,18 @@ jobs:
       - name: Install size toolchain
         run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
 
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Run tests
         run: pnpm run test --bail=1
         env:
           CI: true
+
+      - name: Upload screenshot diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: ignore
+          name: screenshot-diffs
+          path: .vitest-attachments
