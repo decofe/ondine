@@ -150,32 +150,22 @@ pub(crate) fn push_number(out: &mut String, value: f64) {
 
 const BASE: u64 = 1_000_000_000;
 
-/// Powers of ten that doubles hold exactly.
-const POWERS: [f64; 23] = [
-    1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16,
-    1e17, 1e18, 1e19, 1e20, 1e21, 1e22,
-];
-
 // The shortest digits of a positive `value` that needs at most 22 decimals and stays below 2^53
-// when scaled by them. The fewest decimals give the fewest digits. Division of exact integers
-// rounds correctly, so `m / 10^d == value` is the read-back test, and every candidate lies within
-// two of the rounded scaled value. `None` when no candidate is unique.
+// when scaled by them. The fewest decimals give the fewest digits. Powers of ten to 10^22 and
+// integers below 2^53 are exact, so `m / 10^d == value` is the read-back test, and every candidate
+// lies within two of the scaled value's floor. `None` when no candidate is unique.
 fn shortest_scaled(value: f64) -> Option<(Vec<u8>, i32)> {
-    for (decimals, &power) in POWERS.iter().enumerate() {
+    let mut power = 1.0;
+    for decimals in 0..23 {
         let scaled = value * power;
         if scaled >= 9e15 {
             return None;
         }
 
-        let rounded = scaled.round();
+        let floor = scaled.floor();
         let mut found = None;
-        for candidate in [
-            rounded - 2.0,
-            rounded - 1.0,
-            rounded,
-            rounded + 1.0,
-            rounded + 2.0,
-        ] {
+        for offset in [-2.0, -1.0, 0.0, 1.0, 2.0] {
+            let candidate = floor + offset;
             if candidate >= 1.0 && (candidate / power).to_bits() == value.to_bits() {
                 if found.is_some() {
                     return None;
@@ -183,27 +173,25 @@ fn shortest_scaled(value: f64) -> Option<(Vec<u8>, i32)> {
                 found = Some(candidate);
             }
         }
-        let Some(found) = found else {
-            continue;
-        };
 
-        #[expect(
-            clippy::cast_possible_truncation,
-            clippy::cast_sign_loss,
-            reason = "the candidate is a whole number from 1 to 2^53"
-        )]
-        let mut rest = found as u64;
-        let mut digits = Vec::with_capacity(17);
-        while rest > 0 {
-            digits.push(b'0' + u8::try_from(rest % 10).unwrap_or(0));
-            rest /= 10;
+        if let Some(found) = found {
+            #[expect(
+                clippy::cast_possible_truncation,
+                clippy::cast_sign_loss,
+                reason = "the candidate is a whole number from 1 to 2^53"
+            )]
+            let found = found as u64;
+            // `decimal` reads limbs without a leading zero limb.
+            let limbs = [found % BASE, found / BASE];
+            let used = if found < BASE { 1 } else { 2 };
+            let mut digits = decimal(limbs.get(..used).unwrap_or_default());
+            let n = i32::try_from(digits.len()).unwrap_or(0) - decimals;
+            while digits.len() > 1 && digits.last() == Some(&b'0') {
+                digits.pop();
+            }
+            return Some((digits, n));
         }
-        let n = i32::try_from(digits.len()).unwrap_or(0) - i32::try_from(decimals).unwrap_or(0);
-        digits.reverse();
-        while digits.len() > 1 && digits.last() == Some(&b'0') {
-            digits.pop();
-        }
-        return Some((digits, n));
+        power *= 10.0;
     }
     None
 }

@@ -163,14 +163,14 @@ pub(crate) fn svg_document(
     let mut used = [false; WEIGHTS.len()];
     for (at, _) in content.match_indices("var(--") {
         let rest = content.get(at + 6..).unwrap_or("");
-        let Some(name) = rest.strip_prefix('_') else {
+        let Some(name) = rest.strip_prefix("_") else {
             themed |= content
                 .get(at.saturating_sub(ROUNDED.len() - RADIUS.len() - 1)..)
                 .is_some_and(|tail| tail.starts_with(ROUNDED));
             continue;
         };
         radius |= name.starts_with("r)");
-        for (used, (alias, _)) in used.iter_mut().zip(WEIGHTS) {
+        for (used, (alias, _)) in used.iter_mut().zip(&WEIGHTS) {
             *used |= name
                 .strip_prefix(alias.get(3..).unwrap_or(""))
                 .is_some_and(|tail| tail.starts_with(')'));
@@ -190,7 +190,7 @@ pub(crate) fn svg_document(
         weights.push_str(";--_r:");
         weights.push_str(RADIUS);
     }
-    for ((alias, name), used) in WEIGHTS.into_iter().zip(used) {
+    for ((alias, name), used) in WEIGHTS.iter().zip(used) {
         if used {
             weights.push(';');
             weights.push_str(alias);

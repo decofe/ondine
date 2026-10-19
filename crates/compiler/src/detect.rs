@@ -1,7 +1,7 @@
 //! Picks the diagram type from preprocessed source with Mermaid's detectors. Port of Pele's
 //! `src/detect.ts`.
 
-use crate::util::chars::{is_space, is_word};
+use crate::util::chars::{has, is_space, is_word};
 
 fn space(c: char) -> bool {
     is_space(u32::from(c))
@@ -46,18 +46,11 @@ pub(crate) fn detect(cleaned: &str) -> Option<&'static str> {
     if starts("agentflow-beta") && boundary(s, 14) {
         return Some("agentflow");
     }
-    // Mermaid's pattern anchors only its first alternative, so the others match anywhere. One
-    // pass over the bytes finds them all.
-    let bytes = cleaned.as_bytes();
+    // Mermaid's pattern anchors only its first alternative, so the others match anywhere.
     if starts("C4Context")
-        || bytes.iter().enumerate().any(|(at, &byte)| {
-            byte == b'C'
-                && bytes.get(at..).is_some_and(|rest| {
-                    ["C4Container", "C4Component", "C4Dynamic", "C4Deployment"]
-                        .iter()
-                        .any(|name| rest.starts_with(name.as_bytes()))
-                })
-        })
+        || ["C4Container", "C4Component", "C4Dynamic", "C4Deployment"]
+            .iter()
+            .any(|name| has(cleaned, name))
     {
         return Some("c4");
     }
