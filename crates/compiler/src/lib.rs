@@ -89,7 +89,7 @@ pub fn render(source: &str, options: &str) -> Result<Rendered, Error> {
     let options = options_from_json(options)?;
 
     let limit = options.limit.unwrap_or(DEFAULT_LIMIT);
-    if utf16_len(source) > limit {
+    if exceeds(source, limit) {
         let mut message = String::from("Diagram source is longer than the limit of ");
         yaml::push_number(&mut message, limit);
         message.push_str(" characters.");
@@ -181,7 +181,7 @@ pub fn render(source: &str, options: &str) -> Result<Rendered, Error> {
     };
 
     let output_limit = options.output_limit.unwrap_or(DEFAULT_OUTPUT_LIMIT);
-    if utf16_len(&rendered.svg) > output_limit {
+    if exceeds(&rendered.svg, output_limit) {
         let mut message = String::from("Diagram output is longer than the limit of ");
         yaml::push_number(&mut message, output_limit);
         message.push_str(" characters.");
@@ -204,16 +204,25 @@ fn schemes(list: Option<&Vec<String>>) -> Option<Vec<&str>> {
     list.map(|list| list.iter().map(String::as_str).collect())
 }
 
+/// Whether `text` is longer than `limit` UTF-16 units.
 #[expect(
     clippy::cast_precision_loss,
     reason = "source lengths stay far below 2^52"
 )]
-fn utf16_len(text: &str) -> f64 {
+fn exceeds(text: &str, limit: f64) -> bool {
+    // No scalar takes more UTF-16 units than UTF-8 bytes, so text within the limit in bytes is
+    // within it in units without a count.
+    if text.len() as f64 <= limit {
+        return false;
+    }
+
     // Each scalar starts with one non-continuation byte, and only four-byte scalars need a second
     // UTF-16 unit. Counting bytes avoids decoding the whole SVG.
-    text.bytes()
+    let units = text
+        .bytes()
         .map(|byte| usize::from(byte & 0xc0 != 0x80) + usize::from(byte >= 0xf0))
-        .sum::<usize>() as f64
+        .sum::<usize>();
+    units as f64 > limit
 }
 
 /// Reads host options from JSON. Unknown fields are ignored, as in Pele.
