@@ -26,6 +26,9 @@ jobs:
       - name: Install toolchain
         run: rustup show
 
+      - name: Install size toolchain
+        run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
+
       - name: Build WebAssembly
         run: pnpm build:wasm
 

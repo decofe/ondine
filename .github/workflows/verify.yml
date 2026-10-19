@@ -35,6 +35,9 @@ jobs:
       - name: Install toolchain
         run: rustup show
 
+      - name: Install size toolchain
+        run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
+
       - name: Check formatting
         run: cargo fmt --all --check
 
@@ -57,6 +60,9 @@ jobs:
 
       - name: Install toolchain
         run: rustup show
+
+      - name: Install size toolchain
+        run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
 
       - name: Run tests
         run: pnpm run test --bail=1
