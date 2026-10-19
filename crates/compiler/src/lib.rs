@@ -14,6 +14,7 @@ mod yaml;
 
 mod layout {
     pub(crate) mod compound;
+    pub(crate) mod lanes;
     pub(crate) mod layered;
 }
 

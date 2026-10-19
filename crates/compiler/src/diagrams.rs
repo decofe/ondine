@@ -3,7 +3,15 @@
 //! Every type is a Cargo feature, so each WebAssembly module contains only the types it renders.
 
 pub(crate) mod common {
+    pub(crate) mod acc_descr;
+    pub(crate) mod caseless;
+    pub(crate) mod fit;
+    pub(crate) mod fit_text;
     pub(crate) mod fit_width;
+    pub(crate) mod generics;
+    pub(crate) mod icon;
+    pub(crate) mod literal_label;
+    pub(crate) mod outline;
     pub(crate) mod scan;
     pub(crate) mod tokens;
 }
