@@ -1,5 +1,5 @@
 /** Sample diagrams from the test vectors, grouped by diagram type. @module */
-import groups from '../../test/vectors/samples.json' with { type: 'json' }
+import groups from '../../../../test/vectors/samples.json' with { type: 'json' }
 
 /** One sample. */
 export type Sample = {

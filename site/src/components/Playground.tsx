@@ -1,7 +1,7 @@
 'use client'
 /** Mounts the playground app on a documentation page, below the top navigation. @module */
 import { useEffect, useState } from 'react'
-import { App } from '../../../playground/src/App.js'
+import { App } from './playground/App.js'
 import { style } from '../zyzz.config.js'
 
 export function Playground() {

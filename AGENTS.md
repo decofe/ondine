@@ -299,7 +299,7 @@ Applies to documentation, comments, TSDoc, commit messages, and pull requests.
 - `crates/compiler/`: the pure compiler. `crates/wasm/`: the WebAssembly adapter.
 - `src/`: flat PascalCase TypeScript modules for the public API, with colocated tests. Generated WebAssembly modules live under `src/internal/` and are gitignored.
 - `test/vectors/`: imported Mermaid and Pele vectors with their licenses, plus `ledger.json`. `test/oracles/`: reference parsers used by parity tests.
-- `playground/`: the Vite playground. `site/`: the Vocs documentation. `bench/`: cross-library benchmarks.
+- `site/`: the Vocs documentation, including the playground under `site/src/components/playground/`. `bench/`: cross-library benchmarks.
 - `.agents/plan.md` tracks remaining work and acceptance gates. `site/` defines public API contracts.
 
 ## Tooling
@@ -318,4 +318,4 @@ Applies to documentation, comments, TSDoc, commit messages, and pull requests.
 - `pnpm test` runs the integration, vector, and oracle suites with `vp test`.
 - `pnpm bench` runs cross-library benchmarks.
 - `cargo test --workspace`, `cargo fmt --all --check`, and `cargo clippy --workspace --all-targets -- -D warnings` check Rust.
-- `pnpm --dir playground dev` starts the playground. `pnpm --dir site dev` starts the documentation site.
+- `pnpm --dir site dev` starts the documentation site, with the playground at `/playground`.
