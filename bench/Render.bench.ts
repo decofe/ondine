@@ -1,7 +1,7 @@
 /** @module Compares warm render time with Pele over each ported type's vectors. */
 import * as Pele from 'pele'
 import { bench, describe } from 'vite-plus/test'
-import { render } from 'melee'
+import { render } from 'melee/compiler'
 import * as Vectors from '../test/Vectors.js'
 
 const types = ['flowchart'] as const
