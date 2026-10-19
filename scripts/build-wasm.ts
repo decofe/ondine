@@ -13,7 +13,22 @@ import * as Path from 'node:path'
 const root = Path.resolve(import.meta.dirname, '..')
 
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
-const types = ['block', 'flowchart', 'gantt', 'requirement', 'sankey', 'state', 'venn'] as const
+const types = [
+  'block',
+  'flowchart',
+  'gantt',
+  'git',
+  'journey',
+  'kanban',
+  'mindmap',
+  'requirement',
+  'sankey',
+  'sequence',
+  'state',
+  'timeline',
+  'usecase',
+  'venn',
+] as const
 
 /**
  * The nightly toolchain that rebuilds `std` for size. `MELEE_WASM_TOOLCHAIN` overrides it. Without
