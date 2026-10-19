@@ -2,6 +2,9 @@ packages:
   - '.'
   - playground
 
+allowBuilds:
+  esbuild: set this to true or false
+
 catalog:
   '@changesets/cli': '^3.0.3'
   '@types/node': '^24.10.1'
@@ -9,6 +12,7 @@ catalog:
   '@types/react-dom': '^19.3.0'
   '@vitejs/plugin-react': '^6.1.2'
   'binaryen': '132.0.0'
+  'esbuild': '0.28.2'
   'mermaid': '12.1.0'
   'pele': '1.6.0'
   'react': '19.3.1'
@@ -21,3 +25,6 @@ catalog:
 
 minimumReleaseAgeExclude:
   - zyzz@0.0.34
+
+allowBuilds:
+  esbuild: true

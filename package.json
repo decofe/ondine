@@ -5,6 +5,7 @@
     "changeset:publish": "zile publish:prepare && changeset publish && zile publish:post",
     "changeset:version": "changeset version",
     "check": "vp check --fix",
+    "check:size": "node scripts/size.ts",
     "check:types": "tsc",
     "dev": "pnpm build:wasm && zile dev",
     "test": "pnpm build:wasm && vp test"
@@ -13,6 +14,7 @@
     "@changesets/cli": "catalog:",
     "@types/node": "catalog:",
     "binaryen": "catalog:",
+    "esbuild": "catalog:",
     "mermaid": "catalog:",
     "pele": "catalog:",
     "typescript": "catalog:",
