@@ -2,7 +2,7 @@
 
 The size-optimized compiler module for every diagram type, inlined as base64.
 
-`ondine/compiler/wasm/all` exports one value, `wasm`, for [`create`](/docs/api/compiler/create). The entrypoint is about 715 kB gzip. Thus a page loads it with a dynamic import only when the page needs a compiler.
+`ondine/compiler/wasm/all` exports one value, `wasm`, for [`create`](/docs/api/compiler/create). The entrypoint is about 830 kB gzip. The `all.wasm` file is about 630 kB gzip and compiles while it downloads. Thus a page loads it with a dynamic import only when the page needs a compiler.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'

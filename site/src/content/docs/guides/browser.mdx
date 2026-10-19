@@ -8,14 +8,15 @@ Most pages compile diagrams at build time. Editors, previews, and diagrams from 
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
-import { wasm as all } from 'ondine/compiler/wasm/all'
+import url from 'ondine/compiler/wasm/all.wasm?url'
 
-// Compiles in the browser with the size-optimized module
+// Compiles the size-optimized module while it downloads
+const all = await WebAssembly.compileStreaming(fetch(url))
 const renderer = create({ modules: { all } })
 const { svg } = renderer.render('flowchart LR\n  A --> B')
 ```
 
-The JavaScript glue in `ondine/compiler/wasm` is about 1 kB gzip. `ondine/compiler/wasm/all` inlines every diagram type as base64. It is about 715 kB gzip, as [Benchmarks](/docs/introduction/benchmarks) records.
+The JavaScript glue in `ondine/compiler/wasm` is about 1 kB gzip. The `all.wasm` module holds every diagram type, at about 630 kB gzip.
 
 ## Walkthrough
 
@@ -23,15 +24,33 @@ The steps below make a live preview. The preview renders the diagram again after
 
 ### Load the Module
 
-Load `ondine/compiler/wasm/all` with a dynamic import. The browser then downloads the module only when the preview opens.
+Fetch `all.wasm` and compile it with `WebAssembly.compileStreaming`. The browser compiles the module while it downloads, and it caches the compiled code. The server must send `application/wasm`.
+
+<Tabs>
+<Tab title="Vite">
+
+```ts title="preview.ts"
+import { create } from 'ondine/compiler/wasm'
+import url from 'ondine/compiler/wasm/all.wasm?url'
+
+// Emits all.wasm as an asset and compiles it on first use
+const all = await WebAssembly.compileStreaming(fetch(url))
+const renderer = create({ modules: { all } })
+```
+
+</Tab>
+<Tab title="Static File">
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
 
-// Splits the compiler module into its own chunk
-const { wasm } = await import('ondine/compiler/wasm/all')
-const renderer = create({ modules: { all: wasm } })
+// Serves node_modules/ondine/dist/internal/all.generated.wasm at /ondine/all.wasm
+const all = await WebAssembly.compileStreaming(fetch('/ondine/all.wasm'))
+const renderer = create({ modules: { all } })
 ```
+
+</Tab>
+</Tabs>
 
 ### Render on Input
 
@@ -82,14 +101,27 @@ const renderer = create({ modules: { all } })
 
 ### Load One Type
 
-If a page compiles only one diagram type, import the module for that type from `ondine/compiler/wasm/<type>`. This module is much smaller than `all`. [Diagram Modules](/docs/api/compiler-wasm/types) lists every type.
+If a page compiles only one diagram type, load the module for that type, such as `flowchart.wasm`. This module is much smaller than `all.wasm`. [Diagram Modules](/docs/api/compiler-wasm/types) lists every type.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
-import { wasm as flowchart } from 'ondine/compiler/wasm/flowchart'
+import url from 'ondine/compiler/wasm/flowchart.wasm?url'
 
 // Renders flowcharts and throws RenderError for other types
+const flowchart = await WebAssembly.compileStreaming(fetch(url))
 const renderer = create({ modules: { flowchart } })
+```
+
+### Inline the Module
+
+The `ondine/compiler/wasm/all` entrypoint inlines `all.wasm` as base64, at about 830 kB gzip. It needs no file server, but the page downloads more, and `create` compiles the bytes only after the whole module loads.
+
+```ts title="preview.ts"
+import { create } from 'ondine/compiler/wasm'
+
+// Splits the base64 module into its own chunk
+const { wasm } = await import('ondine/compiler/wasm/all')
+const renderer = create({ modules: { all: wasm } })
 ```
 
 ### Offload Compilation
@@ -98,13 +130,16 @@ A large diagram can take milliseconds to compile. Move the renderer into a Web W
 
 ```ts title="compile.worker.ts"
 import { create } from 'ondine/compiler/wasm'
-import { wasm as all } from 'ondine/compiler/wasm/all'
+import url from 'ondine/compiler/wasm/all.wasm?url'
 
-const renderer = create({ modules: { all } })
+// Starts compiling at once, so that early messages wait for the renderer
+const renderer = WebAssembly.compileStreaming(fetch(url)).then((all) =>
+  create({ modules: { all } }),
+)
 
-// Answers each message with the compiled SVG
-self.onmessage = (event: MessageEvent<string>) => {
-  self.postMessage(renderer.render(event.data).svg)
+// Responds to each message with the compiled SVG
+self.onmessage = async (event: MessageEvent<string>) => {
+  self.postMessage((await renderer).render(event.data).svg)
 }
 ```
 

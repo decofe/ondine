@@ -11,6 +11,7 @@
     "check:types": "tsc && pnpm --dir site generate-routes && tsc -p site && pnpm --dir video diagrams && tsc -p video",
     "dev": "pnpm build:wasm && zile dev",
     "postinstall": "zile dev",
+    "size:report": "node scripts/size-report.ts",
     "test": "pnpm build:wasm && vp test",
     "test:packed": "pnpm build:wasm && vp test run --config scripts/packed-consumer.config.ts",
     "test:screenshots": "pnpm build:wasm && vp test --run --project screenshots --update"

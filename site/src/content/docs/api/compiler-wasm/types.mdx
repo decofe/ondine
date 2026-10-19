@@ -39,6 +39,17 @@ create({ modules: { pie: wasm } })
 
 `ondine/compiler/wasm/<type>.wasm` is the same module as a file. Bundlers and hosts that compile WebAssembly ahead of time, such as Cloudflare Workers, use this file. `all.wasm` contains every type. `all.fast.wasm` contains every type, optimized for speed instead of size.
 
+In a browser, fetch the file and compile it with `WebAssembly.compileStreaming`. The file is about a quarter smaller than the base64 export after compression, and the browser compiles it while it downloads.
+
+```ts title="preview.ts"
+import { create } from 'ondine/compiler/wasm'
+import url from 'ondine/compiler/wasm/flowchart.wasm?url'
+
+// Compiles the module while it downloads
+const flowchart = await WebAssembly.compileStreaming(fetch(url))
+const renderer = create({ modules: { flowchart } })
+```
+
 ```ts title="worker.ts"
 import { create } from 'ondine/compiler/wasm'
 import flowchart from 'ondine/compiler/wasm/flowchart.wasm'

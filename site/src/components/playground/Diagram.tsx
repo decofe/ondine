@@ -1,7 +1,7 @@
 /** Renders one diagram with Ondine and reports timing and errors. @module */
 import { useEffect, useRef, useState } from 'react'
 import { create } from 'ondine/compiler/wasm'
-import { wasm as all } from 'ondine/compiler/wasm/all'
+import url from 'ondine/compiler/wasm/all.wasm?url'
 import { style } from './zyzz.config.js'
 
 /** The outcome of one render. */
@@ -9,19 +9,32 @@ export type Outcome =
   | { readonly ms: number; readonly ok: true; readonly svg: string; readonly type: string }
   | { readonly message: string; readonly ok: false }
 
-/** Renders `source` with Ondine's in-browser compiler, loading it on first use. */
-export function draw(source: string, width: number): Outcome {
+/** Renders `source` with Ondine's in-browser compiler, once its module has compiled. */
+export async function draw(source: string, width: number): Promise<Outcome> {
   try {
+    renderer ??= load()
+    const ready = await renderer
     const start = performance.now()
-    renderer ??= create({ modules: { all } })
-    const result = renderer.render(source, { maxWidth: width })
+    const result = ready.render(source, { maxWidth: width })
     return { ms: performance.now() - start, ok: true, svg: result.svg, type: result.type }
   } catch (error) {
     return { message: error instanceof Error ? error.message : String(error), ok: false }
   }
 }
 
-let renderer: ReturnType<typeof create> | undefined
+let renderer: Promise<ReturnType<typeof create>> | undefined
+
+/**
+ * Fetches the size-optimized `all` module and compiles it while it downloads. A `.wasm` file is
+ * about a quarter smaller after compression than the base64 module, and the browser caches its code.
+ */
+async function load(): Promise<ReturnType<typeof create>> {
+  const all = await WebAssembly.compileStreaming(fetch(url)).catch(async () =>
+    // Streaming compilation requires `application/wasm`. Other servers fall back to the bytes.
+    WebAssembly.compile(await (await fetch(url)).arrayBuffer()),
+  )
+  return create({ modules: { all } })
+}
 
 /** Draws `source` with `engine` and calls `onOutcome` after each render. */
 export function Diagram(props: Diagram.Props) {
@@ -30,9 +43,16 @@ export function Diagram(props: Diagram.Props) {
   const [outcome, setOutcome] = useState<Outcome | undefined>()
 
   useEffect(() => {
-    const next = draw(source, frame.current?.clientWidth ?? 800)
-    setOutcome(next)
-    onOutcome?.(next)
+    let current = true
+    void draw(source, frame.current?.clientWidth ?? 800).then((next) => {
+      // A later source replaces this render before it lands.
+      if (!current) return
+      setOutcome(next)
+      onOutcome?.(next)
+    })
+    return () => {
+      current = false
+    }
   }, [onOutcome, source])
 
   return (
