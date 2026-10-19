@@ -29,7 +29,22 @@ export function Search(props: Search.Props) {
   }, [query])
 
   return (
-    <dialog {...styles.dialog()} aria-label="Samples" onClose={onClose} ref={dialog}>
+    <dialog
+      {...styles.dialog()}
+      aria-label="Samples"
+      onClick={(event) => {
+        // A click on the backdrop lands on the dialog itself, outside its box.
+        const box = event.currentTarget.getBoundingClientRect()
+        const outside =
+          event.clientX < box.left ||
+          event.clientX > box.right ||
+          event.clientY < box.top ||
+          event.clientY > box.bottom
+        if (event.target === event.currentTarget && outside) event.currentTarget.close()
+      }}
+      onClose={onClose}
+      ref={dialog}
+    >
       <input
         {...styles.input()}
         aria-label="Filter samples"

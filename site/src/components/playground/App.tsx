@@ -48,7 +48,6 @@ export function App() {
         <section {...styles.panel()} aria-label="Source">
           <div {...styles.bar()}>
             <span {...styles.tools()}>
-              Source <span {...styles.muted()}>Mermaid</span>
               <button {...styles.search()} onClick={() => setSearching(true)} type="button">
                 Open sample <kbd {...styles.kbd()}>⌘K</kbd>
               </button>
@@ -231,8 +230,6 @@ namespace styles {
     minHeight: '2.75rem !custom',
     paddingInline: 'md',
   })
-
-  export const muted = style({ color: 'muted' })
 
   export const tools = style({ alignItems: 'center', display: 'flex', gap: 'md' })
 
