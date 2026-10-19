@@ -231,12 +231,24 @@ Applies to the documentation site and other Markdown documentation. Prose Conven
 
 ## Prose Conventions
 
-Applies to documentation, comments, TSDoc, commit messages, and pull requests.
+Applies to documentation, comments, TSDoc, interface copy, commit messages, and pull requests. Adapted from the Prose Conventions of `tempoxyz/id`.
 
-- Write about the code, not about the person using it. Avoid second person.
+- Write about the code, not about the person using it. Avoid second person outside interface copy.
 - Describe behavior in technical terms rather than by the experience it produces. Prefer `answers before acquisition finishes` over `keeps the editor feeling fast`.
+- Write formally, concisely, and technically. Use precise verbs such as "returns", "renders", "compiles", "rejects", "emits", "serves", and "throws", not conversational ones such as "hands", "gets", "gives", "sees", "knows", "says", or "tells".
 - State an invariant or a reason the code cannot show on its own. Leave out justification the code already makes plain.
-- Vary sentence construction. One shape repeated across a file, such as an assertion followed by a colon and its reason, reads as a writing style rather than as information.
+- Write close to ASD-STE100 Simplified Technical English. Apply its writing rules below, but not its full dictionary.
+- Use the short, common word: "use", "start", "before", "about", "make sure", not "utilize", "commence", "prior to", "approximately", "ensure". Technical names and Mermaid terms, such as "fence", "directive", and "front matter", are always valid.
+- Use one word for one thing, and give each word one meaning and one part of speech. Do not use a synonym for variety.
+- Keep an instruction to 20 words or fewer, and a descriptive sentence to 25 words or fewer. Give one instruction in each sentence, unless the actions occur at the same time.
+- Keep each paragraph to one topic and six sentences or fewer. Use a vertical list for sequential steps or several conditions.
+- Put a condition before the instruction it controls: "If the source is invalid, read the error's line and column."
+- Use the active voice in instructions. Use the passive voice in descriptions only when the agent is unknown or not important.
+- Use the imperative, simple present, simple past, and simple future. Do not use a progressive (`-ing`) or perfect form as the main verb. An `-ing` word in a technical name, such as "rendering mode", is valid.
+- Do not stack more than three nouns, except in a technical name. Break a longer cluster with a preposition.
+- Do not leave out "the", "a", or "this" to make a sentence shorter.
+- Start sentences in different ways, but keep each sentence simple.
+- Use a diagram, not prose, to show a flow or how components connect, and keep it to about 12 nodes. Use a table, not a paragraph, to compare options or map inputs to outputs.
 - Do not use semicolons or em dashes in prose. Split the sentence, or use a comma, colon, or parenthesis. Semicolons remain valid inside code and CSS.
 - Keep PR titles and bodies short and concrete. Explain the problem and resulting behavior in a few sentences, include one small example, and add one validation line. Use a usage snippet, before/after behavior, or relevant command. Link detailed reports.
 

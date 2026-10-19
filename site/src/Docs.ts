@@ -19,6 +19,7 @@ export const groups: readonly { pages: readonly Item[]; title: string }[] = [
     pages: [
       { path: 'guides/vite', title: 'Vite' },
       { path: 'guides/cli', title: 'CLI' },
+      { path: 'guides/mdx', title: 'MDX' },
       { path: 'guides/node', title: 'Node Compiler' },
       { path: 'guides/browser', title: 'In-Browser Compilation' },
       { path: 'guides/github', title: 'GitHub Images' },
