@@ -123,10 +123,10 @@ namespace styles {
 
   export const header = style({
     alignItems: 'center',
-    backgroundColor: 'code',
+    backgroundColor: 'tint',
     borderBottom: '1px dashed',
-    borderColor: '#5c4100 !custom',
-    color: '#ffb000 !custom',
+    borderColor: 'shade',
+    color: 'muted',
     display: 'flex',
     fontFamily: 'mono',
     fontSize: '0.75rem !custom',
@@ -153,17 +153,17 @@ namespace styles {
 
   export const code = style({
     '& .highlighted': {
-      backgroundColor: 'rgb(255 176 0 / 0.14) !custom',
+      backgroundColor: 'chip',
       display: 'inline-block',
       minWidth: '100% !custom',
     },
-    '& .highlighted-word': { outline: '1px solid #ffb000 !custom' },
+    '& .highlighted-word': { outline: '1px solid #000000 !custom' },
     '& .diff': { display: 'inline-block', minWidth: '100% !custom' },
-    '& .diff.add': { backgroundColor: 'rgb(127 224 168 / 0.14) !custom' },
-    '& .diff.remove': { backgroundColor: 'rgb(255 90 95 / 0.16) !custom' },
+    '& .diff.add': { backgroundColor: 'rgb(0 112 74 / 0.12) !custom' },
+    '& .diff.remove': { backgroundColor: 'rgb(228 32 43 / 0.12) !custom' },
     '& code': { display: 'block', font: 'inherit', minWidth: 'max-content !custom' },
-    backgroundColor: 'code',
-    color: '#ffb000 !custom',
+    backgroundColor: 'tint',
+    color: 'ink',
     fontFamily: 'mono',
     fontSize: '0.875rem !custom',
     lineHeight: '1.6 !custom',

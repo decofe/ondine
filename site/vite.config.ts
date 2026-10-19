@@ -412,29 +412,32 @@ type Element = Extract<
 >
 
 /**
- * A terminal-style code theme: amber text on the black code panel, with brighter keywords and
- * dimmed comments. Code blocks stay dark in both color schemes.
+ * A printed code theme in the site's palette: black text on the light tint panel, with green
+ * keywords, blue strings, red constants, and grey comments. Code blocks stay light in both schemes.
  */
 const theme: ThemeRegistrationRaw = {
-  name: 'ondine-amber',
-  type: 'dark',
-  bg: '#000000',
-  fg: '#ffb000',
+  name: 'ondine-print',
+  type: 'light',
+  bg: '#f3f3f3',
+  fg: '#000000',
   settings: [
-    { settings: { background: '#000000', foreground: '#ffb000' } },
-    { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#8a6a1f' } },
+    { settings: { background: '#f3f3f3', foreground: '#000000' } },
+    {
+      scope: ['comment', 'punctuation.definition.comment'],
+      settings: { fontStyle: 'italic', foreground: '#6b6b6b' },
+    },
     {
       scope: ['keyword', 'storage', 'storage.type', 'keyword.control', 'keyword.operator.new'],
-      settings: { foreground: '#ffd56b' },
+      settings: { foreground: '#00704a' },
     },
     {
       scope: ['string', 'string.quoted', 'markup.inline.raw'],
-      settings: { foreground: '#7fe0a8' },
+      settings: { foreground: '#0047ab' },
     },
-    { scope: ['constant.numeric', 'constant.language'], settings: { foreground: '#ff8f5a' } },
+    { scope: ['constant.numeric', 'constant.language'], settings: { foreground: '#b3141c' } },
     {
       scope: ['entity.name.function', 'support.function', 'entity.name.type', 'support.type'],
-      settings: { foreground: '#ffffff' },
+      settings: { fontStyle: 'bold', foreground: '#000000' },
     },
   ],
 }
