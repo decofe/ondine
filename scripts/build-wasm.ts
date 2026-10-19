@@ -14,7 +14,10 @@ const root = Path.resolve(import.meta.dirname, '..')
 
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
 const types = [
+  'architecture',
   'block',
+  'class',
+  'er',
   'flowchart',
   'gantt',
   'git',
@@ -28,6 +31,7 @@ const types = [
   'timeline',
   'usecase',
   'venn',
+  'wardley',
 ] as const
 
 /**
