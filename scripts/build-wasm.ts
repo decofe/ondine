@@ -78,10 +78,21 @@ function build(feature: string): Buffer {
     '--enable-sign-ext',
   ]
 
-  // The pinned npm build of Binaryen keeps output identical across machines.
+  // The pinned npm build of Binaryen keeps output identical across machines. Rust places the stack
+  // and static data above the first kilobyte, so `--low-memory-unused` can fold address offsets.
   ChildProcess.execFileSync(
     Path.join(root, 'node_modules/.bin/wasm-opt'),
-    ['-Oz', ...proposals, '--strip-debug', '--strip-producers', input, '-o', output],
+    [
+      '-Oz',
+      '--converge',
+      '--low-memory-unused',
+      ...proposals,
+      '--strip-debug',
+      '--strip-producers',
+      input,
+      '-o',
+      output,
+    ],
     { cwd: root, stdio: 'inherit' },
   )
 
