@@ -13,6 +13,18 @@ const root = Path.resolve(import.meta.dirname, '..')
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
 const types = ['block', 'flowchart', 'gantt', 'requirement', 'sankey', 'state', 'venn'] as const
 
+/**
+ * The nightly toolchain that rebuilds `std` for size. `MELEE_WASM_TOOLCHAIN` overrides it. Without
+ * it, or without its `rust-src` component, modules build on the stable toolchain and are larger.
+ */
+const nightly = process.env.MELEE_WASM_TOOLCHAIN ?? 'nightly-2026-06-29'
+const sized = installed(nightly)
+
+if (!sized)
+  console.warn(
+    `${nightly} with rust-src is not installed. Building larger modules with the stable toolchain. Install it with: rustup toolchain install ${nightly} --component rust-src --target wasm32-unknown-unknown`,
+  )
+
 // `all` includes every diagram type, for the root entrypoint and the tests.
 for (const type of ['all', ...types]) {
   const bytes = build(type)
@@ -25,9 +37,17 @@ for (const type of ['all', ...types]) {
 function build(feature: string): Buffer {
   const targetDir = `target/wasm-${feature}`
 
+  // Rebuilding `std` with `optimize_for_size` and aborting panics without formatting their messages
+  // removes `core::fmt` and selects smaller `std` algorithms.
+  const nightlyArgs = ['-Zbuild-std=std,panic_abort', '-Zbuild-std-features=optimize_for_size']
+  const env = sized
+    ? { ...process.env, RUSTFLAGS: '-Zunstable-options -Cpanic=immediate-abort' }
+    : process.env
+
   ChildProcess.execFileSync(
     'cargo',
     [
+      ...(sized ? [`+${nightly}`] : []),
       'build',
       '--package',
       'wasm',
@@ -40,8 +60,9 @@ function build(feature: string): Buffer {
       'wasm32-unknown-unknown',
       '--target-dir',
       targetDir,
+      ...(sized ? nightlyArgs : []),
     ],
-    { cwd: root, stdio: 'inherit' },
+    { cwd: root, env, stdio: 'inherit' },
   )
 
   const input = Path.join(root, targetDir, 'wasm32-unknown-unknown/wasm/wasm.wasm')
@@ -65,6 +86,20 @@ function build(feature: string): Buffer {
   )
 
   return Fs.readFileSync(output)
+}
+
+/** Whether rustup has `toolchain` with the `std` sources that `-Zbuild-std` compiles. */
+function installed(toolchain: string): boolean {
+  try {
+    const components = ChildProcess.execFileSync(
+      'rustup',
+      ['component', 'list', '--installed', '--toolchain', toolchain],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    )
+    return components.split('\n').includes('rust-src')
+  } catch {
+    return false
+  }
 }
 
 /** The generated module that inlines `bytes`. */
