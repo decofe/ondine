@@ -7,21 +7,18 @@ Inputs, agents, tools, and the flows that connect them. Mermaid marks this type 
 ## Status
 
 - **Keyword:** `agentflow-beta`
-- **Status:** Not ported
-- **Vectors:** 0 of 13 match Pele
+- **Status:** Matches Pele
+- **Vectors:** 13 of 13 match Pele
 
 The [Compatibility](/introduction/compatibility) page defines each status.
 
-> [!NOTE]
-> Melee does not render this type yet. The examples below show the Mermaid source only.
-
 ## Examples
 
-The playground samples for this type.
+The playground samples for this type, rendered by Melee when the documentation builds.
 
 ### Example 1
 
-```txt
+```mermaid
 agentflow-beta TB
   brief["Release brief"]@{ shape: input }
   flow writer["Drafting Agent"]
@@ -45,7 +42,7 @@ agentflow-beta TB
 
 ### Example 2
 
-```txt
+```mermaid
 ---
 config:
   theme: default
@@ -75,7 +72,7 @@ agentflow-beta TB
 
 ### Example 3
 
-```txt
+```mermaid
 agentflow-beta LR
   brief["Brief"]@{ shape: input }
   draft["Draft copy"]@{ shape: task }
@@ -90,7 +87,7 @@ agentflow-beta LR
 
 ### Example 4
 
-```txt
+```mermaid
 agentflow-beta TB
   global
     corpus["Shared corpus"]@{ shape: refdoc }
@@ -110,7 +107,7 @@ agentflow-beta TB
 
 ### Example 5
 
-```txt
+```mermaid
 agentflow-beta TB
   flow intake["Intake"]
     receive["Receive request"]@{ shape: input }
@@ -134,7 +131,7 @@ agentflow-beta TB
 
 ### Example 6
 
-```txt
+```mermaid
 agentflow-beta TB
   connector llm["LLM API"]
   llm@{ protocol: "http", endpoint: "https://api.example.com/chat" }

@@ -95,7 +95,11 @@ A `test/vectors/ledger.json` records each vector's parse, model, render, and lay
 
 ### 5. Diagram types
 
-Order by corpus share and shared layout: sequence, class, state, ER, block, git, then the remaining 26 types. Each type closes only when its specs, oracle, fuzzing, corpus, and screenshot sheet pass.
+All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte for byte; the two `info` vectors differ by design (Melee's name and version). Every type has a syntax fixture harvested from Pele's compat specs, comparing accept/reject, messages, positions, and models.
+
+- [ ] Screenshot sheets per type, reviewed in light and dark.
+- [ ] Port Pele's Mermaid grammar oracles and fuzzing as committed tests (agents ran them as throwaway checks).
+- [ ] `test/vectors/ledger.json`, or drop it from AGENTS.md in favor of the generated Compatibility page.
 
 ### 5a. Build-time path
 

@@ -7,21 +7,18 @@ Grammar rules drawn as railroad tracks. Mermaid marks this type as beta.
 ## Status
 
 - **Keyword:** `railroad-ebnf-beta`, `railroad-abnf-beta`, `railroad-peg-beta`, `railroad-beta`
-- **Status:** Not ported
-- **Vectors:** 0 of 14 match Pele
+- **Status:** Matches Pele
+- **Vectors:** 14 of 14 match Pele
 
 The [Compatibility](/introduction/compatibility) page defines each status.
 
-> [!NOTE]
-> Melee does not render this type yet. The examples below show the Mermaid source only.
-
 ## Examples
 
-The playground samples for this type.
+The playground samples for this type, rendered by Melee when the documentation builds.
 
 ### Example 1
 
-```txt
+```mermaid
 railroad-ebnf-beta
 title "Arithmetic Expression Grammar"
 
@@ -35,7 +32,7 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 
 ### Example 2
 
-```txt
+```mermaid
 railroad-ebnf-beta
 title "JSON Grammar"
 
@@ -49,7 +46,7 @@ member = string ":" element ;
 
 ### Example 3
 
-```txt
+```mermaid
 railroad-abnf-beta
 title "Email Address"
 
@@ -62,7 +59,7 @@ label = 1*( ALPHA / DIGIT / "-" ) ;
 
 ### Example 4
 
-```txt
+```mermaid
 railroad-peg-beta
 title "Calculator Grammar"
 
@@ -76,7 +73,7 @@ Digit <- "0" / "1" / "2" / "3" / "4" / "5" / "6" / "7" / "8" / "9" ;
 
 ### Example 5
 
-```txt
+```mermaid
 railroad-peg-beta
 title "Identifiers (keywords excluded)"
 
@@ -88,7 +85,7 @@ Letter <- "a" / "b" / "c" / "_" ;
 
 ### Example 6
 
-```txt
+```mermaid
 railroad-beta
 title Expression Grammar
 

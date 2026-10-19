@@ -26,7 +26,7 @@
   },
   {
     "slug": "eventmodeling",
-    "status": "not-ported",
+    "status": "matches",
     "title": "Event Modeling"
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "slug": "agentflow",
-    "status": "not-ported",
+    "status": "matches",
     "title": "Agent Flow"
   },
   {
@@ -131,12 +131,12 @@
   },
   {
     "slug": "railroad",
-    "status": "not-ported",
+    "status": "matches",
     "title": "Railroad"
   },
   {
     "slug": "swimlane",
-    "status": "not-ported",
+    "status": "matches",
     "title": "Swimlane"
   },
   {
@@ -146,7 +146,7 @@
   },
   {
     "slug": "treeview",
-    "status": "not-ported",
+    "status": "matches",
     "title": "Tree View"
   },
   {
