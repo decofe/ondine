@@ -21,8 +21,31 @@ jobs:
       - name: Build WebAssembly
         run: pnpm build:wasm
 
+      - name: Check generated exports
+        run: git diff --exit-code package.json
+
       - name: Check types
         run: pnpm check:types
+
+  packed:
+    name: Test Packed
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
+
+      - name: Install toolchain
+        run: rustup show
+
+      - name: Install size toolchain
+        run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
+
+      - name: Run packed-consumer test
+        run: pnpm test:packed
 
   rust:
     name: Rust

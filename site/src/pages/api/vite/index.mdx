@@ -26,3 +26,12 @@ export default defineConfig({
     description="The Vite plugin and its rendering options."
   />
 </Cards>
+
+## Types
+
+`melee/vite/client` declares the default export of `.mmd` and `.mermaid` imports: `{ height, svg, type, width }`.
+
+```ts title="src/env.d.ts"
+// Types every Mermaid import in the project
+/// <reference types="melee/vite/client" />
+```

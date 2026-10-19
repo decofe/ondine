@@ -76,14 +76,23 @@ Cloudflare Workers refuse to compile WebAssembly at runtime. Import a `.wasm` fi
 
 ```ts title="worker.ts"
 import { create } from 'melee/compiler/wasm'
-import all from './all.wasm'
+import all from 'melee/compiler/wasm/all.wasm'
 
 // The module arrives precompiled, so no runtime compilation happens
 const renderer = create({ modules: { all } })
 ```
 
-> [!NOTE]
-> The package does not export a `.wasm` file yet. The [image Worker](/api/worker) imports the build output from the repository.
+### Load One Type
+
+A page that compiles only one diagram type imports that type's module from `melee/compiler/wasm/<type>`, which is much smaller than `all`. [Diagram Modules](/api/compiler-wasm/types) lists every type.
+
+```ts title="preview.ts"
+import { create } from 'melee/compiler/wasm'
+import { wasm as flowchart } from 'melee/compiler/wasm/flowchart'
+
+// Renders flowcharts and throws RenderError for other types
+const renderer = create({ modules: { flowchart } })
+```
 
 ### Compile Off the Main Thread
 

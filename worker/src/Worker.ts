@@ -8,7 +8,7 @@
  */
 import { Render, RenderError } from 'melee/compiler/wasm'
 // Every diagram type, optimized for speed. Workers download nothing per request.
-import module from 'melee/src/internal/all.fast.generated.wasm'
+import module from 'melee/compiler/wasm/all.fast.wasm'
 
 /** Thrown when a request path does not hold a decodable payload. */
 export class PayloadError extends Error {

@@ -78,19 +78,11 @@ export function Flow() {
 
 ### Type the Imports
 
-The package does not declare a module type for Mermaid files yet. Add a declaration file to the project.
+`melee/vite/client` declares the default export of `.mmd` and `.mermaid` imports. Reference it from a declaration file, or list it in `compilerOptions.types`.
 
-```ts title="src/mermaid.d.ts"
+```ts title="src/env.d.ts"
 // Types the default export of every Mermaid import
-declare module '*.mmd' {
-  const diagram: { height: number; svg: string; type: string; width: number }
-  export default diagram
-}
-
-declare module '*.mermaid' {
-  const diagram: { height: number; svg: string; type: string; width: number }
-  export default diagram
-}
+/// <reference types="melee/vite/client" />
 ```
 
 ### Compile Markdown
