@@ -10,20 +10,25 @@
 
 ## Overview
 
-```ts
-// vite.config.ts
-import { melee } from 'melee/vite'
-
-export default { plugins: [melee()] }
+```text
+sequenceDiagram
+  participant Browser
+  participant Server
+  participant Database
+  Browser->>Server: GET /orders
+  Server->>Database: SELECT * FROM orders
+  Database-->>Server: rows
+  alt cached
+    Server-->>Browser: 304 Not Modified
+  else fresh
+    Server-->>Browser: 200 OK
+  end
 ```
 
-```ts
-// Any module: `.mmd` imports compile at build time.
-import { mount } from 'melee'
-import flow from './flow.mmd'
-
-mount(document.getElementById('flow')!, flow)
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/overview-dark.svg">
+  <img alt="Sequence diagram rendered by Melee" src=".github/assets/overview-light.svg">
+</picture>
 
 ## Agent Prompt
 
