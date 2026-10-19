@@ -5,3 +5,4 @@ target
 src/internal/*.generated.ts
 src/internal/*.generated.wasm
 bench/results
+.wrangler

@@ -1,0 +1,15 @@
+{
+  "name": "@melee/worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "pnpm --dir .. build:wasm && wrangler deploy",
+    "dev": "pnpm --dir .. build:wasm && wrangler dev"
+  },
+  "dependencies": {
+    "melee": "workspace:*"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:"
+  }
+}
