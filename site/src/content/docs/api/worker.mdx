@@ -5,7 +5,7 @@ Serve diagrams as SVG and PNG images from a Cloudflare Worker, for Markdown host
 The Worker at `https://ondine.sh` reads the Mermaid source from the request and compiles it with the module for every diagram type. The Worker is part of the documentation site in `site/`. The build precompiles its compiler module, so a request downloads nothing. The [GitHub Images](/docs/guides/github) guide shows common tasks.
 
 ```md title="README.md"
-<!-- Renders a two-node flowchart that follows the reader's scheme -->
+<!-- Renders a two-node flowchart in the light scheme -->
 
 ![Flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
 ```
@@ -13,8 +13,8 @@ The Worker at `https://ondine.sh` reads the Mermaid source from the request and 
 ## Request
 
 ```txt
-GET /<payload>.svg?scheme=light|dark
-GET /svg?source=<source>&scheme=light|dark
+GET /<payload>.svg?scheme=light|dark|auto
+GET /svg?source=<source>&scheme=light|dark|auto
 GET /<payload>.png
 GET /png?source=<source>
 ```
@@ -50,7 +50,7 @@ The Mermaid source in the query of `/svg` or `/png`. Authors and agents that can
 
 - **Type:** `'light' | 'dark'{:ts}`
 
-Sets one color scheme for an SVG image. If `scheme` is not set, the image changes with `prefers-color-scheme`.
+Selects the color scheme of an SVG image. The default is `light`. The `auto` value follows `prefers-color-scheme`.
 
 ```html
 <!-- Shows the dark variant when GitHub uses a dark theme -->

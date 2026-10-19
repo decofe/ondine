@@ -61,7 +61,7 @@ function images(origin: string): readonly string[] {
     '',
     `![Flowchart](${example})`,
     '',
-    "- `?scheme=light` or `?scheme=dark` pins one color scheme. Without it, the image follows the reader's scheme.",
+    "- Images use the light scheme. `?scheme=dark` selects the dark scheme, and `?scheme=auto` follows the reader's scheme.",
     `- \`${origin}/png?source=\` draws the same diagram on a 1200x630 PNG card, for hosts that do not display SVG.`,
     `- \`${origin}/<payload>.svg\` takes the source zlib-deflated, then base64url-encoded, for shorter URLs.`,
     '- `npx ondine README.md` rewrites every ` ```mermaid ` fence in a file to these images, and `--restore` turns them back into fences.',

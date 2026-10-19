@@ -39,12 +39,12 @@ Markdown written by hand or by an agent can omit the compression. The `/svg` pat
 
 ### Embed the Image
 
-If the URL has no `scheme` parameter, one image follows the color scheme of the viewer through `prefers-color-scheme`.
+If the URL has no `scheme` parameter, the image uses the light scheme. Add `?scheme=auto` to follow the color scheme of the viewer through `prefers-color-scheme`.
 
 ```md title="README.md"
 <!-- Follows the reader's color scheme -->
 
-![Request flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+![Request flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=auto)
 ```
 
 ### Pin Each Scheme

@@ -3,8 +3,8 @@
  *
  * `GET /<payload>.svg` renders the Mermaid source in `payload`, encoded as Kroki does: UTF-8, zlib
  * deflate, then base64url. `GET /svg?source=<source>` reads percent-encoded source instead, which
- * authors and agents can write without a compressor. One adaptive SVG follows the embedder's color
- * scheme. `?scheme=light` or `?scheme=dark` pins one scheme for `<picture>` sources.
+ * authors and agents can write without a compressor. Images draw the light scheme. `?scheme=dark`
+ * draws the dark scheme, and `?scheme=auto` follows `prefers-color-scheme`.
  *
  * `GET /<payload>.png` and `GET /png?source=<source>` draw the diagram on a 1200x630 PNG card. Link
  * previewers that request an SVG address receive an HTML page whose `og:image` is that card.
@@ -59,8 +59,11 @@ export async function respond(request: Request, options: respond.Options = {}): 
 
   const scheme = url.searchParams.get('scheme')
   const style = (() => {
-    if (scheme === 'dark' || scheme === 'light') return `:root{${schemes[scheme]}}`
-    return `:root{${schemes.light}}@media (prefers-color-scheme:dark){:root{${schemes.dark}}}`
+    // `color-scheme` paints a matching canvas behind an image that a browser opens on its own.
+    if (scheme === 'dark') return `:root{color-scheme:dark;${schemes.dark}}`
+    if (scheme === 'auto')
+      return `:root{color-scheme:light dark;${schemes.light}}@media (prefers-color-scheme:dark){:root{${schemes.dark}}}`
+    return `:root{color-scheme:light;${schemes.light}}`
   })()
 
   try {

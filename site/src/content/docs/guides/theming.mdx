@@ -180,7 +180,7 @@ classDiagram
 
 ### Pin a Scheme
 
-A diagram in an image cannot read the styles of the page. Thus the [image Worker](/docs/guides/github) puts the properties in the SVG. It also accepts `?scheme=light` or `?scheme=dark`.
+A diagram in an image cannot read the styles of the page. Thus the [image Worker](/docs/guides/github) puts the properties in the SVG. It draws the light scheme, or the dark scheme with `?scheme=dark`. The `?scheme=auto` value follows `prefers-color-scheme`.
 
 ```md title="README.md"
 <!-- Shows the dark scheme for every reader -->
