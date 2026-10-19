@@ -73,14 +73,19 @@ write(
 
 const stampFile = Path.join(root, 'src/internal/.stamp')
 const stamp = inputs()
+const modelFile = Path.join(root, 'test/oracles/model.generated.wasm')
 const outputs = [
-  ...['all', ...types].flatMap((type) => [`${type}.generated.ts`, `${type}.generated.wasm`]),
-  'all.fast.generated.wasm',
+  ...['all', ...types].flatMap((type) => [
+    Path.join(root, `src/internal/${type}.generated.ts`),
+    Path.join(root, `src/internal/${type}.generated.wasm`),
+  ]),
+  Path.join(root, 'src/internal/all.fast.generated.wasm'),
+  modelFile,
 ]
 const fresh =
   Fs.existsSync(stampFile) &&
   Fs.readFileSync(stampFile, 'utf8') === stamp &&
-  outputs.every((file) => Fs.existsSync(Path.join(root, 'src/internal', file)))
+  outputs.every((file) => Fs.existsSync(file))
 
 if (fresh) console.log('WebAssembly modules are up to date.')
 else {
@@ -97,6 +102,8 @@ else {
         Path.join(root, 'src/internal/all.fast.generated.wasm'),
         await build('all', { fast: true }),
       ),
+    // Tests compare parsed models, which no published module exports.
+    async () => write(modelFile, await build('all,model', { model: true })),
   ]
 
   // Each module has its own target directory, so builds run side by side.
@@ -151,9 +158,6 @@ function run(command: string, args: readonly string[], env: NodeJS.ProcessEnv): 
     )
   })
 }
-
-// Tests compare parsed models, which no published module exports.
-write(Path.join(root, 'test/oracles/model.generated.wasm'), build('all,model', { model: true }))
 
 /** Builds the `wasm` crate with one diagram feature, optimizes it, and returns its bytes. */
 async function build(feature: string, options: build.Options = {}): Promise<Buffer> {

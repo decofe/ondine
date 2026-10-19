@@ -17,6 +17,7 @@ runs:
         path: |
           src/internal/*.generated.*
           src/internal/.stamp
+          test/oracles/model.generated.wasm
 
     - name: Install toolchains
       if: steps.cache.outputs.cache-hit != 'true' && inputs.build == 'true'
