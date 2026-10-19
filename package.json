@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "bench": "pnpm build:wasm && vp test bench --run --no-file-parallelism",
     "build": "pnpm build:wasm && zile",
     "build:wasm": "node scripts/build-wasm.ts",
     "changeset:publish": "zile publish:prepare && changeset publish && zile publish:post",
