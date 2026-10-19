@@ -10,15 +10,19 @@
     "check:types": "tsc && tsc -p playground && tsc -p site",
     "dev": "pnpm build:wasm && zile dev",
     "postinstall": "zile dev",
-    "test": "pnpm build:wasm && vp test"
+    "test": "pnpm build:wasm && vp test",
+    "test:screenshots": "pnpm build:wasm && vp test --run --project screenshots --update"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",
+    "@fontsource/geist-mono": "catalog:",
     "@types/node": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
     "binaryen": "catalog:",
     "esbuild": "catalog:",
     "mermaid": "catalog:",
     "pele": "catalog:",
+    "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:",

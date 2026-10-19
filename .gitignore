@@ -2,6 +2,7 @@ dist
 node_modules
 *.tsbuildinfo
 target
+.vitest-attachments
 src/internal/*.generated.ts
 src/internal/*.generated.wasm
 bench/results
