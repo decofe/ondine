@@ -150,9 +150,72 @@ pub(crate) fn push_number(out: &mut String, value: f64) {
 
 const BASE: u64 = 1_000_000_000;
 
+/// Powers of ten that doubles hold exactly.
+const POWERS: [f64; 23] = [
+    1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15, 1e16,
+    1e17, 1e18, 1e19, 1e20, 1e21, 1e22,
+];
+
+// The shortest digits of a positive `value` that needs at most 22 decimals and stays below 2^53
+// when scaled by them. The fewest decimals give the fewest digits. Division of exact integers
+// rounds correctly, so `m / 10^d == value` is the read-back test, and every candidate lies within
+// two of the rounded scaled value. `None` when no candidate is unique.
+fn shortest_scaled(value: f64) -> Option<(Vec<u8>, i32)> {
+    for (decimals, &power) in POWERS.iter().enumerate() {
+        let scaled = value * power;
+        if scaled >= 9e15 {
+            return None;
+        }
+
+        let rounded = scaled.round();
+        let mut found = None;
+        for candidate in [
+            rounded - 2.0,
+            rounded - 1.0,
+            rounded,
+            rounded + 1.0,
+            rounded + 2.0,
+        ] {
+            if candidate >= 1.0 && (candidate / power).to_bits() == value.to_bits() {
+                if found.is_some() {
+                    return None;
+                }
+                found = Some(candidate);
+            }
+        }
+        let Some(found) = found else {
+            continue;
+        };
+
+        #[expect(
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss,
+            reason = "the candidate is a whole number from 1 to 2^53"
+        )]
+        let mut rest = found as u64;
+        let mut digits = Vec::with_capacity(17);
+        while rest > 0 {
+            digits.push(b'0' + u8::try_from(rest % 10).unwrap_or(0));
+            rest /= 10;
+        }
+        let n = i32::try_from(digits.len()).unwrap_or(0) - i32::try_from(decimals).unwrap_or(0);
+        digits.reverse();
+        while digits.len() > 1 && digits.last() == Some(&b'0') {
+            digits.pop();
+        }
+        return Some((digits, n));
+    }
+    None
+}
+
 // The shortest decimal digits that read back as `value`, and the decimal point position `n`, so
-// that `value` is `0.digits * 10^n`. Expands the double exactly, then rounds to more and more digits.
+// that `value` is `0.digits * 10^n`.
 fn shortest(value: f64) -> (Vec<u8>, i32) {
+    shortest_scaled(value).unwrap_or_else(|| shortest_exact(value))
+}
+
+// Expands the double exactly, then rounds to more and more digits.
+fn shortest_exact(value: f64) -> (Vec<u8>, i32) {
     let bits = value.to_bits();
     let biased = i32::try_from((bits >> 52) & 0x7ff).unwrap_or(0);
     let fraction = bits & ((1 << 52) - 1);
