@@ -1,0 +1,48 @@
+# Diagram Modules
+
+One size-optimized compiler module per diagram type, as base64 or a raw `.wasm` file.
+
+Each `ondine/compiler/wasm/<type>` entrypoint holds only the code that renders `<type>`, so a page that compiles one type downloads far less than [`ondine/compiler/wasm/all`](/docs/api/compiler-wasm/all). Register modules under their type for [`create`](/docs/api/compiler/create).
+
+```ts title="preview.ts"
+import { create } from 'ondine/compiler/wasm'
+import { wasm as flowchart } from 'ondine/compiler/wasm/flowchart'
+import { wasm as sequence } from 'ondine/compiler/wasm/sequence'
+
+// Renders flowcharts and sequence diagrams, and throws RenderError for other types
+const renderer = create({ modules: { flowchart, sequence } })
+```
+
+## Types
+
+`agentflow`, `architecture`, `block`, `c4`, `class`, `cynefin`, `er`, `eventmodeling`, `flowchart`, `gantt`, `git`, `info`, `ishikawa`, `journey`, `kanban`, `mindmap`, `packet`, `pie`, `quadrant`, `radar`, `railroad`, `requirement`, `sankey`, `sequence`, `state`, `swimlane`, `timeline`, `treemap`, `treeview`, `usecase`, `venn`, `wardley`, and `xychart`.
+
+## Exports
+
+### wasm
+
+- **Type:** `string{:ts}`
+
+The module's bytes as base64, exported by `ondine/compiler/wasm/<type>`. `create` compiles them synchronously on the first render of that type.
+
+```ts
+import { create } from 'ondine/compiler/wasm'
+import { wasm } from 'ondine/compiler/wasm/pie'
+
+// Registers the module under its diagram type
+create({ modules: { pie: wasm } })
+```
+
+### Raw Modules
+
+- **Type:** WebAssembly binary
+
+`ondine/compiler/wasm/<type>.wasm` is the same module as a file, for bundlers and hosts that compile WebAssembly ahead of time, such as Cloudflare Workers. `all.wasm` holds every type, and `all.fast.wasm` holds every type optimized for speed instead of size.
+
+```ts title="worker.ts"
+import { create } from 'ondine/compiler/wasm'
+import flowchart from 'ondine/compiler/wasm/flowchart.wasm'
+
+// The bundler compiles the module, so no runtime compilation happens
+const renderer = create({ modules: { flowchart } })
+```

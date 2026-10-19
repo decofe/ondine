@@ -1,0 +1,71 @@
+# ondine
+
+Create a Vite plugin that imports `.mmd` and `.mermaid` files as precompiled SVG.
+
+The plugin compiles each matching module in its `transform` hook, ignoring query strings in the ID. The module's default export is the rendered diagram, and the page bundle holds no compiler.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { ondine } from 'ondine/vite'
+
+export default defineConfig({
+  // Compiles .mmd and .mermaid imports
+  plugins: [ondine()],
+})
+```
+
+## Signature
+
+```ts
+// Returns a Vite plugin named 'ondine'
+ondine(options?)
+```
+
+## Parameters
+
+### options
+
+- **Type:** `Omit<render.Options, 'idPrefix'>{:ts}`
+- **Default:** `{}{:ts}`
+
+Rendering options applied to every imported diagram. Every [`render` option](/docs/api/compiler/render#parameters) is accepted except `idPrefix`. The plugin derives each file's prefix from a hash of its path.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { ondine } from 'ondine/vite'
+
+export default defineConfig({
+  // Lays out every diagram for a 640-pixel column, at 14-pixel text
+  plugins: [ondine({ fontSize: 14, maxWidth: 640 })],
+})
+```
+
+## Returns
+
+### plugin
+
+- **Type:** `Plugin{:ts}`
+
+A Vite plugin. Each import of a Mermaid file resolves to a module whose default export has these fields:
+
+| Field    | Type     | Description               |
+| -------- | -------- | ------------------------- |
+| `height` | `number` | Height in pixels          |
+| `svg`    | `string` | The SVG document          |
+| `type`   | `string` | The detected diagram type |
+| `width`  | `number` | Width in pixels           |
+
+```ts title="main.ts"
+import flow from './flow.mmd'
+
+// The SVG and its size, computed at build time
+const { height, svg, type, width } = flow
+```
+
+`links` from `render` is not included.
+
+## Errors
+
+### Transform Error
+
+A [`RenderError`](/docs/api/compiler/RenderError) becomes a Vite transform error with the file, line, column, and Mermaid's message. It fails `vite build` and shows in the development overlay. Other errors are rethrown unchanged.

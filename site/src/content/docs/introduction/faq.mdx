@@ -1,0 +1,42 @@
+# FAQ
+
+Answers to common questions about Ondine.
+
+## Does Ondine Run Mermaid?
+
+No. Ondine is a separate compiler written in Rust. It follows Mermaid 12.1.0's syntax, so the same source parses into the same diagram model, but it lays out and draws diagrams its own way.
+
+## Why Do Diagrams Look Different?
+
+Layout and appearance differ from Mermaid by design. Ondine draws monochrome, monospace diagrams with square outlines and rounded orthogonal edges, and themes them through `--ondine-*` CSS custom properties.
+
+## Can Diagrams Use Color?
+
+Yes. Every color is a custom property, so a page can set `--ondine-fg`, `--ondine-accent`, or the chart series properties to any value. [Theming](/docs/guides/theming) lists them.
+
+```css
+/* Draws lines and text in blue */
+.diagram {
+  --ondine-fg: #1d4ed8;
+}
+```
+
+## Do Mermaid Themes Apply?
+
+No. Theme variables in front matter or `%%{init}%%` directives do not set Ondine's colors. Use the `--ondine-*` properties instead.
+
+## Which Diagram Types Work?
+
+[Compatibility](/docs/introduction/compatibility) lists every Mermaid type with its status. A type that is not ported yet throws a `RenderError` with code `unsupported-diagram`.
+
+## Does Mounting Need the Compiler?
+
+No. The `ondine` runtime only inserts precompiled SVG and imports nothing from the compiler. Compilation in the browser is opt-in through [`ondine/compiler/wasm`](/docs/guides/browser).
+
+## Is the Output Safe to Insert?
+
+Yes. Output follows Mermaid's strict security level: authored strings are escaped, and the SVG has no scripts, event handlers, or external references.
+
+## Can GitHub Show Ondine Diagrams?
+
+GitHub draws ` ```mermaid ` fences with its own renderer. A README embeds Ondine diagrams as images from the [image Worker](/docs/guides/github) instead.

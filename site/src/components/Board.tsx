@@ -1,93 +1,101 @@
-/** Renders every playground sample with Ondine at build time, as a wall of diagram tiles. @module */
-import { render, RenderError } from 'ondine/compiler'
-import groups from '../../../test/vectors/samples.json' with { type: 'json' }
+/** Lays out pre-rendered diagrams as a wall of tiles that open their source in the playground. @module */
+import type examples from 'virtual:examples'
 import { style } from '../zyzz.config.js'
 
-export function Board() {
-  const tiles = groups.flatMap((group) =>
-    group.samples.map((sample) => ({
-      label: sample.label,
-      source: sample.source,
-      type: group.type,
-    })),
-  )
-
-  // Sources that fail to render, such as types not ported yet, are left off the board.
-  const rendered = tiles.flatMap((tile, index) => {
-    try {
-      return [
-        {
-          ...tile,
-          id: `board-${index}`,
-          svg: render(tile.source, { idPrefix: `board-${index}` }).svg,
-        },
-      ]
-    } catch (error) {
-      if (!(error instanceof RenderError)) throw error
-      return []
-    }
-  })
-
+/** Renders one tile per example, in `samples.json` order. */
+export function Board(props: Board.Props) {
   return (
     <div {...styles.board()}>
-      {rendered.map((tile) => (
+      {props.examples.map((tile) => (
         <a
           {...styles.tile()}
           href={`/playground#${new URLSearchParams({ source: tile.source })}`}
           key={tile.id}
           title={`Open “${tile.label}” in the playground`}
         >
+          <span {...styles.caption()}>
+            <span {...styles.chip()}>{tile.type}</span>
+            <span {...styles.label()}>{tile.label}</span>
+          </span>
           {/* Ondine emits inert SVG with every authored string escaped. */}
           <div {...styles.canvas()} dangerouslySetInnerHTML={{ __html: tile.svg }} />
-          <span {...styles.caption()}>
-            {tile.type} · {tile.label}
-          </span>
         </a>
       ))}
     </div>
   )
 }
 
+export declare namespace Board {
+  type Props = {
+    /** Diagrams rendered during the build. */
+    examples: typeof examples
+  }
+}
+
 namespace styles {
+  // Media rules alone set the column count, since a base `column-count` would follow and override them.
   export const board = style({
+    columnGap: 'lg',
+    marginTop: 'lg',
     '@media (min-width: 40rem)': { columnCount: '2 !custom' },
     '@media (min-width: 64rem)': { columnCount: '3 !custom' },
     '@media (min-width: 96rem)': { columnCount: '4 !custom' },
-    columnGap: 'md',
-    margin: '1.5rem 0 !custom',
   })
 
   export const tile = style({
-    ':focus-visible': { outline: '2px solid currentColor', outlineOffset: '2px' },
-    ':hover': { borderColor: 'strong' },
+    ':active': { boxShadow: 'none !custom', transform: 'translate(2px, 2px)' },
+    ':focus-visible': { outline: '2px solid', outlineColor: 'link', outlineOffset: '2px' },
+    ':hover': { borderColor: 'signal' },
+    backgroundColor: 'paper',
+    border: '1px solid',
+    borderColor: 'rule',
+    boxShadow: 'hard',
     breakInside: 'avoid',
-    borderColor: 'line',
-    borderStyle: 'solid',
-    borderWidth: '1px !custom',
-    color: 'muted',
+    color: 'ink',
     display: 'flex',
     flexDirection: 'column',
-    marginBottom: 'md',
-    textDecoration: 'none !custom',
-  })
-
-  export const canvas = style({
-    // Node fills match the tile surface, so diagrams sit on the same panel in both schemes.
-    '--ondine-bg': 'var(--vocs-background-color-code-block) !custom',
-    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
-    '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
-    backgroundColor: 'surface',
-    display: 'flex',
-    justifyContent: 'center',
-    padding: 'md',
+    marginBottom: 'lg',
+    textDecoration: 'none',
   })
 
   export const caption = style({
-    borderColor: 'line',
-    borderStyle: 'solid',
-    borderWidth: '1px 0 0 0 !custom',
-    fontSize: '0.75rem !custom',
+    alignItems: 'baseline',
+    borderBottom: '1px dashed',
+    borderColor: 'rule',
+    display: 'flex',
+    gap: 'sm',
     paddingBlock: 'xs',
     paddingInline: 'sm',
+  })
+
+  export const chip = style({
+    backgroundColor: 'chip',
+    border: '1px dotted',
+    borderColor: 'rule',
+    flexShrink: 0,
+    fontFamily: 'mono',
+    fontSize: '0.6875rem !custom',
+    letterSpacing: '0.08em !custom',
+    paddingInline: 'xs',
+    textTransform: 'uppercase',
+  })
+
+  export const label = style({
+    color: 'muted',
+    fontSize: '0.8125rem !custom',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  })
+
+  export const canvas = style({
+    // Diagrams take the sheet's colors, so they follow the color scheme without re-rendering.
+    '--ondine-bg': 'light-dark(#ffffff, #000000) !custom',
+    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-line': 'light-dark(#000000, #ffffff) !custom',
+    '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
+    display: 'flex',
+    justifyContent: 'center',
+    padding: 'md',
   })
 }

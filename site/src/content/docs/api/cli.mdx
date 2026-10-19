@@ -1,0 +1,139 @@
+# CLI
+
+Render Mermaid files or standard input to SVG, and Mermaid fences in Markdown to images, from the command line.
+
+The `ondine` binary ships with the package and compiles with the same module as `ondine/compiler`. The [CLI](/docs/guides/cli) guide covers common tasks.
+
+```sh
+# Writes flow.svg next to flow.mmd
+npx ondine flow.mmd
+```
+
+## Usage
+
+```sh
+# Renders files, or standard input when no files are given
+ondine [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--check]
+```
+
+## Arguments
+
+### files
+
+- **Type:** paths
+
+Mermaid files to render. Each writes an `.svg` file whose name drops a `.mmd` or `.mermaid` extension, beside the source or in `--out-dir`. Other extensions are kept, so `flow.txt` writes `flow.txt.svg`.
+
+```sh
+# Writes a.svg and b.svg
+ondine a.mmd b.mermaid
+```
+
+With no files, the command reads Mermaid from standard input and writes SVG to standard output.
+
+```sh
+# Pipes Mermaid in and SVG out
+ondine < flow.mmd > flow.svg
+```
+
+Files ending in `.md` or `.markdown` are rewritten in place. Each ` ```mermaid ` fence, at any indentation, becomes a block that a later run recognizes and re-renders:
+
+```html title="README.md"
+<!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="
+      https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark
+    "
+  />
+  <img
+    alt="Mermaid flowchart diagram"
+    src="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light"
+  />
+</picture>
+<!-- /ondine -->
+```
+
+The payload is the source as UTF-8, zlib deflate, then base64url. The image's `alt` is the diagram's `accTitle`, or its type. Fences in other languages are skipped whole, and fences inside blockquotes are not rewritten. MDX files are not rewritten, since MDX rejects HTML comments. Use [`ondine/remark`](/docs/api/remark) for them.
+
+## Options
+
+### --out-dir
+
+- **Alias:** `-o`
+- **Type:** directory
+
+The directory for rendered files, created when missing.
+
+```sh
+# Writes public/flow.svg
+ondine flow.mmd -o public
+```
+
+### --svg
+
+Links SVG files from Markdown instead of the Worker. Each diagram writes `<name>-<n>.light.svg` and `<name>-<n>.dark.svg`, numbered in document order, beside the Markdown or in `--out-dir`. SVG files a previous block linked that the file no longer links are removed.
+
+```sh
+# Writes guide-1.light.svg and guide-1.dark.svg beside guide.md
+ondine guide.md --svg
+```
+
+### --worker
+
+- **Type:** URL
+- **Default:** `https://melee.broken-thunder-fb8b.workers.dev`
+
+The image Worker origin that Markdown images link. A diagram whose request path would exceed the Worker's 4,096-character limit is reported as an error and left unchanged.
+
+```sh
+# Links a self-hosted Worker
+ondine README.md --worker https://diagrams.example.com
+```
+
+### --restore
+
+Turns each block a previous run wrote back into a ` ```mermaid ` fence, and removes the SVG files it linked.
+
+```sh
+# Brings back the editable fences
+ondine README.md --restore
+```
+
+### --check
+
+Writes and removes nothing. Each file that a run would change is reported as `file is out of date`, and the command exits with code 1.
+
+```sh
+# Fails CI when diagrams are stale
+ondine README.md --svg --check
+```
+
+### --help
+
+- **Alias:** `-h`
+
+Prints usage and exits with code 0.
+
+```sh
+# Shows the usage text
+ondine --help
+```
+
+## Output
+
+Each rendered file is reported on standard error as `source -> output`, and each removed SVG file as `source: removed file`. Markdown runs report only files they change. Errors are reported on standard error as `file:line:column: message`, or `file: message` without a position. Errors in Markdown are positioned in the Markdown file. Standard input is named `<stdin>`.
+
+```txt
+flow.mmd -> flow.svg
+bad.mmd:3:1: Parse error on line 3:
+```
+
+## Exit Codes
+
+| Code | Meaning                                                                |
+| ---- | ---------------------------------------------------------------------- |
+| `0`  | Every input rendered, or with `--check`, every file is up to date.     |
+| `1`  | At least one input failed to render. The remaining files still render. |
+| `1`  | With `--check`, at least one file is out of date.                      |

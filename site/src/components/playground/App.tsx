@@ -165,7 +165,7 @@ namespace styles {
     color: 'text',
     display: 'flex',
     flexDirection: 'column',
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !custom',
+    fontFamily: '"Berkeley Mono", "TX-02", "IBM Plex Mono", ui-monospace, Menlo, monospace !custom',
     height: '100% !custom',
   })
 
@@ -204,10 +204,6 @@ namespace styles {
   })
 
   export const workspace = style({
-    '@media (max-width: 52rem)': {
-      gridTemplateColumns: '1fr !custom',
-      gridTemplateRows: '1fr 1fr !custom',
-    },
     display: 'grid',
     flex: '1 !custom',
     gap: 'sm',
@@ -215,6 +211,10 @@ namespace styles {
     minHeight: '0 !custom',
     paddingBottom: 'sm',
     paddingInline: 'sm',
+    '@media (max-width: 52rem)': {
+      gridTemplateColumns: '1fr !custom',
+      gridTemplateRows: '1fr 1fr !custom',
+    },
   })
 
   export const panel = style({

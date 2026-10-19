@@ -299,7 +299,7 @@ Applies to documentation, comments, TSDoc, commit messages, and pull requests.
 - `crates/compiler/`: the pure compiler. `crates/wasm/`: the WebAssembly adapter.
 - `src/`: flat PascalCase TypeScript modules for the public API, with colocated tests. Generated WebAssembly modules live under `src/internal/` and are gitignored.
 - `test/vectors/`: imported Mermaid and Pele vectors with their licenses, plus `ledger.json`. `test/oracles/`: reference parsers used by parity tests.
-- `site/`: the Vocs documentation, including the playground under `site/src/components/playground/`. `bench/`: cross-library benchmarks.
+- `site/`: the documentation, a TanStack Start app on Cloudflare Workers structured like the zyzz site, with MDX pages under `site/src/content/docs/` and the playground under `site/src/components/playground/`. `bench/`: cross-library benchmarks.
 - `.agents/plan.md` tracks remaining work and acceptance gates. `site/` defines public API contracts.
 
 ## Tooling

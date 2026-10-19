@@ -1,25 +1,43 @@
-'use client'
-/** Mounts the playground app on a documentation page, below the top navigation. @module */
-import { useEffect, useState } from 'react'
-import { App } from './playground/App.js'
+/** Mounts the playground app in the browser, sized to the viewport below the masthead. @module */
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { style } from '../zyzz.config.js'
 
+// The playground compiles in the browser with Ondine, Pele, and Mermaid. Leaving it out of the server
+// build keeps those compilers out of the Worker bundle.
+const App = import.meta.env.SSR
+  ? undefined
+  : lazy(async () => ({ default: (await import('./playground/App.js')).App }))
+
 export function Playground() {
-  // The playground reads its source from the URL fragment and compiles in the browser, so it
-  // mounts after hydration instead of prerendering.
+  // The app reads its source from the URL fragment, so it mounts after hydration.
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
-  return <div {...styles.frame()}>{mounted ? <App /> : null}</div>
+  return (
+    <div {...styles.frame()}>
+      {mounted && App ? (
+        <Suspense fallback={<p {...styles.loading()}>Loading the playground…</p>}>
+          <App />
+        </Suspense>
+      ) : (
+        <p {...styles.loading()}>Loading the playground…</p>
+      )}
+    </div>
+  )
 }
 
 namespace styles {
-  // Pinned below the top navigation, the app fills the viewport regardless of the page padding.
   export const frame = style({
-    bottom: '0 !custom',
-    insetInline: '0 !custom',
-    position: 'fixed',
-    top: 'calc(var(--vocs-spacing-topNav) + var(--vocs-spacing-banner)) !custom',
+    border: '1px solid',
+    borderColor: 'rule',
+    height: 'max(36rem, calc(100dvh - 13rem)) !custom',
+  })
+
+  export const loading = style({
+    color: 'muted',
+    fontFamily: 'mono',
+    fontSize: '0.875rem !custom',
+    padding: 'lg',
   })
 }

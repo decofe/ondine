@@ -8,4 +8,3 @@ src/internal/*.generated.wasm
 test/oracles/*.generated.wasm
 bench/results
 .wrangler
-site/src/pages.gen.ts

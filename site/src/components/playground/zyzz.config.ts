@@ -1,17 +1,17 @@
-/** Monochrome tokens for the playground, with light and dark values. @module */
+/** Monochrome tokens for the playground, with light and dark values, matching the site's square catalog boxes. @module */
 import { defineConfig, defineVars } from 'zyzz'
 
 const base = defineVars({
   color: {
     background: { dark: '#000000', light: '#ffffff' },
     hover: { dark: '#141414', light: '#f4f4f4' },
-    line: { dark: '#262626', light: '#e4e4e4' },
+    line: { dark: '#ffffff', light: '#000000' },
     muted: { dark: '#8a8a8a', light: '#6b6b6b' },
-    panel: { dark: '#0a0a0a', light: '#fcfcfc' },
+    panel: { dark: '#000000', light: '#ffffff' },
     strong: { dark: '#ffffff', light: '#000000' },
     text: { dark: '#ededed', light: '#111111' },
   },
-  radius: { panel: '0.5rem', control: '0.375rem' },
+  radius: { control: '0', panel: '0' },
   spacing: { lg: '1.5rem', md: '1rem', sm: '0.5rem', xs: '0.25rem' },
 })
 

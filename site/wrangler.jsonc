@@ -1,7 +1,8 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
   "name": "melee-docs",
-  "compatibility_date": "2026-10-01",
-  // `renderStrategy: 'full-static'` writes every page to dist/public. The server bundle beside it is unused.
-  "assets": { "directory": "./dist/public", "not_found_handling": "404-page" },
+  "compatibility_date": "2026-09-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./src/entry.server.ts",
+  "observability": { "enabled": true },
 }

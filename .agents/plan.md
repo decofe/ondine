@@ -45,7 +45,7 @@ Structured like `wevm/zyzz`:
 - `crates/wasm/`: thin `cdylib` adapter, `wasm32-wasip1`, size profile (`opt-level = "z"`), inlined into the package as generated TypeScript.
 - `src/`: TypeScript API (`render`, `mount`, errors), flat PascalCase modules with colocated tests.
 - `test/vectors/`: imported corpus with Mermaid and Pele notices.
-- `site/`: Vocs docs, including the playground page. `bench/`: comparisons with Pele and Mermaid.
+- `site/`: TanStack Start docs on Cloudflare Workers, including the playground and examples pages. `bench/`: comparisons with Pele and Mermaid.
 - `AGENTS.md` adapted from zyzz, `.agents/plan.md` (this file), `rust-toolchain.toml`, `rustfmt.toml`, `clippy.toml`, and a Cargo workspace as in zyzz.
 
 ## Test vectors
@@ -119,8 +119,8 @@ All 33 types are ported (October 19, 2026). 610 of 612 vectors match Pele byte f
 
 ### 7. Docs
 
-- [ ] Vocs site modeled on the zyzz documentation (zyzz.style/docs): its sidebar groups, guide structure, API page format, and visual design. Pages: Getting Started, Theming, one page per diagram type, API, a Compatibility table generated from the ledger, and benchmarks tied to one run.
-- [ ] Style custom docs components with Zyzz. First confirm that `zyzz/vite` works inside Vocs's Vite build. Where it doesn't, record the gap and keep Vocs defaults.
+- [x] Docs site structured like the zyzz site (`wevm/zyzz/site`): TanStack Start on Cloudflare Workers, MDX pages, search, Markdown twins with agent negotiation, `llms.txt`, and a sitemap, in a printed-catalog theme. Pages: Getting Started, Theming, one page per diagram type, API, a Compatibility table generated from the ledger, benchmarks tied to one run, the playground, and an examples board.
+- [x] Style docs components with Zyzz.
 
 ### 8. Release
 
