@@ -34,7 +34,7 @@ fn render_input(
         input.title,
         Some(input.max_edges),
     )?;
-    Ok(render::render(&db, input.config, options, url))
+    Ok(render::render(&db, input.config, options, url, None))
 }
 
 /// The parsed flowchart model: Pele's `FlowDb`.

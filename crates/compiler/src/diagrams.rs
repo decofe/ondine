@@ -32,7 +32,8 @@ pub(crate) mod cynefin;
 pub(crate) mod er;
 #[cfg(feature = "eventmodeling")]
 pub(crate) mod eventmodeling;
-#[cfg(feature = "flowchart")]
+/// Swimlane diagrams draw through the flowchart, and agentflow reads its shapes.
+#[cfg(any(feature = "agentflow", feature = "flowchart", feature = "swimlane"))]
 pub(crate) mod flowchart;
 #[cfg(feature = "gantt")]
 pub(crate) mod gantt;

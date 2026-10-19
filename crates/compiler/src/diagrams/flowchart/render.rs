@@ -1,13 +1,14 @@
-//! Lays out and draws a flowchart. Port of Pele's `src/diagrams/flowchart/render.ts`.
-//!
-//! Variants that draw top-level groups themselves (swimlanes) are not ported yet.
+//! Lays out and draws a flowchart, or a variant of one such as a swimlane diagram. Port of Pele's
+//! `src/diagrams/flowchart/render.ts`.
 
 use super::db::FlowDb;
-use super::graph::{self, GraphEdge, GraphNode};
+use super::graph::{self, FlowGraph, GraphEdge, GraphNode};
 use super::shapes::canonical_shape;
 use crate::diagrams::Rendered;
 use crate::diagrams::common::fit_width::{runs_across, tighten, title_room, turn_to_fit};
-use crate::layout::compound::{CEdge, CNode, Dir, cnode, compound_layout, direction, shift_layout};
+use crate::layout::compound::{
+    CEdge, CNode, CompoundResult, Dir, cnode, compound_layout, direction, shift_layout,
+};
 use crate::layout::layered::LayeredOptions;
 use crate::svg::builder::{esc, esc_text, label_svg, push_num};
 use crate::svg::cluster::{
@@ -34,6 +35,23 @@ const GROUP_PAD: f64 = 20.0;
 const LOOP: f64 = 26.0;
 const SHAPE_ATTRS: &str = " fill=\"var(--_s)\" stroke=\"var(--_b)\"";
 const LINE_ATTRS: &str = " stroke=\"var(--_b)\"";
+
+/// Draws a top-level group from its box, title, style, classes, escaped id, and the diagram's
+/// direction.
+pub(crate) type DrawGroup = fn(&CNode, &Label, &ResolvedStyle, &str, &str, Dir) -> String;
+
+/// A diagram type that is a flowchart with a different layout, which may draw its top-level groups
+/// itself: Pele's `FlowVariant`.
+pub(crate) struct Variant {
+    /// Draws top-level groups. Groups use the flowchart's drawing without it.
+    pub(crate) draw_group: Option<DrawGroup>,
+    /// Lays out the nodes and edges in a direction. The flag asks for tighter spacing.
+    pub(crate) layout: fn(&mut [CNode], &mut [CEdge], Dir, &LayeredOptions, bool) -> CompoundResult,
+    /// Adjusts the graph before it is measured.
+    pub(crate) prepare: fn(&mut FlowGraph),
+    /// The diagram type, which names its config section and the SVG's type.
+    pub(crate) r#type: &'static str,
+}
 
 /// What a node is drawn as, beside its layout box.
 struct NodeView<'g> {
@@ -68,15 +86,20 @@ fn asset_size(value: Option<f64>, fallback: f64) -> f64 {
     }
 }
 
-/// Draws a flowchart, turning one that runs across to run down, and tightening its spacing, when
-/// it does not fit the host's width.
+/// Draws a flowchart, or the flowchart `variant`, turning one that runs across to run down, and
+/// tightening its spacing, when it does not fit the host's width.
 pub(crate) fn render(
     db: &FlowDb,
     config: &Value,
     options: &RenderOptions,
     url: &UrlOptions<'_>,
+    variant: Option<&Variant>,
 ) -> Rendered {
-    let fitted = |down: bool| tighten(options, |tight| draw(db, config, options, url, down, tight));
+    let fitted = |down: bool| {
+        tighten(options, |tight| {
+            draw(db, config, options, url, variant, down, tight)
+        })
+    };
 
     if runs_across(db.direction.as_deref()) {
         turn_to_fit(options, fitted)
@@ -95,19 +118,37 @@ fn draw(
     config: &Value,
     options: &RenderOptions,
     url: &UrlOptions<'_>,
+    variant: Option<&Variant>,
     turned: bool,
     tight: bool,
 ) -> Rendered {
     let group_pad = if tight { 12.0 } else { GROUP_PAD };
-    let flow = get(config, "flowchart").filter(|value| matches!(value, Value::Object(_)));
+    let own = variant
+        .and_then(|variant| get(config, variant.r#type))
+        .filter(|value| matches!(value, Value::Object(_)));
+    let flow =
+        own.or_else(|| get(config, "flowchart").filter(|value| matches!(value, Value::Object(_))));
     let curve = match flow.and_then(|flow| get(flow, "curve")) {
         Some(Value::String(curve)) => Some(curve.as_str()),
         _ => None,
     };
-    let graph = graph::build(db, curve);
+    let mut graph = graph::build(db, curve);
+    if let Some(variant) = variant {
+        (variant.prepare)(&mut graph);
+    }
     let size = options.font_size.unwrap_or(16.0);
     let edge_size = crate::svg::builder::js_round(size * 0.875);
-    let wrap_width = number_option(flow, "wrappingWidth", 200.0);
+    let squeezed = variant.is_some() && tight;
+    let wrap_width = number_option(flow, "wrappingWidth", 200.0).min(if squeezed {
+        100.0
+    } else {
+        f64::INFINITY
+    });
+    let group_title_width = if squeezed {
+        80.0_f64.max(title_room(options) / 2.0)
+    } else {
+        4000.0
+    };
     let pad = options.padding.unwrap_or(8.0);
 
     let mut index: std::collections::BTreeMap<&str, usize> = std::collections::BTreeMap::new();
@@ -136,7 +177,7 @@ fn draw(
                 node.label.as_deref(),
                 markdown,
                 font_size,
-                4000.0,
+                group_title_width,
                 text_style,
                 None,
             );
@@ -341,7 +382,12 @@ fn draw(
         straight: curve == Some("linear"),
         tracks: curve.is_some_and(|curve| curve.starts_with("step")),
     };
-    let layout = compound_layout(&mut cnodes, &mut cedges, root_dir, &layout_options);
+    let layout = match variant {
+        Some(variant) => {
+            (variant.layout)(&mut cnodes, &mut cedges, root_dir, &layout_options, tight)
+        }
+        None => compound_layout(&mut cnodes, &mut cedges, root_dir, &layout_options),
+    };
 
     let title_width = if tight { title_room(options) } else { 4000.0 };
     let title = layout_label(db.title.as_deref(), false, size, title_width, BOLD, None);
@@ -374,6 +420,21 @@ fn draw(
         let node = view.node;
         let classes = class_names(strip_default(&node.css_classes));
         let id = esc_text(&node.id);
+
+        if c.is_group
+            && c.parent < 0
+            && let Some(draw_group) = variant.and_then(|variant| variant.draw_group)
+        {
+            clusters.push_str(&draw_group(
+                c,
+                &view.label,
+                &view.style,
+                &classes,
+                &id,
+                root_dir,
+            ));
+            continue;
+        }
 
         if c.is_group {
             let title_x = cluster_title_x(c, view.label.width, &crossings, group_pad);
@@ -700,7 +761,7 @@ fn draw(
         acc_title: db.acc_title.as_deref(),
     };
     let svg = svg_document(
-        "flowchart",
+        variant.map_or("flowchart", |variant| variant.r#type),
         width,
         height,
         size,
