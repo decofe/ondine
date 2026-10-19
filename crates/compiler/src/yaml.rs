@@ -272,8 +272,7 @@ fn reads_back(digits: &[u8], n: i32, value: f64) -> bool {
         text.push('-');
     }
     push_u32(&mut text, exponent.unsigned_abs());
-    text.parse::<f64>()
-        .is_ok_and(|parsed| parsed.to_bits() == value.to_bits())
+    crate::util::float::parse(&text).is_some_and(|parsed| parsed.to_bits() == value.to_bits())
 }
 
 /// A failure while reading.
@@ -450,7 +449,7 @@ fn scalar(raw: &str) -> Value {
     }
 
     if is_int(s) || is_float(s) {
-        return Value::Number(s.parse::<f64>().unwrap_or(f64::NAN));
+        return Value::Number(crate::util::float::parse(s).unwrap_or(f64::NAN));
     }
 
     let negative = s.starts_with('-');

@@ -184,7 +184,7 @@ fn word_number(word: &str) -> f64 {
         .strip_prefix(['e', 'E'])
         .is_some_and(|digits| !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_digit()));
     if mantissa > 0 && (rest.is_empty() || exponent) {
-        return word.parse::<f64>().unwrap_or(f64::NAN);
+        return crate::util::float::parse(word).unwrap_or(f64::NAN);
     }
     f64::NAN
 }

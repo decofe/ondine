@@ -37,6 +37,7 @@ mod text {
 
 mod util {
     pub(crate) mod chars;
+    pub(crate) mod float;
     pub(crate) mod unicode;
     pub(crate) mod url;
 }

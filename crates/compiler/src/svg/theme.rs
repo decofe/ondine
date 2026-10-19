@@ -192,7 +192,7 @@ fn parse_float(text: &str) -> Option<f64> {
     if digits == 0 {
         return None;
     }
-    text.get(..end).and_then(|number| number.parse().ok())
+    text.get(..end).and_then(crate::util::float::parse)
 }
 
 /// JavaScript's `Number(text)`, for the forms a font weight can take.
@@ -238,7 +238,7 @@ fn js_number(text: &str) -> f64 {
     {
         return f64::NAN;
     }
-    text.parse().unwrap_or(f64::NAN)
+    crate::util::float::parse(text).unwrap_or(f64::NAN)
 }
 
 /// Lowercases as JavaScript's `toLowerCase` does, for property names.

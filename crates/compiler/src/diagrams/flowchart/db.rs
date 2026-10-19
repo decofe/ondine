@@ -880,5 +880,5 @@ fn string_to_number(text: &str) -> f64 {
     if i != b.len() {
         return f64::NAN;
     }
-    text.parse::<f64>().unwrap_or(f64::NAN)
+    crate::util::float::parse(text).unwrap_or(f64::NAN)
 }

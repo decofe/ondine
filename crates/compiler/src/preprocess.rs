@@ -527,7 +527,7 @@ impl Json<'_> {
                 return None;
             }
         }
-        let number = self.text.get(start..self.pos)?.parse::<f64>().ok()?;
+        let number = crate::util::float::parse(self.text.get(start..self.pos)?)?;
         Some(Value::Number(number))
     }
 }
