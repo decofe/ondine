@@ -10,7 +10,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import { BrandIcon } from './Brands.js'
-import { Mark, Panel } from './Code.js'
+import { Highlighted, Mark, Panel } from './Code.js'
 import { svgs } from './diagrams.generated.js'
 import { Rule, useDraw } from './Frame.js'
 import { Browser, Canvas, geist } from './Geist.js'
@@ -20,6 +20,7 @@ import {
   beat,
   beats,
   benchSteps,
+  cliSteps,
   compileSteps,
   frame as box,
   githubSteps,
@@ -170,9 +171,9 @@ export function Hero() {
         <Typed
           at={heroSteps.tagline}
           segments={[
-            { text: 'Mermaid diagrams, ' },
-            { invert: true, text: 'compiled with Rust' },
-            { text: '.' },
+            { text: 'Fast, tiny, ' },
+            { invert: true, text: 'beautiful' },
+            { text: ' Mermaid diagrams.' },
           ]}
         />
       </div>
@@ -321,22 +322,16 @@ function Summary(props: { at: number; style: CSSProperties; text: string }) {
 const lines = (source: string, at: number, every = beat / 2) =>
   source.split('\n').map((text, i) => ({ at: Math.round(at + i * every), text }))
 
-// Right edges of the compiled flowchart's nodes, plus stroke, in viewBox units.
-const width = Number(/viewBox="0 0 ([\d.]+)/.exec(svgs.compile)?.[1] ?? 1)
-const edges = [
-  ...svgs.compile.matchAll(
-    /translate\(([\d.]+),[\d.-]+\)"><rect x="(-?[\d.]+)" y="[^"]*" width="([\d.]+)"/g,
-  ),
-].map((m) => Math.min(width, Number(m[1]) + Number(m[2]) + Number(m[3]) + 2))
+// The compiled sequence diagram's size, in viewBox units.
+const [, , width, height] = (/viewBox="([\d. ]+)"/.exec(svgs.compile)?.[1] ?? '0 0 1 1')
+  .split(' ')
+  .map(Number)
 
 export function Compile() {
   const frame = useCurrentFrame()
   const split = 860
-  // Reveal the left-to-right flowchart one node per step, each wipe stopping just past a node's right edge.
-  const reveal = compileSteps.nodes.reduce(
-    (x, at, i) => x + step(frame, at, 0, (edges[i] ?? 0) - (edges[i - 1] ?? 0), 8),
-    0,
-  )
+  // Reveal the whole diagram top to bottom in one beat.
+  const reveal = step(frame, compileSteps.reveal, 0, 1, beats(1))
   return (
     <AbsoluteFill>
       <Title
@@ -362,8 +357,8 @@ export function Compile() {
       <Panel
         at={compileSteps.source}
         lines={lines(sources.compile, compileSteps.source, beat / 4)}
-        size={30}
-        title="flow.mmd"
+        size={26}
+        title="checkout.mmd"
         top={160}
         width={split - box.left}
         x={box.left}
@@ -379,7 +374,7 @@ export function Compile() {
       />
       <Canvas
         at={beats(3)}
-        label="flow.svg"
+        label="checkout.svg"
         style={{
           height: 800,
           left: split + 48,
@@ -390,15 +385,88 @@ export function Compile() {
         <Diagram
           name="compile"
           style={{
-            clipPath: `inset(0 ${(1 - reveal / width) * 100}% 0 0)`,
-            left: 60,
-            height: 260,
+            aspectRatio: `${width} / ${height}`,
+            clipPath: `inset(0 0 ${(1 - reveal) * 100}% 0)`,
+            height: 660,
+            left: '50%',
             position: 'absolute',
-            right: 60,
-            top: 270,
+            top: 90,
+            transform: 'translateX(-50%)',
           }}
         />
       </Canvas>
+    </AbsoluteFill>
+  )
+}
+
+const command = 'ondine order.mmd --print'
+
+export function Cli() {
+  const frame = useCurrentFrame()
+  const image = cliSteps.image
+  return (
+    <AbsoluteFill>
+      <Title
+        sub="The ondine command prints diagrams in the terminal with --print."
+        title={[{ text: 'Diagrams in your ' }, { invert: true, text: 'terminal' }, { text: '.' }]}
+      />
+      <div
+        style={{
+          background: geist.bg,
+          border: `1px solid ${geist.border}`,
+          bottom: 1080 - 790,
+          fontFamily: mono,
+          fontSize: 28,
+          left: box.left + inset,
+          lineHeight: 1.8,
+          opacity: fade(frame, beats(2), beats(0.5)),
+          padding: '28px 36px',
+          position: 'absolute',
+          right: 1920 - box.right + inset,
+          top: 160,
+        }}
+      >
+        <div style={{ color: ink.label, fontFamily: sans, fontSize: 22, marginBottom: 18 }}>
+          terminal
+        </div>
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <span style={{ color: ink.label }}>$ </span>
+          <Typed at={cliSteps.command} perFrame={1.6} segments={[{ text: command }]} />
+        </div>
+        {/* Terminals with an image protocol show the diagram as a PNG on white, as resvg draws it. */}
+        <div
+          style={{
+            background: '#ffffff',
+            display: 'inline-block',
+            marginTop: 24,
+            opacity: fade(frame, image, 4),
+            padding: 20,
+            transform: `scale(${pop(frame, image)})`,
+            transformOrigin: 'left top',
+          }}
+        >
+          <Diagram
+            name="order"
+            style={
+              {
+                '--ondine-bg': '#ffffff',
+                '--ondine-fg': '#000000',
+                height: 150,
+                width: 1180,
+              } as CSSProperties
+            }
+          />
+        </div>
+      </div>
+      <Summary
+        at={cliSteps.summary}
+        style={{
+          left: box.left + inset,
+          top: 820,
+          width: box.right - box.left - inset * 2,
+        }}
+        text="Images in Ghostty, Kitty, and iTerm2. Braille everywhere else."
+      />
     </AbsoluteFill>
   )
 }
@@ -726,26 +794,155 @@ function Footnote() {
   )
 }
 
-const markdown = '![Flow](https://…/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)'
+const intro = ['# Checkout', '', 'Orders flow through the API.', '']
+
+const fence = ['```mermaid', ...sources.github.split('\n'), '```']
+
+// What `ondine README.md` writes in place of the fence, with the encoded source shortened.
+const payload = 'eNorTi0s…'
+
+const block = [
+  `<!-- ondine:${payload} -->`,
+  '<picture>',
+  `  <source srcset="https://ondine.sh/${payload}.svg?scheme=dark">`,
+  `  <img src="https://ondine.sh/${payload}.svg?scheme=light">`,
+  '</picture>',
+  '<!-- /ondine -->',
+]
+
+/** One README line, revealed at `at`, in the panel's monospace size. */
+function Source(props: { at: number; size: number; text: string }) {
+  const frame = useCurrentFrame()
+  const shown = fade(frame, props.at)
+  return (
+    <div
+      style={{
+        height: props.size * 1.6,
+        lineHeight: `${props.size * 1.6}px`,
+        opacity: shown,
+        transform: `translateY(${(1 - shown) * 10}px)`,
+        whiteSpace: 'pre',
+      }}
+    >
+      <Highlighted text={props.text} />
+    </div>
+  )
+}
 
 export function Github() {
   const frame = useCurrentFrame()
+  const split = 1000
   const image = githubSteps.image
+  const morph = step(frame, githubSteps.morph, 0, 1, beats(1))
   return (
     <AbsoluteFill style={{ fontFamily: sans }}>
       <Title
-        sub="An image Worker renders diagrams encoded in the URL."
+        sub="The CLI turns Mermaid fences into Ondine images that GitHub can show."
         title={[{ text: 'Diagrams in ' }, { invert: true, text: 'Markdown' }, { text: '.' }]}
+      />
+      <Rule at={split} from={box.top} progress={useDraw(beats(2))} to={box.bottom} />
+      <div
+        style={{
+          fontFamily: mono,
+          fontSize: 20,
+          left: box.left + inset,
+          position: 'absolute',
+          top: 160,
+          width: split - box.left - inset * 2,
+        }}
+      >
+        <div
+          style={{
+            color: ink.label,
+            fontFamily: sans,
+            fontSize: 26,
+            marginBottom: 40,
+            opacity: fade(frame, githubSteps.source - 4),
+          }}
+        >
+          README.md
+        </div>
+        {intro.map((text, i) => (
+          <Source
+            at={githubSteps.source + Math.round((i * beat) / 4)}
+            key={i}
+            size={20}
+            text={text}
+          />
+        ))}
+        {/* The fence morphs into the image block that the CLI writes in its place. */}
+        <div style={{ position: 'relative' }}>
+          <div style={{ filter: `blur(${morph * 6}px)`, opacity: 1 - morph }}>
+            {fence.map((text, i) => (
+              <Source
+                at={githubSteps.source + Math.round(((intro.length + i) * beat) / 4)}
+                key={i}
+                size={20}
+                text={text}
+              />
+            ))}
+          </div>
+          <div
+            style={{
+              filter: `blur(${(1 - morph) * 6}px)`,
+              left: 0,
+              opacity: morph,
+              position: 'absolute',
+              top: 0,
+            }}
+          >
+            {block.map((text, i) => (
+              <div
+                key={i}
+                style={{ height: 20 * 1.6, lineHeight: `${20 * 1.6}px`, whiteSpace: 'pre' }}
+              >
+                <Highlighted text={text} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div
+          style={{
+            alignItems: 'center',
+            border: `1px solid ${geist.border}`,
+            color: ink.white,
+            display: 'inline-flex',
+            fontFamily: sans,
+            fontSize: 24,
+            gap: 12,
+            marginTop: 72,
+            opacity: fade(frame, githubSteps.callout, 6),
+            padding: '12px 18px',
+            transform: `translateY(${(1 - fade(frame, githubSteps.callout, 6)) * 8}px)`,
+          }}
+        >
+          <span style={{ color: ink.label }}>Agent</span>
+          Ask your agent to run
+          <span
+            style={{ background: ink.white, color: ink.bg, fontFamily: mono, padding: '2px 8px' }}
+          >
+            ondine README.md
+          </span>
+        </div>
+      </div>
+      <Summary
+        at={githubSteps.summary}
+        style={{
+          left: box.left + inset,
+          top: 820,
+          width: split - box.left - inset * 2,
+        }}
+        text="GitHub shows the compiled image."
       />
       <Browser
         style={{
-          bottom: 1080 - box.bottom + 60,
-          left: box.left + inset,
-          opacity: fade(frame, beats(2.5), beats(0.5)),
-          right: 1920 - box.right + inset,
-          top: 160,
+          bottom: 1080 - box.bottom + 40,
+          left: split + 48,
+          opacity: fade(frame, beats(3), beats(0.5)),
+          right: 1920 - box.right + 48,
+          top: 150,
         }}
-        url="github.com/you/project"
+        url="github.com/you/shop"
       >
         <div
           style={{
@@ -753,35 +950,22 @@ export function Github() {
             display: 'flex',
             flex: 1,
             flexDirection: 'column',
-            padding: '48px 64px',
+            padding: '40px 48px',
           }}
         >
           <div
             style={{
               borderBottom: `1px solid ${geist.border}`,
               color: ink.white,
-              fontSize: 48,
+              fontSize: 44,
               fontWeight: 600,
-              paddingBottom: 18,
+              paddingBottom: 16,
             }}
           >
-            project
+            Checkout
           </div>
-          <div
-            style={{
-              color: ink.gray,
-              fontFamily: mono,
-              fontSize: 25,
-              marginTop: 36,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Typed
-              at={githubSteps.markdown}
-              color={ink.gray}
-              perFrame={2.4}
-              segments={[{ text: markdown }]}
-            />
+          <div style={{ color: ink.gray, fontSize: 26, marginTop: 28 }}>
+            Orders flow through the API.
           </div>
           <div
             style={{
@@ -793,7 +977,7 @@ export function Github() {
               transform: `scale(${pop(frame, image)})`,
             }}
           >
-            <Diagram name="github" style={{ height: 180, width: 450 }} />
+            <Diagram name="github" style={{ height: 380, width: '100%' }} />
           </div>
         </div>
       </Browser>

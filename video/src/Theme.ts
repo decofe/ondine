@@ -36,15 +36,16 @@ export const typing = (text: string, perFrame: number) => text.length / perFrame
 
 const bars = {
   bench: 3,
+  cli: 3,
   compile: 3,
-  github: 3,
+  github: 4,
   hero: 3,
   prompt: 4,
   theming: 3,
   types: 3,
 }
 
-const order = ['hero', 'compile', 'types', 'theming', 'bench', 'github', 'prompt'] as const
+const order = ['hero', 'compile', 'types', 'theming', 'bench', 'github', 'cli', 'prompt'] as const
 
 // Scenes start on bar lines of the soundtrack.
 export const scenes = (() => {
@@ -64,7 +65,7 @@ export const total = beats(order.reduce((n, name) => n + bars[name], 0) * 4)
 export const heroSteps = { install: beats(7), tagline: beats(3) }
 
 export const compileSteps = {
-  nodes: [5, 5.5, 6, 6.5].map(beats),
+  reveal: beats(4.5),
   source: beats(2.5),
   summary: beats(8),
 }
@@ -88,6 +89,14 @@ export const benchSteps = {
   renderBars: beats(3),
 }
 
-export const githubSteps = { image: beats(8), markdown: beats(3) }
+export const cliSteps = { command: beats(2.5), image: beats(4.5), summary: beats(6.5) }
+
+export const githubSteps = {
+  callout: beats(8),
+  image: beats(6.5),
+  morph: beats(5),
+  source: beats(2.5),
+  summary: beats(10),
+}
 
 export const promptSteps = { footer: beats(11), quote: beats(3) }

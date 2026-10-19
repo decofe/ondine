@@ -6,6 +6,7 @@ import { chromium } from 'playwright'
 import {
   beat,
   benchSteps,
+  cliSteps,
   compileSteps,
   githubSteps,
   heroSteps,
@@ -17,7 +18,7 @@ import {
   typing,
 } from '../src/Theme.ts'
 
-type Kind = 'plink' | 'pop' | 'typing'
+type Kind = 'plink' | 'pop' | 'swell' | 'typing'
 
 type Cue = {
   at: number
@@ -63,25 +64,26 @@ const cues: Partial<Record<keyof typeof scenes, readonly Cue[]>> = {
     { at: benchSteps.download, kind: 'plink' },
     typed(benchSteps.download, 'Smallest download', 2.4),
   ],
+  cli: [
+    typed(cliSteps.command, 'ondine order.mmd --print', 1.6),
+    { at: cliSteps.image, kind: 'pop', note: 4 },
+    { at: cliSteps.summary, kind: 'plink' },
+    typed(cliSteps.summary, 'Images in Ghostty, Kitty, and iTerm2. Braille everywhere else.', 2.4),
+  ],
   compile: [
-    ...compileSteps.nodes.map((at, i) => ({
-      at,
-      kind: 'pop' as const,
-      note: i,
-    })),
+    { at: compileSteps.reveal, kind: 'swell', length: beat / 30 },
     { at: compileSteps.summary, kind: 'plink' },
     typed(compileSteps.summary, 'No renderer in the page bundle.', 2.4),
   ],
   github: [
-    typed(
-      githubSteps.markdown,
-      '![Flow](https://…/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)',
-      2.4,
-    ),
-    { at: githubSteps.image, kind: 'plink' },
+    { at: githubSteps.morph, kind: 'swell', length: beat / 30 },
+    { at: githubSteps.image, kind: 'pop', note: 4 },
+    { at: githubSteps.callout, kind: 'pop', note: 6 },
+    { at: githubSteps.summary, kind: 'plink' },
+    typed(githubSteps.summary, 'GitHub shows the compiled image.', 2.4),
   ],
   hero: [
-    typed(heroSteps.tagline, 'Mermaid diagrams, compiled with Rust.', 1.6),
+    typed(heroSteps.tagline, 'Fast, tiny, beautiful Mermaid diagrams.', 1.6),
     { at: heroSteps.install, kind: 'pop', note: 4 },
   ],
   prompt: [

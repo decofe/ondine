@@ -3,7 +3,7 @@ import geistMono from '@fontsource-variable/geist-mono/files/geist-mono-latin-wg
 import geist from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2'
 import { AbsoluteFill, Audio, continueRender, delayRender, Sequence, staticFile } from 'remotion'
 import { Exit, Frame } from './Frame.js'
-import { Bench, Compile, Github, Hero, Prompt, Theming, Types } from './Scenes.js'
+import { Bench, Cli, Compile, Github, Hero, Prompt, Theming, Types } from './Scenes.js'
 import { ink, scenes } from './Theme.js'
 
 const handle = delayRender('fonts')
@@ -19,7 +19,7 @@ Promise.all([
   continueRender(handle)
 })
 
-// Scenes follow the README: compilation, compatibility, theming, benchmarks, then GitHub images.
+// Scenes follow the README: compilation, compatibility, theming, benchmarks, Markdown, then the terminal.
 const order = [
   { ...scenes.hero, node: <Hero /> },
   { ...scenes.compile, node: <Compile /> },
@@ -27,10 +27,11 @@ const order = [
   { ...scenes.theming, node: <Theming /> },
   { ...scenes.bench, node: <Bench /> },
   { ...scenes.github, node: <Github /> },
+  { ...scenes.cli, node: <Cli /> },
   { ...scenes.prompt, last: true, node: <Prompt /> },
 ]
 
-/** The launch video: seven sections over the soundtrack's beat grid. */
+/** The launch video: eight sections over the soundtrack's beat grid. */
 export function Video() {
   return (
     <AbsoluteFill style={{ background: ink.bg }}>

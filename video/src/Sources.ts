@@ -9,10 +9,19 @@ export const sources = {
   }
   Diagram <|-- Flowchart
   Diagram <|-- Sequence`,
-  compile: `flowchart LR
-  A[Mermaid] --> B[Rust compiler]
-  B --> C[SVG]
-  C --> D[Page]`,
+  compile: `sequenceDiagram
+  participant Browser
+  participant API
+  participant DB
+  Browser->>+API: POST /checkout
+  API->>DB: INSERT order
+  DB-->>API: order id
+  alt paid
+    API-->>Browser: 201 Created
+  else declined
+    API-->>Browser: 402 Declined
+  end
+  deactivate API`,
   er: `erDiagram
   DIAGRAM ||--o{ NODE : contains
   NODE ||--o{ EDGE : links`,
@@ -23,14 +32,21 @@ export const sources = {
   checkout main
   merge feature
   commit`,
-  github: `flowchart LR
-  A --> B`,
+  github: `sequenceDiagram
+  Browser->>API: POST /checkout
+  API-->>Browser: 201 Created`,
   mindmap: `mindmap
   root((Ondine))
     Compiled
     Compatible
     Precise
     Small`,
+  order: `stateDiagram-v2
+  direction LR
+  [*] --> Placed
+  Placed --> Paid
+  Paid --> Shipped
+  Shipped --> [*]`,
   sequence: `sequenceDiagram
   Browser->>Server: GET /orders
   Server-->>Browser: 200 OK`,
