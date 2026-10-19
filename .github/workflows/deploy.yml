@@ -1,18 +1,17 @@
 name: Deploy
 on:
-  push:
-    branches: [main]
+  workflow_call:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
 
 jobs:
   deploy:
     name: Deploy
     permissions:
       contents: read
+    # Deploys run one at a time, in push order, and never cancel each other mid-upload.
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -23,14 +22,10 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
 
-      - name: Install toolchain
-        run: rustup show
-
-      - name: Install size toolchain
-        run: rustup toolchain install nightly-2026-06-29 --profile minimal --component rust-src --target wasm32-unknown-unknown
-
-      - name: Build WebAssembly
-        run: pnpm build:wasm
+      - name: Restore WebAssembly
+        uses: ./.github/actions/wasm-modules
+        with:
+          build: 'true'
 
       - name: Deploy playground
         run: pnpm --dir playground run deploy
