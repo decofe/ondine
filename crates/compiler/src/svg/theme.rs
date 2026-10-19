@@ -355,13 +355,24 @@ pub(crate) fn class_names(raw: &str) -> String {
     out
 }
 
-/// Color for the nth data series in a chart, cycling through eight variables. Melee's defaults are
-/// all the foreground color.
+/// The share of the foreground in each series' default shade. Neighboring series differ by at
+/// least 28 points, so adjacent slices and lines stay apart in monochrome.
+const SERIES_SHADES: [&str; 8] = ["100", "58", "30", "79", "44", "16", "90", "65"];
+
+/// Color for the nth data series in a chart, cycling through eight variables. Each defaults to a
+/// shade between the foreground and background, so charts stay monochrome and follow the scheme.
 pub(crate) fn series_color(index: i64) -> String {
     let k = index.rem_euclid(8);
     let mut out = String::from("var(--melee-series-");
     out.push(char::from(b'1' + u8::try_from(k).unwrap_or(0)));
-    out.push_str(",#000)");
+    out.push_str(",color-mix(in srgb,var(--_fg) ");
+    out.push_str(
+        SERIES_SHADES
+            .get(usize::try_from(k).unwrap_or(0))
+            .copied()
+            .unwrap_or("100"),
+    );
+    out.push_str("%,var(--_bg)))");
     out
 }
 
@@ -576,13 +587,34 @@ mod tests {
     #[test]
     fn series_color_matches_pele() {
         for &(index, expected) in &[
-            (-9, "var(--melee-series-8,#000)"),
-            (-1, "var(--melee-series-8,#000)"),
-            (0, "var(--melee-series-1,#000)"),
-            (1, "var(--melee-series-2,#000)"),
-            (7, "var(--melee-series-8,#000)"),
-            (8, "var(--melee-series-1,#000)"),
-            (15, "var(--melee-series-8,#000)"),
+            (
+                -9,
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+            ),
+            (
+                -1,
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+            ),
+            (
+                0,
+                "var(--melee-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
+            ),
+            (
+                1,
+                "var(--melee-series-2,color-mix(in srgb,var(--_fg) 58%,var(--_bg)))",
+            ),
+            (
+                7,
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+            ),
+            (
+                8,
+                "var(--melee-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
+            ),
+            (
+                15,
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+            ),
         ] {
             assert_eq!(series_color(index), expected);
         }

@@ -50,7 +50,11 @@ function normalize(svg: string): string {
     .replace(/\bpele-(?=[a-z])/g, 'melee-')
     .replace(/var\(--melee-radius,4px\)/g, 'var(--melee-radius,0)')
     .replace(/var\(--melee-critical,#[0-9a-f]+\)/g, 'var(--melee-critical,var(--_fg))')
-    .replace(/var\(--melee-series-(\d),#[0-9a-f]+\)/g, 'var(--melee-series-$1,#000)')
+    .replace(/var\(--melee-series-(\d),#[0-9a-f]+\)/g, (_, n: string) => {
+      // Melee's series default to shades between the foreground and background.
+      const shades = ['100', '58', '30', '79', '44', '16', '90', '65']
+      return `var(--melee-series-${n},color-mix(in srgb,var(--_fg) ${shades[Number(n) - 1]}%,var(--_bg)))`
+    })
 }
 
 function isWide(c: number): boolean {
