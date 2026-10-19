@@ -156,7 +156,7 @@ describe('pack', () => {
     const result = JSON.parse(run(['node', 'render.ts'], { cwd: consumer }))
 
     expect(result.compiler.slice(0, 120)).toMatchInlineSnapshot(
-      `"<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart" viewBox="0 0 160 64" width="160" height="64" style"`,
+      `"<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart" viewBox="0 0 160 64" width="160" height="64" sty"`,
     )
     expect(result.base64 === result.compiler).toMatchInlineSnapshot(`true`)
     expect(result.raw === result.compiler).toMatchInlineSnapshot(`true`)
