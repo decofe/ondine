@@ -13,7 +13,8 @@ const root = Path.resolve(import.meta.dirname, '..')
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
 const types = ['flowchart'] as const
 
-for (const type of types) {
+// `all` includes every diagram type, for the root entrypoint and the tests.
+for (const type of ['all', ...types]) {
   const bytes = build(type)
 
   write(Path.join(root, `src/internal/${type}.generated.ts`), source(bytes))

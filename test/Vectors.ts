@@ -7,6 +7,21 @@ const root = Path.resolve(import.meta.dirname, 'vectors')
 /** One vector: a label for reports and the Mermaid source. */
 export type Vector = { readonly label: string; readonly source: string }
 
+/** Diagram types with vectors, as Pele names them. */
+export function types(): readonly string[] {
+  const names = Fs.readdirSync(Path.join(root, 'corpus')).map((file) => file.replace(/\.json$/, ''))
+  // Corpus files use folder names. Pele's type names differ for three of them.
+  const renamed: Record<string, string> = {
+    git: 'gitGraph',
+    quadrant: 'quadrantChart',
+    treeview: 'treeView',
+  }
+  return names
+    .filter((name) => name !== 'agentflow-reference')
+    .map((name) => renamed[name] ?? name)
+    .sort()
+}
+
 /** Every vector of `type`: documentation examples, playground samples, and layout cases. */
 export function of(type: string): readonly Vector[] {
   const vectors: Vector[] = []
@@ -17,7 +32,12 @@ export function of(type: string): readonly Vector[] {
     vectors.push({ label, source })
   }
 
-  const corpus = Path.join(root, 'corpus', `${type}.json`)
+  const folders: Record<string, string> = {
+    gitGraph: 'git',
+    quadrantChart: 'quadrant',
+    treeView: 'treeview',
+  }
+  const corpus = Path.join(root, 'corpus', `${folders[type] ?? type}.json`)
   if (Fs.existsSync(corpus))
     (JSON.parse(Fs.readFileSync(corpus, 'utf8')) as string[]).forEach((source, i) =>
       add(`corpus ${i}`, source),

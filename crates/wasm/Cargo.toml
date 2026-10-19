@@ -13,6 +13,8 @@ crate-type = ["cdylib"]
 
 [features]
 default = ["flowchart"]
+# Every diagram type, for the root entrypoint and tests.
+all = ["compiler/all"]
 agentflow = ["compiler/agentflow"]
 architecture = ["compiler/architecture"]
 block = ["compiler/block"]

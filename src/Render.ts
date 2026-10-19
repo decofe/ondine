@@ -1,6 +1,6 @@
 /** @module Renders Mermaid source to monochrome SVG. */
 import * as Wasm from './internal/Wasm.js'
-import { wasm as flowchart } from './internal/flowchart.generated.js'
+import { wasm as all } from './internal/all.generated.js'
 
 /** Thrown when source cannot be rendered. Messages match Mermaid's diagnostics. */
 export class RenderError extends Error {
@@ -57,25 +57,46 @@ export declare namespace RenderError {
  * ```
  */
 export function create(options: create.Options): create.ReturnType {
-  const instance = Wasm.instantiate(options.modules.flowchart)
+  const instances = new Map<string, Wasm.Instance>()
+  const instance = (type: string) => {
+    let found = instances.get(type)
+    if (found) return found
+
+    const module = options.modules[type]
+    if (module === undefined) return undefined
+    found = Wasm.instantiate(module)
+    instances.set(type, found)
+    return found
+  }
 
   return {
-    render: (source, renderOptions = {}) => run(instance, source, renderOptions),
+    render(source, renderOptions = {}) {
+      const types = Object.keys(options.modules)
+      const first = types[0] === undefined ? undefined : instance(types[0])
+      if (first === undefined) throw new Error('Render.create needs at least one module.')
+
+      const json = JSON.stringify(renderOptions)
+      const result = first.render(source, json)
+      // A module reports the detected type when it does not include it.
+      if (!result.ok && result.code === 'unsupported-diagram' && result.type !== undefined) {
+        const owner = instance(result.type)
+        if (owner) return unwrap(owner.render(source, json))
+      }
+      return unwrap(result)
+    },
   }
 }
 
 export declare namespace create {
-  /** Renderer options. */
+  /** Factory options. */
   type Options = {
-    /** Diagram modules by type, each compiled or as base64 bytes. */
-    readonly modules: {
-      readonly flowchart: WebAssembly.Module | string
-    }
+    /** WebAssembly modules by diagram type, as compiled modules or base64 bytes. */
+    readonly modules: Readonly<Record<string, WebAssembly.Module | string>>
   }
 
-  /** A renderer bound to its own module instances. */
+  /** A renderer over the given modules. */
   type ReturnType = {
-    /** Renders Mermaid `source` to an SVG document, as {@link render} does. */
+    /** Renders `source`, choosing the module for its diagram type. */
     readonly render: (source: string, options?: render.Options) => render.ReturnType
   }
 }
@@ -95,9 +116,9 @@ let instance: Wasm.Instance | undefined
  * ```
  */
 export function render(source: string, options: render.Options = {}): render.ReturnType {
-  instance ??= Wasm.instantiate(flowchart)
+  instance ??= Wasm.instantiate(all)
 
-  return run(instance, source, options)
+  return unwrap(instance.render(source, JSON.stringify(options)))
 }
 
 export declare namespace render {
@@ -140,8 +161,7 @@ export declare namespace render {
   }
 }
 
-function run(instance: Wasm.Instance, source: string, options: render.Options): render.ReturnType {
-  const result = instance.render(source, JSON.stringify(options))
+function unwrap(result: Wasm.Result): render.ReturnType {
   if (!result.ok) throw new RenderError({ ...result, code: result.code as RenderError.Code })
 
   return {
