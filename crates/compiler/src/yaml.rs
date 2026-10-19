@@ -110,6 +110,16 @@ pub(crate) fn push_number(out: &mut String, value: f64) {
         out.push_str("Infinity");
         return;
     }
+    // Sizes and counts are mostly whole numbers, whose digits need no search.
+    if value <= f64::from(u32::MAX) && value.fract() == 0.0 {
+        #[expect(
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss,
+            reason = "the value is a whole number in range"
+        )]
+        push_u32(out, value as u32);
+        return;
+    }
 
     let (digits, n) = shortest(value);
     let k = i32::try_from(digits.len()).unwrap_or(i32::MAX);
