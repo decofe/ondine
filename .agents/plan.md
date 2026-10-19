@@ -20,11 +20,21 @@ Sub-microsecond rendering is not reachable: one cache miss costs about 100 ns. T
 ## Decisions
 
 1. **Port Pele's design to Rust.** Write parsers and layout by hand for each type, following Pele's structure (MIT, keep the notice). Do not depend on Merman or Mermaid at runtime.
-2. **Size budget.** The core (JS glue and WASM loader) plus one diagram type stays under 20 kB gzip. Each other type ships as its own on-demand WASM module with a measured budget.
+2. **Size budget.** Two delivery paths, decided October 19, 2026:
+   - **Build time:** the Vite plugin, CLI, and Worker compile diagrams ahead of time. The browser runtime only mounts precompiled SVG and stays under 20 kB gzip.
+   - **In browser:** each diagram type ships as its own WebAssembly module with a measured gzip budget. The first faithful flowchart port measured 177 kB gzip (Pele's core plus flowchart is 45 kB), so size work continues with recorded floors.
 3. **Monospace measurement.** Every glyph has a 0.6 em advance (Geist Mono, SF Mono, Menlo). Text width needs no canvas, font tables, or DOM, so Node and browser output match byte for byte. Wide and zero-width Unicode use fixed rules.
 4. **Theming through CSS variables** (`--melee-bg`, `--melee-fg`, `--melee-line`, `--melee-font`, and so on), as in Pele. Changing the scheme needs no re-render.
 5. **Parity scope.** Parity with Mermaid covers syntax and diagram models. Layout and pixels are intentionally different, as in Pele. Pele is the baseline for layout quality and speed, not for output bytes.
 6. **Zyzz for authored styles.** The playground, docs components, and examples write all styles with Zyzz through `zyzz/vite`. Diagram SVG styles stay inside the Rust compiler's output as CSS variables, so the package has no Zyzz runtime dependency and keeps its size budget.
+
+## GitHub Rendering
+
+GitHub renders ` ```mermaid ` fences with its own Mermaid viewer, so Melee reaches GitHub through images:
+
+- `worker/` serves `GET /<zlib+base64url>.svg?scheme=light|dark` from a Cloudflare Worker that runs the WebAssembly compiler. Paths are limited to 4,096 characters and inflated source to 64 KiB. Errors return an SVG error card with status 400. Responses cache for a day with `stale-while-revalidate`.
+- READMEs embed light and dark variants with `<picture>` and `prefers-color-scheme`.
+- Workers refuse runtime WebAssembly compilation, so the Worker imports the build's `.wasm` file through `Render.create({ modules })`.
 
 ## Repository layout
 
@@ -59,26 +69,26 @@ A `test/vectors/ledger.json` records each vector's parse, model, render, and lay
 
 ### 1. Scaffold
 
-- [ ] `zile new --pnpm`, then align with zyzz: Vite Plus, oxfmt, oxlint, catalogs in `pnpm-workspace.yaml`, strict TypeScript.
-- [ ] Cargo workspace, toolchain pin, lints, and profiles copied from zyzz.
-- [ ] `AGENTS.md` adapted from zyzz, with Melee principles replacing styling ones.
+- [x] `zile new --pnpm`, then align with zyzz: Vite Plus, oxfmt, oxlint, catalogs in `pnpm-workspace.yaml`, strict TypeScript.
+- [x] Cargo workspace, toolchain pin, lints, and profiles copied from zyzz.
+- [x] `AGENTS.md` adapted from zyzz, with Melee principles replacing styling ones.
 - [ ] CI: check, types, Rust tests, WASM build, size report.
 
 ### 2. Vectors and oracles
 
-- [ ] Import the vectors with notices and the ledger.
+- [x] Import the vectors with notices. The ledger is pending.
 - [ ] Oracle harness: Mermaid 12.1.0 grammars and `@mermaid-js/parser`, Pele 1.6.0 for timing and layout metrics.
 - [ ] Layout metrics: crossings, overlaps, bounding area, edge length.
 
 ### 3. Vertical slice: flowchart
 
-- [ ] Rust lexer, parser, model, layered layout, and SVG for flowchart.
-- [ ] WASM build, `render()` and `mount()`, size and speed measured from the first commit.
+- [x] Rust lexer, parser, model, layered layout, and SVG for flowchart.
+- [x] WASM build and `render()`. `mount()` is pending.
 - [ ] Flowchart passes its compat specs, oracle, fuzzing, and 114 corpus vectors.
 
 ### 4. Playground
 
-- [ ] Vite and React app based on zyzz's `examples/vite-react`, styled only with Zyzz.
+- [x] Vite and React app based on zyzz's `examples/vite-react`, styled only with Zyzz.
 - [ ] Modeled on pele.run/playground: editor, sample picker with all 167 samples, Melee, Mermaid, SVG, and Compare views, timing readout, share links.
 - [ ] Compare view renders Pele and Mermaid beside Melee for review.
 
@@ -86,10 +96,18 @@ A `test/vectors/ledger.json` records each vector's parse, model, render, and lay
 
 Order by corpus share and shared layout: sequence, class, state, ER, block, git, then the remaining 26 types. Each type closes only when its specs, oracle, fuzzing, corpus, and screenshot sheet pass.
 
+### 5a. Build-time path
+
+- [ ] `melee/runtime`: mounts precompiled SVG with unique IDs, under 20 kB gzip (target: under 1 kB).
+- [ ] `melee` CLI: renders `.mmd` files and Markdown fences to SVG.
+- [ ] `melee/vite`: imports `.mmd` files as precompiled SVG.
+- [ ] Deploy the Worker and the playground to Cloudflare.
+
 ### 6. Speed and size
 
 - [ ] Benchmarks against Pele and Mermaid on the full corpus, cold and warm, in Node and Chrome.
-- [ ] Size budgets enforced in CI.
+- [ ] Per-type gzip budgets for in-browser modules, enforced in CI, with each floor recorded.
+- [ ] Size work: build-std with immediate abort, generic and inlining audits, string data, and shared-module splitting.
 
 ### 7. Docs
 
