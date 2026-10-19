@@ -215,7 +215,7 @@ Applies to the documentation site and other Markdown documentation. Prose Conven
 ### Guide Structure
 
 - Organize each guide into Overview, Walkthrough, Recipes, and More sections, as in the zyzz documentation. When a guide has no recipes, hoist its sections to `##` headings between Overview and More.
-- Give each diagram type a page with its syntax, a rendered example per feature, and its compatibility status from the vector ledger.
+- Give each diagram type a page with its description and rendered examples. `site/scripts/generate.ts` generates these pages from the playground samples.
 
 ### Navigation
 

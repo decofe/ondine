@@ -1,167 +1,134 @@
 [
   {
     "slug": "flowchart",
-    "status": "matches",
     "title": "Flowchart"
   },
   {
     "slug": "block",
-    "status": "matches",
     "title": "Block"
   },
   {
     "slug": "c4",
-    "status": "matches",
     "title": "C4"
   },
   {
     "slug": "class",
-    "status": "matches",
     "title": "Class"
   },
   {
     "slug": "er",
-    "status": "matches",
     "title": "Entity Relationship"
   },
   {
     "slug": "eventmodeling",
-    "status": "matches",
     "title": "Event Modeling"
   },
   {
     "slug": "gantt",
-    "status": "matches",
     "title": "Gantt"
   },
   {
     "slug": "git",
-    "status": "matches",
     "title": "Git Graph"
   },
   {
     "slug": "info",
-    "status": "differs",
     "title": "Info"
   },
   {
     "slug": "journey",
-    "status": "matches",
     "title": "User Journey"
   },
   {
     "slug": "kanban",
-    "status": "matches",
     "title": "Kanban"
   },
   {
     "slug": "mindmap",
-    "status": "matches",
     "title": "Mindmap"
   },
   {
     "slug": "packet",
-    "status": "matches",
     "title": "Packet"
   },
   {
     "slug": "pie",
-    "status": "matches",
     "title": "Pie Chart"
   },
   {
     "slug": "quadrant",
-    "status": "matches",
     "title": "Quadrant Chart"
   },
   {
     "slug": "requirement",
-    "status": "matches",
     "title": "Requirement"
   },
   {
     "slug": "sankey",
-    "status": "matches",
     "title": "Sankey"
   },
   {
     "slug": "sequence",
-    "status": "matches",
     "title": "Sequence"
   },
   {
     "slug": "state",
-    "status": "matches",
     "title": "State"
   },
   {
     "slug": "timeline",
-    "status": "matches",
     "title": "Timeline"
   },
   {
     "slug": "xychart",
-    "status": "matches",
     "title": "XY Chart"
   },
   {
     "slug": "agentflow",
-    "status": "matches",
     "title": "Agent Flow"
   },
   {
     "slug": "architecture",
-    "status": "matches",
     "title": "Architecture"
   },
   {
     "slug": "cynefin",
-    "status": "matches",
     "title": "Cynefin"
   },
   {
     "slug": "ishikawa",
-    "status": "matches",
     "title": "Ishikawa"
   },
   {
     "slug": "radar",
-    "status": "matches",
     "title": "Radar"
   },
   {
     "slug": "railroad",
-    "status": "matches",
     "title": "Railroad"
   },
   {
     "slug": "swimlane",
-    "status": "matches",
     "title": "Swimlane"
   },
   {
     "slug": "treemap",
-    "status": "matches",
     "title": "Treemap"
   },
   {
     "slug": "treeview",
-    "status": "matches",
     "title": "Tree View"
   },
   {
     "slug": "usecase",
-    "status": "matches",
     "title": "Use Case"
   },
   {
     "slug": "venn",
-    "status": "matches",
     "title": "Venn"
   },
   {
     "slug": "wardley",
-    "status": "matches",
     "title": "Wardley Map"
   }
 ]
