@@ -8,19 +8,19 @@ import { fontFace, global } from 'zyzz/web'
 
 const base = defineVars({
   color: {
-    accent: { dark: '#2fbf86', light: '#00704a' },
-    chip: { dark: '#4d4300', light: '#fff3a8' },
-    code: { dark: '#0a0a0a', light: '#000000' },
-    desk: { dark: '#161616', light: '#ececec' },
-    faint: { dark: '#3a3a3a', light: '#c8c8c8' },
-    ink: { dark: '#ffffff', light: '#000000' },
-    link: { dark: '#7fb0ff', light: '#0047ab' },
-    muted: { dark: '#a6a6a6', light: '#4d4d4d' },
-    paper: { dark: '#000000', light: '#ffffff' },
-    rule: { dark: '#ffffff', light: '#000000' },
-    shade: { dark: '#4a4a4a', light: '#a3a3a3' },
-    signal: { dark: '#ff5a5f', light: '#e4202b' },
-    tint: { dark: '#1c1c1c', light: '#f3f3f3' },
+    accent: '#00704a',
+    chip: '#fff3a8',
+    code: '#000000',
+    desk: '#ececec',
+    faint: '#c8c8c8',
+    ink: '#000000',
+    link: '#0047ab',
+    muted: '#4d4d4d',
+    paper: '#ffffff',
+    rule: '#000000',
+    shade: '#a3a3a3',
+    signal: '#e4202b',
+    tint: '#f3f3f3',
   },
   // Berkeley Mono applies where it is installed, and IBM Plex Mono ships as the fallback.
   fontFamily: {
@@ -29,8 +29,8 @@ const base = defineVars({
   },
   // Hard offset shadows, as printed buttons and sheets cast them.
   shadow: {
-    hard: '2px 2px 0 light-dark(#a3a3a3, #4a4a4a)',
-    sheet: '4px 4px 0 light-dark(#a3a3a3, #4a4a4a)',
+    hard: '2px 2px 0 #a3a3a3',
+    sheet: '4px 4px 0 #a3a3a3',
   },
   spacing: {
     '2xl': '3rem',
@@ -43,22 +43,11 @@ const base = defineVars({
 })
 
 /** Helpers bound to the site tokens. */
-export const { appearance, script, style, variants, vars } = defineConfig({
+export const { style, variants, vars } = defineConfig({
   defaultVars: 'catalog',
   id: 'site',
   vars: { catalog: base },
 })
-
-/** The ink strip beside the brand, in process-color order. */
-export const inks = [
-  '#e4202b',
-  '#00a651',
-  '#2e3192',
-  '#00aeef',
-  '#fff200',
-  '#ec008c',
-  '#000000',
-] as const
 
 fontFace({
   fontDisplay: 'swap',

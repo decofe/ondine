@@ -90,9 +90,9 @@ namespace styles {
 
   export const canvas = style({
     // Diagrams take the sheet's colors, so they follow the color scheme without re-rendering.
-    '--ondine-bg': 'light-dark(#ffffff, #000000) !custom',
-    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
-    '--ondine-line': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': '#ffffff !custom',
+    '--ondine-fg': '#000000 !custom',
+    '--ondine-line': '#000000 !custom',
     '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     display: 'flex',
     justifyContent: 'center',

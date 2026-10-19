@@ -3,15 +3,13 @@ import type { ComponentType, ElementType, ReactPromise } from 'react'
 import diagrams from './diagrams.generated.json' with { type: 'json' }
 import * as Manifest from './Manifest.js'
 
-/** Authored sidebar order. Diagram pages follow `samples.json` order. */
+/** Authored sidebar order. Diagram pages sort by title. */
 export const groups: readonly { pages: readonly Item[]; title: string }[] = [
   {
     title: 'Introduction',
     pages: [
       { path: 'introduction/getting-started', title: 'Getting Started' },
       { path: 'introduction/why-ondine', title: 'Why Ondine' },
-      { path: 'introduction/concepts', title: 'Concepts & Principles' },
-      { path: 'introduction/compatibility', title: 'Compatibility' },
       { path: 'introduction/benchmarks', title: 'Benchmarks' },
       { path: 'introduction/faq', title: 'FAQ' },
     ],
@@ -30,10 +28,9 @@ export const groups: readonly { pages: readonly Item[]; title: string }[] = [
   },
   {
     title: 'Diagrams',
-    pages: diagrams.map((diagram) => ({
-      path: `diagrams/${diagram.slug}`,
-      title: diagram.title,
-    })),
+    pages: diagrams
+      .map((diagram) => ({ path: `diagrams/${diagram.slug}`, title: diagram.title }))
+      .sort((a, b) => a.title.localeCompare(b.title)),
   },
   {
     title: 'API',
@@ -139,10 +136,23 @@ export function trail(path: string): readonly string[] {
   return []
 }
 
-/** Pages in sidebar order, for previous and next links. */
-export const sequence: readonly string[] = groups.flatMap((group) =>
-  group.pages.flatMap(paths).filter((path) => Object.hasOwn(Manifest.pages, path)),
-)
+/** The site area a page belongs to: diagram pages have their own sidebar, apart from the docs. */
+export function section(path: string): 'diagrams' | 'docs' {
+  return path.startsWith('diagrams/') ? 'diagrams' : 'docs'
+}
+
+/** The sidebar groups shown beside a page, from its section. */
+export function sidebar(path: string): typeof groups {
+  const diagrams = section(path) === 'diagrams'
+  return groups.filter((group) => (group.title === 'Diagrams') === diagrams)
+}
+
+/** Pages of a page's sidebar in order, for previous and next links. */
+export function sequence(path: string): readonly string[] {
+  return sidebar(path).flatMap((group) =>
+    group.pages.flatMap(paths).filter((page) => Object.hasOwn(Manifest.pages, page)),
+  )
+}
 
 /** Compiled MDX component for one documentation page. */
 export type Content = ComponentType<{

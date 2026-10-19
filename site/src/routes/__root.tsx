@@ -5,7 +5,7 @@ import reset from 'zyzz/reset.css?url'
 import { Link } from '../components/Link.js'
 import { Shell } from '../components/Shell.js'
 import * as Head from '../Head.js'
-import { script, vars } from '../zyzz.config.js'
+import { vars } from '../zyzz.config.js'
 
 /** Defines the document shell and page metadata. */
 export const Route = createRootRoute({
@@ -44,9 +44,8 @@ function RootDocument(props: RootDocument.Props) {
   const { children } = props
 
   return (
-    <html lang="en" suppressHydrationWarning {...vars({ colorScheme: 'light dark' })}>
+    <html lang="en" suppressHydrationWarning {...vars({ colorScheme: 'light' })}>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: script() }} />
         <HeadContent />
       </head>
       <body>

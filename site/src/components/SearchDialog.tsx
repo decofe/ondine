@@ -325,7 +325,7 @@ function snippet(text: string, terms: readonly string[]): string {
 
 namespace styles {
   export const dialog = style({
-    '&::backdrop': { backgroundColor: 'light-dark(rgb(0 0 0 / 0.25), rgb(0 0 0 / 0.65)) !custom' },
+    '&::backdrop': { backgroundColor: 'rgb(0 0 0 / 0.25) !custom' },
     backgroundColor: 'transparent !custom',
     border: 'none',
     color: 'ink',

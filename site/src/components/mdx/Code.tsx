@@ -101,9 +101,9 @@ namespace styles {
 
   export const diagram = style({
     // Diagrams take the sheet's colors, so they follow the color scheme without re-rendering.
-    '--ondine-bg': 'light-dark(#ffffff, #000000) !custom',
-    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
-    '--ondine-line': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': '#ffffff !custom',
+    '--ondine-fg': '#000000 !custom',
+    '--ondine-line': '#000000 !custom',
     '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     border: '1px solid',
     borderBottom: 'none',
@@ -125,8 +125,8 @@ namespace styles {
     alignItems: 'center',
     backgroundColor: 'code',
     borderBottom: '1px dashed',
-    borderColor: 'light-dark(#5c4100, #5c4100) !custom',
-    color: 'light-dark(#ffb000, #ffb000) !custom',
+    borderColor: '#5c4100 !custom',
+    color: '#ffb000 !custom',
     display: 'flex',
     fontFamily: 'mono',
     fontSize: '0.75rem !custom',
@@ -163,7 +163,7 @@ namespace styles {
     '& .diff.remove': { backgroundColor: 'rgb(255 90 95 / 0.16) !custom' },
     '& code': { display: 'block', font: 'inherit', minWidth: 'max-content !custom' },
     backgroundColor: 'code',
-    color: 'light-dark(#ffb000, #ffb000) !custom',
+    color: '#ffb000 !custom',
     fontFamily: 'mono',
     fontSize: '0.875rem !custom',
     lineHeight: '1.6 !custom',

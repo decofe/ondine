@@ -18,18 +18,18 @@ export function Page(props: Page.Props) {
 
   const page = Manifest.pages[path]!
   const trail = Docs.trail(path)
-  const position = Docs.sequence.indexOf(path)
-  const previous = Docs.sequence[position - 1]
-  const next = Docs.sequence[position + 1]
+  const sequence = Docs.sequence(path)
+  const position = sequence.indexOf(path)
+  const previous = sequence[position - 1]
+  const next = sequence[position + 1]
 
   return (
-    <Shell active={path.startsWith('diagrams/') ? 'diagrams' : 'docs'}>
+    <Shell active={Docs.section(path)}>
       <nav aria-label="Breadcrumb" {...styles.breadcrumb()}>
-        <Link href="/docs/introduction/getting-started">Docs</Link>
         {trail.map((title) => (
-          <span key={title}> / {title}</span>
+          <span key={title}>{title} / </span>
         ))}
-        <span aria-current="page"> / {page.title}</span>
+        <span aria-current="page">{page.title}</span>
       </nav>
       <hr {...styles.halftone()} />
 
@@ -255,13 +255,13 @@ declare namespace PageActions {
   type Props = { path: string; title: string }
 }
 
-/** Lists every page by sidebar group. */
+/** Lists the pages of the current section by sidebar group. */
 function Sidebar(props: Sidebar.Props) {
   const { path } = props
 
   return (
-    <nav aria-label="Documentation">
-      {Docs.groups.map((group) => (
+    <nav aria-label={Docs.section(path) === 'diagrams' ? 'Diagrams' : 'Documentation'}>
+      {Docs.sidebar(path).map((group) => (
         <div key={group.title} {...styles.group()}>
           <h2 {...styles.groupHeading()}>{group.title}</h2>
           <ul {...styles.links()}>
@@ -323,8 +323,7 @@ namespace styles {
 
   // A dotted halftone band, as catalogs separate a heading from its listing.
   export const halftone = style({
-    backgroundImage:
-      'radial-gradient(circle, light-dark(#8c8c8c, #6b6b6b) 0.6px, transparent 0.8px) !custom',
+    backgroundImage: 'radial-gradient(circle, #8c8c8c 0.6px, transparent 0.8px) !custom',
     backgroundSize: '3px 3px !custom',
     border: 'none',
     height: '0.75rem !custom',
@@ -359,7 +358,7 @@ namespace styles {
     borderColor: 'rule',
     boxShadow: 'hard',
     cursor: 'pointer',
-    fontFamily: 'mono',
+    fontFamily: 'sans',
     fontSize: '0.875rem !custom',
     paddingBlock: 'xs',
     paddingInline: 'sm',
@@ -370,7 +369,7 @@ namespace styles {
   export const groupHeading = style({
     borderBottom: '1px dashed',
     borderColor: 'rule',
-    fontFamily: 'mono',
+    fontFamily: 'sans',
     fontSize: '0.75rem !custom',
     fontWeight: '700 !custom',
     letterSpacing: '0.1em !custom',
@@ -394,7 +393,7 @@ namespace styles {
   export const topic = style({
     '& > summary': { cursor: 'pointer', listStyle: 'none' },
     '& > summary::-webkit-details-marker': { display: 'none' },
-    '& > summary::before': { content: '"+ "', fontFamily: 'mono' },
+    '& > summary::before': { content: '"+ "', fontFamily: 'sans' },
     '&[open] > summary::before': { content: '"− "' },
   })
 
@@ -414,7 +413,7 @@ namespace styles {
     '& h2': {
       borderBottom: '1px dashed',
       borderColor: 'rule',
-      fontFamily: 'mono',
+      fontFamily: 'sans',
       fontSize: '1.125rem !custom',
       fontWeight: '700 !custom',
       marginBottom: 'md',
@@ -423,7 +422,7 @@ namespace styles {
       scrollMarginTop: 'md',
     },
     '& h3': {
-      fontFamily: 'mono',
+      fontFamily: 'sans',
       fontSize: '1rem !custom',
       fontWeight: '700 !custom',
       marginBottom: 'sm',
@@ -431,7 +430,7 @@ namespace styles {
       scrollMarginTop: 'md',
     },
     '& h4': {
-      fontFamily: 'mono',
+      fontFamily: 'sans',
       fontSize: '0.9375rem !custom',
       fontWeight: '700 !custom',
       marginTop: 'lg',
@@ -467,7 +466,7 @@ namespace styles {
 
   export const heading = style({
     '& h1': {
-      fontFamily: 'mono',
+      fontFamily: 'sans',
       fontSize: '2rem !custom',
       fontWeight: '700 !custom',
       letterSpacing: '-0.02em !custom',
@@ -531,7 +530,7 @@ namespace styles {
   export const outlineLink = style({
     ':hover': { color: 'ink' },
     '&[aria-current="location"]': { color: 'ink', fontWeight: '700 !custom' },
-    '&[aria-current="location"]::before': { color: 'signal', content: '"● "' },
+    '&[aria-current="location"]::before': { color: 'ink', content: '"● "' },
     '&[data-depth="3"]': { paddingLeft: 'md' },
     color: 'muted',
     display: 'block',
