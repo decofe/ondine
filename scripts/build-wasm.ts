@@ -51,8 +51,9 @@ function build(feature: string): Buffer {
     '--enable-sign-ext',
   ]
 
+  // The pinned npm build of Binaryen keeps output identical across machines.
   ChildProcess.execFileSync(
-    'wasm-opt',
+    Path.join(root, 'node_modules/.bin/wasm-opt'),
     ['-Oz', ...proposals, '--strip-debug', '--strip-producers', input, '-o', output],
     { cwd: root, stdio: 'inherit' },
   )

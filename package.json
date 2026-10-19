@@ -12,6 +12,7 @@
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@types/node": "catalog:",
+    "binaryen": "catalog:",
     "mermaid": "catalog:",
     "pele": "catalog:",
     "typescript": "catalog:",
