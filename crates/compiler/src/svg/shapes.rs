@@ -24,6 +24,40 @@ pub(crate) const PAD_Y: f64 = 12.0;
 /// Kept clear at each end of a straight side, for the corner.
 const CORNER: f64 = 12.0;
 
+/// `(cos, sin)` of `PI * i / 14 - PI / 2` for the bang shape's 28 points, bit for bit as libm and
+/// JavaScript's `Math` return them. The table keeps libm's trigonometry out of the module.
+#[rustfmt::skip]
+const STAR: [(f64, f64); 28] = [
+    (f64::from_bits(0x3c91_a626_3314_5c07), f64::from_bits(0xbff0_0000_0000_0000)),
+    (f64::from_bits(0x3fcc_7b90_e302_4584), f64::from_bits(0xbfef_329c_0558_e969)),
+    (f64::from_bits(0x3fdb_c4c0_4d71_abc2), f64::from_bits(0xbfec_d4bc_a9cb_5c71)),
+    (f64::from_bits(0x3fe3_f3a0_e28b_edd2), f64::from_bits(0xbfe9_04c3_7505_de4b)),
+    (f64::from_bits(0x3fe9_04c3_7505_de4b), f64::from_bits(0xbfe3_f3a0_e28b_edd1)),
+    (f64::from_bits(0x3fec_d4bc_a9cb_5c71), f64::from_bits(0xbfdb_c4c0_4d71_abc1)),
+    (f64::from_bits(0x3fef_329c_0558_e969), f64::from_bits(0xbfcc_7b90_e302_4582)),
+    (f64::from_bits(0x3ff0_0000_0000_0000), f64::from_bits(0x0000_0000_0000_0000)),
+    (f64::from_bits(0x3fef_329c_0558_e969), f64::from_bits(0x3fcc_7b90_e302_4582)),
+    (f64::from_bits(0x3fec_d4bc_a9cb_5c71), f64::from_bits(0x3fdb_c4c0_4d71_abc1)),
+    (f64::from_bits(0x3fe9_04c3_7505_de4b), f64::from_bits(0x3fe3_f3a0_e28b_edd1)),
+    (f64::from_bits(0x3fe3_f3a0_e28b_edd5), f64::from_bits(0x3fe9_04c3_7505_de48)),
+    (f64::from_bits(0x3fdb_c4c0_4d71_abc2), f64::from_bits(0x3fec_d4bc_a9cb_5c71)),
+    (f64::from_bits(0x3fcc_7b90_e302_4575), f64::from_bits(0x3fef_329c_0558_e96a)),
+    (f64::from_bits(0x3c91_a626_3314_5c07), f64::from_bits(0x3ff0_0000_0000_0000)),
+    (f64::from_bits(0xbfcc_7b90_e302_4570), f64::from_bits(0x3fef_329c_0558_e96a)),
+    (f64::from_bits(0xbfdb_c4c0_4d71_abc0), f64::from_bits(0x3fec_d4bc_a9cb_5c71)),
+    (f64::from_bits(0xbfe3_f3a0_e28b_edd4), f64::from_bits(0x3fe9_04c3_7505_de49)),
+    (f64::from_bits(0xbfe9_04c3_7505_de4a), f64::from_bits(0x3fe3_f3a0_e28b_edd2)),
+    (f64::from_bits(0xbfec_d4bc_a9cb_5c70), f64::from_bits(0x3fdb_c4c0_4d71_abc3)),
+    (f64::from_bits(0xbfef_329c_0558_e969), f64::from_bits(0x3fcc_7b90_e302_4586)),
+    (f64::from_bits(0xbff0_0000_0000_0000), f64::from_bits(0x3ca1_a626_3314_5c07)),
+    (f64::from_bits(0xbfef_329c_0558_e96b), f64::from_bits(0xbfcc_7b90_e302_455f)),
+    (f64::from_bits(0xbfec_d4bc_a9cb_5c71), f64::from_bits(0xbfdb_c4c0_4d71_abbf)),
+    (f64::from_bits(0xbfe9_04c3_7505_de4c), f64::from_bits(0xbfe3_f3a0_e28b_edd0)),
+    (f64::from_bits(0xbfe3_f3a0_e28b_edd3), f64::from_bits(0xbfe9_04c3_7505_de4a)),
+    (f64::from_bits(0xbfdb_c4c0_4d71_abb5), f64::from_bits(0xbfec_d4bc_a9cb_5c74)),
+    (f64::from_bits(0xbfcc_7b90_e302_4589), f64::from_bits(0xbfef_329c_0558_e969)),
+];
+
 /// A size with no label shift.
 fn size(w: f64, h: f64) -> ShapeSize {
     ShapeSize { dy: 0.0, h, w }
@@ -1051,14 +1085,11 @@ pub(crate) fn draw_shape(shape: &str, w: f64, h: f64, a: &str, line: &str) -> St
             .concat()
         }
         "bang" => {
-            let spikes = 14.0;
             let mut points = Vec::with_capacity(56);
-            for i in 0..28_u8 {
-                let angle =
-                    (std::f64::consts::PI * f64::from(i)) / spikes - std::f64::consts::PI / 2.0;
+            for (i, (cos, sin)) in STAR.into_iter().enumerate() {
                 let k = if i % 2 == 0 { 1.0 } else { 0.82 };
-                points.push(angle.cos() * (w / 2.0) * k);
-                points.push(angle.sin() * (h / 2.0) * k);
+                points.push(cos * (w / 2.0) * k);
+                points.push(sin * (h / 2.0) * k);
             }
             poly(&points, a)
         }
