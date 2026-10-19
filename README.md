@@ -1,15 +1,12 @@
 <h1 align="center">Melee</h1>
 
 <p align="center">
-  Monochrome Mermaid diagrams, compiled with Rust
+  Mermaid diagrams, compiled with Rust
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> · <a href="#agent-prompt">Agent Prompt</a> · <a href="#philosophy">Philosophy</a> · <a href="#features">Features</a> · <a href="#documentation">Documentation</a> · <a href="site/src/pages/guides/vite.mdx">Guides</a> · <a href="site/src/pages/api/compiler/index.mdx">API Reference</a>
 </p>
-
-> [!NOTE]
-> Melee is being rewritten. [`.agents/plan.md`](.agents/plan.md) tracks progress. The previous prototype lives on the `poc` branch.
 
 ## Overview
 
@@ -40,7 +37,7 @@ Read github.com/wevm/melee and help me render my Mermaid diagrams with Melee.
 
 - **Compiled.** Diagrams compile ahead of time, so pages load only the SVG and a 210-byte runtime.
 - **Compatible.** Every diagram type accepts and rejects the same input as Mermaid 12.1.0.
-- **Monochrome.** One foreground, one background, square outlines, and rounded orthogonal edges.
+- **Precise.** Square outlines, rounded orthogonal edges, and monospace labels on a strict grid.
 - **Deterministic.** A uniform monospace advance measures text, so Node and browsers emit identical bytes.
 - **Inert.** Output escapes every authored string and holds no scripts, event handlers, or external references.
 - **Small.** The runtime stays under 20 kB gzip, and each WebAssembly module has a measured size budget.
