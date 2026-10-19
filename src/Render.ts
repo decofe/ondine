@@ -68,9 +68,10 @@ export function create(options: create.Options): create.ReturnType {
     return found
   }
 
+  const types = Object.keys(options.modules)
+
   return {
     render(source, renderOptions = {}) {
-      const types = Object.keys(options.modules)
       const first = types[0] === undefined ? undefined : instance(types[0])
       if (first === undefined) throw new Error('Render.create needs at least one module.')
 

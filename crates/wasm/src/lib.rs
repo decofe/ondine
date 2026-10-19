@@ -173,22 +173,6 @@ fn field(out: &mut Vec<u8>, bytes: &[u8]) {
 mod exports {
     //! The C ABI the TypeScript wrapper calls.
 
-    use core::cell::Cell;
-
-    /// The last result's address and length, read by the host after `render`.
-    struct Output {
-        len: Cell<usize>,
-        ptr: Cell<usize>,
-    }
-
-    // SAFETY: WebAssembly modules built for this crate run on one thread.
-    unsafe impl Sync for Output {}
-
-    static OUTPUT: Output = Output {
-        len: Cell::new(0),
-        ptr: Cell::new(0),
-    };
-
     /// Empties the arena. Every pointer previously returned becomes invalid.
     #[unsafe(no_mangle)]
     extern "C" fn reset() {
@@ -205,7 +189,7 @@ mod exports {
     }
 
     /// Renders the UTF-8 source and options the host wrote, and returns the result's address.
-    /// The length is available from `result_len`.
+    /// The result's fields carry their lengths.
     #[unsafe(no_mangle)]
     extern "C" fn render(
         source: *const u8,
@@ -213,7 +197,7 @@ mod exports {
         options: *const u8,
         options_len: usize,
     ) -> *const u8 {
-        // SAFETY: the host wrote `source_len` and `options_len` bytes at addresses from `alloc`.
+        // SAFETY: the host wrote `source_len` and `options_len` bytes inside memory from `alloc`.
         let (source, options) = unsafe {
             (
                 core::slice::from_raw_parts(source, source_len),
@@ -233,16 +217,6 @@ mod exports {
             }),
         };
 
-        let bytes = super::encode(result).into_boxed_slice();
-        OUTPUT.len.set(bytes.len());
-        let ptr = Box::into_raw(bytes).cast::<u8>();
-        OUTPUT.ptr.set(ptr as usize);
-        ptr
-    }
-
-    /// The length of the last result.
-    #[unsafe(no_mangle)]
-    extern "C" fn result_len() -> usize {
-        OUTPUT.len.get()
+        Box::into_raw(super::encode(result).into_boxed_slice()).cast::<u8>()
     }
 }

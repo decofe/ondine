@@ -43,7 +43,6 @@ type Exports = {
     optionsLen: number,
   ) => number
   readonly reset: () => void
-  readonly result_len: () => number
 }
 
 const decoder = new TextDecoder()
@@ -58,22 +57,36 @@ const encoder = new TextEncoder()
 export function instantiate(input: string | WebAssembly.Module): Instance {
   const module = typeof input === 'string' ? new WebAssembly.Module(bytes(input)) : input
   const exports = new WebAssembly.Instance(module, {}).exports as unknown as Exports
+  const reader = read(exports.memory)
+
+  // Growth detaches the old buffer, which empties views of it, so the views are renewed after
+  // every call that may allocate.
+  const fresh = () => {
+    if (reader.bytes.byteLength === 0) Object.assign(reader, read(exports.memory))
+    return reader
+  }
+
+  // Encodes `text` straight into linear memory at `at` and returns its length in bytes. A UTF-16
+  // unit takes at most three UTF-8 bytes.
+  const write = (text: string, at: number) =>
+    text === ''
+      ? 0
+      : encoder.encodeInto(text, reader.bytes.subarray(at, at + text.length * 3)).written
 
   return {
     render(source, options) {
       exports.reset()
 
-      const sourceBytes = encoder.encode(source)
-      const optionsBytes = encoder.encode(options)
-      const sourcePtr = exports.alloc(sourceBytes.length)
-      const optionsPtr = exports.alloc(optionsBytes.length)
+      // Source and options share one allocation.
+      const sourceAt = exports.alloc((source.length + options.length) * 3)
+      fresh()
+      const sourceLength = write(source, sourceAt)
+      const optionsAt = sourceAt + sourceLength
+      const optionsLength = write(options, optionsAt)
 
-      // The memory may grow during `alloc`, so views are taken after every allocation.
-      new Uint8Array(exports.memory.buffer, sourcePtr, sourceBytes.length).set(sourceBytes)
-      new Uint8Array(exports.memory.buffer, optionsPtr, optionsBytes.length).set(optionsBytes)
-
-      const at = exports.render(sourcePtr, sourceBytes.length, optionsPtr, optionsBytes.length)
-      return decode(new Uint8Array(exports.memory.buffer, at, exports.result_len()))
+      const at = exports.render(sourceAt, sourceLength, optionsAt, optionsLength)
+      fresh().at = at
+      return decode(reader)
     },
   }
 }
@@ -85,45 +98,56 @@ function bytes(base64: string): Uint8Array<ArrayBuffer> {
   return out
 }
 
-function decode(buffer: Uint8Array): Result {
-  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength)
-  let at = 1
+/** Views of linear memory and a cursor into it. */
+type Reader = { at: number; bytes: Uint8Array; view: DataView }
 
-  const field = (): Uint8Array => {
-    const length = view.getUint32(at, true)
-    const value = buffer.subarray(at + 4, at + 4 + length)
-    at += 4 + length
-    return value
-  }
-  const text = (): string => decoder.decode(field())
-  const u32 = (): number => {
-    const value = field()
-    return new DataView(value.buffer, value.byteOffset, 4).getUint32(0, true)
-  }
-  const f64 = (): number => {
-    const value = field()
-    return new DataView(value.buffer, value.byteOffset, 8).getFloat64(0, true)
-  }
+function read(memory: WebAssembly.Memory): Reader {
+  return { at: 0, bytes: new Uint8Array(memory.buffer), view: new DataView(memory.buffer) }
+}
 
-  if (buffer[0] === 1) {
-    const code = text()
-    const type = text()
-    const line = u32()
-    const column = u32()
-    const snippet = text()
-    const message = text()
+/**
+ * Decodes the result at the reader's cursor: a status byte, then fields that are each a
+ * little-endian `u32` length and its bytes.
+ */
+function decode(reader: Reader): Result {
+  const status = reader.bytes[reader.at++]
+
+  if (status === 1) {
+    const code = text(reader)
+    const type = text(reader)
+    const line = reader.view.getUint32(field(reader), true)
+    const column = reader.view.getUint32(field(reader), true)
+    const snippet = text(reader)
+    const message = text(reader)
 
     return { code, column, line, message, ok: false, snippet, type: type || undefined }
   }
 
-  const type = text()
-  const width = f64()
-  const height = f64()
-  const count = u32()
+  const type = text(reader)
+  const width = reader.view.getFloat64(field(reader), true)
+  const height = reader.view.getFloat64(field(reader), true)
+  const count = reader.view.getUint32(field(reader), true)
   const links: Link[] = []
   for (let i = 0; i < count; i++)
-    links.push({ href: text(), id: text(), internal: field()[0] === 1 })
-  const svg = text()
+    links.push({
+      href: text(reader),
+      id: text(reader),
+      internal: reader.bytes[field(reader)] === 1,
+    })
+  const svg = text(reader)
 
   return { height, links, ok: true, svg, type, width }
+}
+
+/** Skips the next field and returns where its bytes start. */
+function field(reader: Reader): number {
+  const length = reader.view.getUint32(reader.at, true)
+  reader.at += 4 + length
+  return reader.at - length
+}
+
+/** Reads the next field as UTF-8 text. */
+function text(reader: Reader): string {
+  const start = field(reader)
+  return start === reader.at ? '' : decoder.decode(reader.bytes.subarray(start, reader.at))
 }
