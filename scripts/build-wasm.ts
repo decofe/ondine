@@ -11,7 +11,7 @@ import * as Path from 'node:path'
 const root = Path.resolve(import.meta.dirname, '..')
 
 /** Diagram types with a compiler module. Each builds into its own WebAssembly module. */
-const types = ['block', 'flowchart', 'requirement', 'sankey', 'venn'] as const
+const types = ['block', 'flowchart', 'gantt', 'requirement', 'sankey', 'state', 'venn'] as const
 
 // `all` includes every diagram type, for the root entrypoint and the tests.
 for (const type of ['all', ...types]) {
