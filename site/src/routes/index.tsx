@@ -24,11 +24,6 @@ function Page() {
       <section {...styles.hero()}>
         <div {...styles.copy()}>
           <h1 {...styles.title()}>Ondine</h1>
-          <p {...styles.chips()}>
-            <span {...styles.chip()}>Compiler</span>
-            <span {...styles.outlined()}>Mermaid 12.1.0</span>
-            <span {...styles.outlined()}>SVG</span>
-          </p>
           <p>
             Ondine compiles Mermaid source to SVG ahead of time. A Rust compiler parses, lays out,
             and emits each diagram once, while the site or README builds.
@@ -57,13 +52,12 @@ function Page() {
         <Tabs>
           {showcase.tabs.map((tab) => (
             <Tab key={tab.type} title={tab.label}>
-              <div dangerouslySetInnerHTML={{ __html: tab.svg }} {...styles.terminal()} />
+              <div dangerouslySetInnerHTML={{ __html: tab.svg }} {...styles.panel()} />
             </Tab>
           ))}
         </Tabs>
         <p {...styles.note()}>
-          The same SVG as above, themed amber on black through <code>--ondine-*</code> custom
-          properties. <Link href="/examples">See every example →</Link>
+          <Link href="/examples">See every example →</Link>
         </p>
       </section>
 
@@ -140,29 +134,6 @@ namespace styles {
     fontWeight: '700 !custom',
   })
 
-  export const chips = style({ display: 'flex', flexWrap: 'wrap', gap: 'sm' })
-
-  export const chip = style({
-    backgroundColor: 'chip',
-    border: '1px dotted',
-    borderColor: 'rule',
-    fontFamily: 'mono',
-    fontSize: '0.9375rem !custom',
-    letterSpacing: '0.12em !custom',
-    paddingInline: 'xs',
-    textTransform: 'uppercase',
-  })
-
-  export const outlined = style({
-    border: '1px dotted',
-    borderColor: 'rule',
-    fontFamily: 'mono',
-    fontSize: '0.9375rem !custom',
-    letterSpacing: '0.12em !custom',
-    paddingInline: 'xs',
-    textTransform: 'uppercase',
-  })
-
   export const calls = style({ display: 'flex', flexWrap: 'wrap', gap: 'md' })
 
   export const primary = style({
@@ -217,18 +188,19 @@ namespace styles {
     paddingBottom: 'sm',
   })
 
-  export const terminal = style({
-    // Amber on black, from the same SVG the plate above draws in the sheet's colors.
-    '--ondine-bg': '#000000 !custom',
-    '--ondine-fg': '#ffb000 !custom',
-    '--ondine-line': '#ffb000 !custom',
+  export const panel = style({
+    '--ondine-bg': '#ffffff !custom',
+    '--ondine-fg': '#000000 !custom',
+    '--ondine-line': '#000000 !custom',
     '& svg': {
       display: 'block',
       height: 'auto !custom',
       maxHeight: '32rem !custom',
       maxWidth: '100% !custom',
     },
-    backgroundColor: 'code',
+    backgroundColor: 'paper',
+    border: '1px solid',
+    borderColor: 'faint',
     display: 'flex',
     justifyContent: 'center',
     minHeight: '20rem !custom',
