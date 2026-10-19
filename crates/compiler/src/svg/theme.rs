@@ -12,13 +12,15 @@ use crate::yaml::push_number;
 
 /// Private aliases set once on the root element, so each use is short and the public `--melee-*`
 /// variables keep their defaults. Node fills default to the background, and lines, borders,
-/// and muted text to the foreground, so setting `--melee-bg` and `--melee-fg` themes a diagram. The text color is set as
+/// and muted text to the foreground, so setting `--melee-bg` and `--melee-fg` themes a diagram.
+/// The alternate surface is a light tint of the foreground, as diagrams draw grids, graticules,
+/// excluded ranges, and finished work in it, which would vanish into the background. The text color is set as
 /// well: an icon is drawn in `currentColor`, which would otherwise be whatever color the page
 /// gives the diagram's container. Shapes and edges inherit the stroke width, which defaults to the
 /// 2 pixels that the diagrams' fixed-width outlines already use.
 pub(crate) const ROOT_STYLE: &str = "--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);\
 --_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));\
---_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));\
+--_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));\
 --_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg)";
 
 /// The monospace font, as set on the root.
@@ -360,9 +362,10 @@ pub(crate) fn class_names(raw: &str) -> String {
     out
 }
 
-/// The share of the foreground in each series' default shade. Neighboring series differ by at
-/// least 28 points, so adjacent slices and lines stay apart in monochrome.
-const SERIES_SHADES: [&str; 8] = ["100", "58", "30", "79", "44", "16", "90", "65"];
+/// The share of the foreground in each series' default shade. Every shade is at least half the
+/// foreground, so thin lines, outlines under a wash, and labels drawn in the background color stay
+/// readable on it. Neighboring series differ by at least 15 points.
+const SERIES_SHADES: [&str; 8] = ["100", "57", "86", "50", "79", "64", "93", "71"];
 
 /// Color for the nth data series in a chart, cycling through eight variables. Each defaults to a
 /// shade between the foreground and background, so charts stay monochrome and follow the scheme.
@@ -594,11 +597,11 @@ mod tests {
         for &(index, expected) in &[
             (
                 -9,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 -1,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 0,
@@ -606,11 +609,11 @@ mod tests {
             ),
             (
                 1,
-                "var(--melee-series-2,color-mix(in srgb,var(--_fg) 58%,var(--_bg)))",
+                "var(--melee-series-2,color-mix(in srgb,var(--_fg) 57%,var(--_bg)))",
             ),
             (
                 7,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 8,
@@ -618,7 +621,7 @@ mod tests {
             ),
             (
                 15,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 65%,var(--_bg)))",
+                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
         ] {
             assert_eq!(series_color(index), expected);
