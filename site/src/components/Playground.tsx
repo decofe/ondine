@@ -2,17 +2,24 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { style } from '../zyzz.config.js'
 
-// The playground compiles in the browser with Ondine, Pele, and Mermaid. Leaving it out of the server
-// build keeps those compilers out of the Worker bundle.
+// The playground compiles in the browser with Ondine. Leaving it out of the server build keeps the
+// compiler out of the Worker bundle.
+// The chunk starts loading with this module, which the router preloads while a link to the page is in view.
 const App = import.meta.env.SSR
   ? undefined
-  : lazy(async () => ({ default: (await import('./playground/App.js')).App }))
+  : lazy(((chunk) => async () => ({ default: (await chunk).App }))(import('./playground/App.js')))
+
+// Only the first render on the client must match the server's loading state. Later visits mount at once.
+let hydrated = false
 
 export function Playground() {
   // The app reads its source from the URL fragment, so it mounts after hydration.
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(hydrated)
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    hydrated = true
+    setMounted(true)
+  }, [])
 
   return (
     <div {...styles.frame()}>
@@ -29,8 +36,6 @@ export function Playground() {
 
 namespace styles {
   export const frame = style({
-    border: '1px solid',
-    borderColor: 'rule',
     height: 'max(36rem, calc(100dvh - 13rem)) !custom',
   })
 

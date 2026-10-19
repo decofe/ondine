@@ -1,28 +1,24 @@
 /** The playground shell: source on the left, rendered views on the right. @module */
-import { useCallback, useEffect, useState } from 'react'
-import { Diagram, type Engine, type Outcome } from './Diagram.js'
+import { type ReactNode, useCallback, useEffect, useState } from 'react'
+import { Diagram, type Outcome } from './Diagram.js'
 import { Editor } from './Editor.js'
-import { Menu } from './Menu.js'
 import * as Samples from './Samples.js'
 import { Search } from './Search.js'
 import * as Share from './Share.js'
 import { style } from './zyzz.config.js'
 
 /** The views the preview offers. */
-type View = 'compare' | 'ondine' | 'mermaid' | 'svg'
+type View = 'diagram' | 'svg'
 
 const views: readonly { readonly label: string; readonly value: View }[] = [
-  { label: 'Ondine', value: 'ondine' },
-  { label: 'Mermaid', value: 'mermaid' },
+  { label: 'Diagram', value: 'diagram' },
   { label: 'SVG', value: 'svg' },
-  { label: 'Compare', value: 'compare' },
 ]
 
 /** Lays out the editor and preview, and owns their shared state. */
 export function App() {
   const [source, setSource] = useState(() => Share.read() ?? Samples.initial)
-  const [view, setView] = useState<View>('ondine')
-  const [wrap, setWrap] = useState(true)
+  const [view, setView] = useState<View>('diagram')
   const [searching, setSearching] = useState(false)
   const [outcome, setOutcome] = useState<Outcome | undefined>()
   const [notice, setNotice] = useState<string | undefined>()
@@ -48,49 +44,39 @@ export function App() {
 
   return (
     <div {...styles.page()}>
-      <header {...styles.header()}>
-        <h1 {...styles.title()}>
-          <strong>Ondine</strong> Playground
-        </h1>
-        <nav {...styles.actions()}>
-          <Menu
-            actions={{
-              clear: () => setSource(''),
-              open: setSource,
-              reset: () => setSource(Samples.initial),
-              samples: () => setSearching(true),
-              share: async () => {
-                await navigator.clipboard.writeText(Share.link(source))
-                flash('Link copied')
-              },
-              wrap: () => setWrap((value) => !value),
-            }}
-            wrap={wrap}
-          />
-          <button {...styles.search()} onClick={() => setSearching(true)} type="button">
-            Search <kbd {...styles.kbd()}>⌘K</kbd>
-          </button>
-        </nav>
-      </header>
-
       <main {...styles.workspace()}>
         <section {...styles.panel()} aria-label="Source">
           <div {...styles.bar()}>
-            <span>
+            <span {...styles.tools()}>
               Source <span {...styles.muted()}>Mermaid</span>
+              <button {...styles.search()} onClick={() => setSearching(true)} type="button">
+                Open sample <kbd {...styles.kbd()}>⌘K</kbd>
+              </button>
             </span>
-            <button
-              {...styles.quiet()}
-              onClick={async () => {
-                await navigator.clipboard.writeText(source)
-                flash('Source copied')
-              }}
-              type="button"
-            >
-              Copy
-            </button>
+            <span {...styles.tools()}>
+              <IconButton
+                label="Copy source"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(source)
+                  flash('Source copied')
+                }}
+              >
+                <rect height="9" width="9" x="5.5" y="5.5" />
+                <path d="M3.5 10.5h-1v-8h8v1" />
+              </IconButton>
+              <IconButton
+                label="Reset to the starter diagram"
+                onClick={() => setSource(Samples.initial)}
+              >
+                <path d="M3 8a5 5 0 1 0 1.5-3.5" />
+                <path d="M4.5 1.5v3h3" />
+              </IconButton>
+              <IconButton label="Clear source" onClick={() => setSource('')}>
+                <path d="M4 4l8 8M12 4l-8 8" />
+              </IconButton>
+            </span>
           </div>
-          <Editor onChange={setSource} value={source} wrap={wrap} />
+          <Editor onChange={setSource} value={source} />
           <footer {...styles.status()} role="status">
             {notice ??
               (outcome === undefined
@@ -117,30 +103,21 @@ export function App() {
                 </button>
               ))}
             </div>
+            <button
+              {...styles.search()}
+              onClick={async () => {
+                await navigator.clipboard.writeText(Share.link(source))
+                flash('Link copied')
+              }}
+              type="button"
+            >
+              Copy share link
+            </button>
           </div>
 
-          {view === 'ondine' ? (
-            <Diagram engine="ondine" onOutcome={onOutcome} source={source} />
-          ) : null}
-          {view === 'mermaid' ? <Diagram engine="mermaid" source={source} /> : null}
+          {view === 'diagram' ? <Diagram onOutcome={onOutcome} source={source} /> : null}
           {view === 'svg' ? (
             <pre {...styles.code()}>{outcome?.ok ? outcome.svg : (outcome?.message ?? '')}</pre>
-          ) : null}
-          {view === 'compare' ? (
-            <div {...styles.compare()}>
-              {(['ondine', 'pele', 'mermaid'] as const satisfies readonly Engine[]).map(
-                (engine) => (
-                  <div {...styles.cell()} key={engine}>
-                    <span {...styles.label()}>{engine}</span>
-                    <Diagram
-                      engine={engine}
-                      onOutcome={engine === 'ondine' ? onOutcome : undefined}
-                      source={source}
-                    />
-                  </div>
-                ),
-              )}
-            </div>
           ) : null}
 
           <footer {...styles.status()}>
@@ -152,6 +129,35 @@ export function App() {
       <Search onClose={() => setSearching(false)} onOpen={setSource} open={searching} />
     </div>
   )
+}
+
+/** A square button that shows a 16-unit outline icon, named by `label` for assistive technology and tooltips. */
+function IconButton(props: IconButton.Props) {
+  const { children, label, onClick } = props
+
+  return (
+    <button {...styles.icon()} aria-label={label} onClick={onClick} title={label} type="button">
+      <svg
+        aria-hidden="true"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 16 16"
+        width="16"
+      >
+        {children}
+      </svg>
+    </button>
+  )
+}
+
+declare namespace IconButton {
+  type Props = {
+    readonly children: ReactNode
+    readonly label: string
+    readonly onClick: () => void
+  }
 }
 
 namespace styles {
@@ -168,18 +174,6 @@ namespace styles {
     fontFamily: '"Berkeley Mono", "TX-02", "IBM Plex Mono", ui-monospace, Menlo, monospace !custom',
     height: '100% !custom',
   })
-
-  export const header = style({
-    alignItems: 'center',
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingBlock: 'md',
-    paddingInline: 'lg',
-  })
-
-  export const title = style({ fontSize: '1rem !custom', fontWeight: 400, margin: '0 !custom' })
-
-  export const actions = style({ alignItems: 'center', display: 'flex', gap: 'lg' })
 
   export const search = style({
     ':hover': { color: 'strong' },
@@ -209,8 +203,6 @@ namespace styles {
     gap: 'sm',
     gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr) !custom',
     minHeight: '0 !custom',
-    paddingBottom: 'sm',
-    paddingInline: 'sm',
     '@media (max-width: 52rem)': {
       gridTemplateColumns: '1fr !custom',
       gridTemplateRows: '1fr 1fr !custom',
@@ -242,12 +234,22 @@ namespace styles {
 
   export const muted = style({ color: 'muted' })
 
-  export const quiet = style({
-    ':hover': { color: 'strong' },
+  export const tools = style({ alignItems: 'center', display: 'flex', gap: 'md' })
+
+  export const icon = style({
+    ':hover': { backgroundColor: 'hover', color: 'strong' },
+    alignItems: 'center',
     backgroundColor: 'transparent !custom',
-    border: 'none',
-    color: 'muted',
-    font: 'inherit',
+    border: '1px solid',
+    borderColor: 'line',
+    borderRadius: 'control',
+    color: 'text',
+    cursor: 'pointer',
+    display: 'flex',
+    height: '1.75rem !custom',
+    justifyContent: 'center',
+    padding: '0 !custom',
+    width: '1.75rem !custom',
   })
 
   export const tabs = style({ display: 'flex', gap: 'xs' })
@@ -285,29 +287,5 @@ namespace styles {
     padding: 'md',
     whiteSpace: 'pre-wrap',
     wordBreak: 'break-all',
-  })
-
-  export const compare = style({
-    display: 'grid',
-    flex: '1 !custom',
-    gridTemplateRows: 'repeat(3, minmax(0, 1fr)) !custom',
-    minHeight: '0 !custom',
-  })
-
-  export const cell = style({
-    '& + &': { borderTop: '1px solid', borderColor: 'line' },
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '0 !custom',
-    position: 'relative',
-  })
-
-  export const label = style({
-    color: 'muted',
-    fontSize: '0.75rem !custom',
-    left: '1rem !custom',
-    position: 'absolute',
-    textTransform: 'capitalize',
-    top: '0.5rem !custom',
   })
 }

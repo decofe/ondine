@@ -4,7 +4,7 @@ import { style } from './zyzz.config.js'
 
 /** Edits `value`, calling `onChange` on every keystroke. */
 export function Editor(props: Editor.Props) {
-  const { onChange, value, wrap } = props
+  const { onChange, value } = props
   const gutter = useRef<HTMLDivElement>(null)
   const lines = value.split('\n').length
 
@@ -27,7 +27,6 @@ export function Editor(props: Editor.Props) {
         }}
         spellCheck={false}
         value={value}
-        wrap={wrap ? 'soft' : 'off'}
       />
     </div>
   )
@@ -40,8 +39,6 @@ export declare namespace Editor {
     readonly onChange: (value: string) => void
     /** Mermaid source. */
     readonly value: string
-    /** Whether long lines wrap. */
-    readonly wrap: boolean
   }
 }
 
