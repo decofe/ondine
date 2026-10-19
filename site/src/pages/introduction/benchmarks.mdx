@@ -1,250 +1,29 @@
 # Benchmarks
 
-Render speed and runtime size against Pele and Mermaid, and the size of each compiler module.
+Render speed and download size of Melee, Pele 1.6.0, and Mermaid 12.1.0, each in its best measured configuration. Colors compare each library with Melee.
 
-## Overview
+Every library rendered all 612 vectors across 33 diagram types in headless Chromium 141, at `1c9f5d6` on a 4-core Intel Xeon at 2.10 GHz. [`bench/comparison.md`](https://github.com/wevm/melee/blob/main/bench/comparison.md) holds the full report, and `pnpm bench:compare` reproduces it.
 
-Melee is compared with Pele 1.6.0 and Mermaid 12.1.0 over all 33 diagram types and 612 vectors. Every library rendered every vector, so each lane times the same sources. Colors compare each cell with the first value column: green is faster or smaller, red slower or larger.
+## Mount Speed
 
-The comparison ran at `1c9f5d6` on a 4-core Intel Xeon at 2.10 GHz with Node 22.22.0 and headless Chromium 141. [`bench/comparison.md`](https://github.com/wevm/melee/blob/main/bench/comparison.md) holds the full report, including p95 times.
-
-## Summary
-
-Each ratio is the geometric mean over the 33 types of the library's time divided by Melee's.
+Warm render is the average time per diagram over all 612 vectors once each library is loaded. Cold render runs from loading the library in a fresh page until its first diagram renders, averaged over the 33 types.
 
 :::benchmarks
-| Measure | Melee | Pele | Mermaid |
+| Render | Melee | Pele | Mermaid |
 | --- | --: | --: | --: |
-| Node warm render | 1x | 1.84x | — |
-| Node cold start | 1x | 1.46x | — |
-| Chrome warm render | 1x | 1.16x | 327.86x |
-| Chrome warm render, speed module | 1x | 1.99x | 562.99x |
-| Chrome cold start | 1x | 1.65x | 7.89x |
+| Warm | 54.9µs | 151µs | 36.8ms |
+| Cold | 34ms | 55.6ms | 300ms |
 :::
 
-## Runtime Size
+Melee's warm render uses its speed-optimized module, and its cold render the size-optimized module for the diagram type. Pele loads through `pele/lazy`, and Mermaid renders with `mermaid.render`.
 
-Diagrams compiled at build time ship with only the `melee` runtime, which mounts them. Pele and Mermaid ship their renderers. Sizes are bytes of minified esbuild bundles with every diagram type, counting every chunk of `pele/lazy` and Mermaid.
+## Diagram Size
+
+Bytes a page downloads to display diagrams of every type. Melee compiles diagrams ahead of time, so a page ships only the `melee` runtime that mounts them. Pele and Mermaid ship their renderers, measured as minified esbuild bundles.
 
 :::benchmarks
-| Bytes | `melee` | `pele` | `pele/lazy` | `mermaid` |
-| --- | --: | --: | --: | --: |
-| Raw | 115 | 665656 | 675516 | 5179321 |
-| Gzip | 127 | 248064 | 276422 | 1506327 |
-| Brotli | 93 | 200236 | 250731 | 1252410 |
+| Bytes | Melee | Pele | Mermaid |
+| --- | --: | --: | --: |
+| Gzip | 127 | 248064 | 1506327 |
+| Brotli | 93 | 200236 | 1252410 |
 :::
-
-## Node Render
-
-Median time per diagram, with the vector count beside each type. Melee loads the speed-optimized module, as `melee/compiler` does. Warm rounds repeat until they last at least 10 ms.
-
-:::benchmarks
-| Type | Melee | Pele |
-| --- | --: | --: |
-| agentflow (13) | 71.9µs | 164µs |
-| architecture (6) | 38.3µs | 78.1µs |
-| block (30) | 15.8µs | 22.8µs |
-| c4 (8) | 191µs | 250µs |
-| class (43) | 40µs | 81.2µs |
-| cynefin (3) | 51.1µs | 68.6µs |
-| er (27) | 44.6µs | 86.1µs |
-| eventmodeling (12) | 28µs | 43.5µs |
-| flowchart (174) | 84.3µs | 197µs |
-| gantt (12) | 48.6µs | 86.8µs |
-| gitGraph (35) | 61.8µs | 95.9µs |
-| info (2) | 2µs | 2.7µs |
-| ishikawa (1) | 27.1µs | 37.1µs |
-| journey (1) | 23.5µs | 35.3µs |
-| kanban (3) | 30.7µs | 41.4µs |
-| mindmap (16) | 12.9µs | 32.3µs |
-| packet (4) | 17.8µs | 35µs |
-| pie (3) | 15.9µs | 26.5µs |
-| quadrantChart (3) | 25.5µs | 45.1µs |
-| radar (3) | 26.7µs | 54.5µs |
-| railroad (14) | 35.8µs | 57.7µs |
-| requirement (12) | 51.8µs | 123µs |
-| sankey (8) | 64.3µs | 103µs |
-| sequence (40) | 29.5µs | 51.8µs |
-| state (25) | 55.6µs | 150µs |
-| swimlane (14) | 64.4µs | 143µs |
-| timeline (16) | 37.2µs | 68.2µs |
-| treeView (13) | 11.7µs | 27.5µs |
-| treemap (8) | 26.1µs | 42.2µs |
-| usecase (25) | 55.6µs | 155µs |
-| venn (8) | 55.6µs | 157µs |
-| wardley (20) | 28.1µs | 43.1µs |
-| xychart (10) | 22.4µs | 46.3µs |
-:::
-
-Cold time runs from loading the library in a fresh process until its first diagram renders, as the median of five processes.
-
-:::benchmarks
-| Type | Melee | Pele |
-| --- | --: | --: |
-| agentflow | 45.6ms | 53.8ms |
-| architecture | 25.4ms | 38.8ms |
-| block | 30.1ms | 38.5ms |
-| c4 | 28.7ms | 40.6ms |
-| class | 42.5ms | 48.7ms |
-| cynefin | 22.9ms | 41.8ms |
-| er | 34.3ms | 41.7ms |
-| eventmodeling | 21.9ms | 35.7ms |
-| flowchart | 36.1ms | 41ms |
-| gantt | 26ms | 42.4ms |
-| gitGraph | 25.9ms | 41ms |
-| info | 19.6ms | 35.3ms |
-| ishikawa | 22.4ms | 39.1ms |
-| journey | 21.6ms | 35.7ms |
-| kanban | 22.7ms | 37.7ms |
-| mindmap | 26.1ms | 40ms |
-| packet | 29.4ms | 48.7ms |
-| pie | 25.1ms | 36.7ms |
-| quadrantChart | 23.7ms | 36.5ms |
-| radar | 23.8ms | 38.6ms |
-| railroad | 26.2ms | 35ms |
-| requirement | 30.8ms | 41.6ms |
-| sankey | 27ms | 42.7ms |
-| sequence | 27.3ms | 36.6ms |
-| state | 38ms | 41.5ms |
-| swimlane | 35.8ms | 45.9ms |
-| timeline | 22.9ms | 39.5ms |
-| treeView | 22.5ms | 35.8ms |
-| treemap | 24.9ms | 36.8ms |
-| usecase | 35.2ms | 48.4ms |
-| venn | 25.8ms | 40.9ms |
-| wardley | 29.1ms | 37.3ms |
-| xychart | 23ms | 35.5ms |
-:::
-
-## Chrome Render
-
-Melee loads the size-optimized module for the type, as browsers do. The speed column loads the module that Node, the CLI, and the Worker use. Pele loads through `pele/lazy`, and Mermaid renders with `mermaid.render`.
-
-:::benchmarks
-| Type | Melee | Melee (speed) | Pele | Mermaid |
-| --- | --: | --: | --: | --: |
-| agentflow (13) | 121µs | 67.3µs | 154µs | 45.2ms |
-| architecture (6) | 59.4µs | 38.5µs | 85.4µs | 42.1ms |
-| block (30) | 28.3µs | 19.2µs | 27.1µs | 27.9ms |
-| c4 (8) | 325µs | 169µs | 319µs | 72.4ms |
-| class (43) | 65.1µs | 43µs | 109µs | 52.4ms |
-| cynefin (3) | 75µs | 50µs | 68.7µs | 9.63ms |
-| er (27) | 77.8µs | 46.3µs | 106µs | 46.3ms |
-| eventmodeling (12) | 45.8µs | 30.2µs | 44.8µs | 9.3ms |
-| flowchart (174) | 153µs | 85.6µs | 287µs | 50.6ms |
-| gantt (12) | 95.8µs | 46.9µs | 89.6µs | 8.72ms |
-| gitGraph (35) | 88.6µs | 55.7µs | 94.3µs | 34.4ms |
-| info (2) | 4.1µs | 2.9µs | 3µs | 3.68ms |
-| ishikawa (1) | 56.2µs | 26.6µs | 36.3µs | 17.8ms |
-| journey (1) | 42.2µs | 25µs | 37.5µs | 10.9ms |
-| kanban (3) | 68.7µs | 31.3µs | 60.4µs | 35.7ms |
-| mindmap (16) | 25µs | 13.3µs | 28.9µs | 34.4ms |
-| packet (4) | 31.3µs | 17.2µs | 35.2µs | 6.38ms |
-| pie (3) | 28.1µs | 14.1µs | 26µs | 5.97ms |
-| quadrantChart (3) | 46.9µs | 25µs | 44.3µs | 10.4ms |
-| radar (3) | 39.6µs | 26.6µs | 56.3µs | 8.3ms |
-| railroad (14) | 59.8µs | 36.6µs | 57.6µs | 16.2ms |
-| requirement (12) | 91.7µs | 62.5µs | 112µs | 44ms |
-| sankey (8) | 87.5µs | 50µs | 106µs | 15.7ms |
-| sequence (40) | 50µs | 31.3µs | 82.5µs | 19.3ms |
-| state (25) | 106µs | 62µs | 236µs | 60.2ms |
-| swimlane (14) | 116µs | 64.3µs | 154µs | 45.5ms |
-| timeline (16) | 62.5µs | 39.1µs | 61.7µs | 16.8ms |
-| treeView (13) | 23.1µs | 13µs | 32.7µs | 7.47ms |
-| treemap (8) | 44.5µs | 23.4µs | 45.3µs | 9.49ms |
-| usecase (25) | 88µs | 55µs | 164µs | 43.8ms |
-| venn (8) | 85.9µs | 56.2µs | 144µs | 8.68ms |
-| wardley (20) | 46.2µs | 25.6µs | 43.7µs | 8.45ms |
-| xychart (10) | 42.5µs | 21.3µs | 47.5µs | 14.6ms |
-:::
-
-The size-optimized modules lose to Pele on 14 small types, by 1% to 35%. The speed module wins on every type.
-
-Cold time runs from loading the library in a fresh browser context until its first diagram renders, as the median of five contexts.
-
-:::benchmarks
-| Type | Melee | Melee (speed) | Pele | Mermaid |
-| --- | --: | --: | --: | --: |
-| agentflow | 35.4ms | 171ms | 66ms | 541ms |
-| architecture | 31.4ms | 142ms | 59.4ms | 419ms |
-| block | 37ms | 155ms | 57.6ms | 202ms |
-| c4 | 34.1ms | 154ms | 60.9ms | 268ms |
-| class | 46ms | 167ms | 71.1ms | 676ms |
-| cynefin | 27.1ms | 147ms | 50.3ms | 244ms |
-| er | 40.1ms | 152ms | 65.3ms | 550ms |
-| eventmodeling | 34.5ms | 147ms | 61.1ms | 267ms |
-| flowchart | 42.2ms | 168ms | 67.8ms | 515ms |
-| gantt | 33.5ms | 140ms | 49.6ms | 131ms |
-| gitGraph | 34ms | 153ms | 53.6ms | 282ms |
-| info | 24.6ms | 143ms | 51.4ms | 248ms |
-| ishikawa | 26.5ms | 139ms | 50.8ms | 128ms |
-| journey | 27.7ms | 140ms | 44.6ms | 135ms |
-| kanban | 28.1ms | 154ms | 52.3ms | 155ms |
-| mindmap | 30.8ms | 145ms | 42.1ms | 315ms |
-| packet | 22.6ms | 141ms | 53.3ms | 263ms |
-| pie | 27.4ms | 141ms | 44.7ms | 235ms |
-| quadrantChart | 30.2ms | 151ms | 47ms | 124ms |
-| radar | 27.7ms | 132ms | 48.1ms | 239ms |
-| railroad | 31.7ms | 137ms | 43.7ms | 281ms |
-| requirement | 39.3ms | 154ms | 51.6ms | 584ms |
-| sankey | 35.1ms | 147ms | 53.6ms | 217ms |
-| sequence | 30.5ms | 149ms | 64.7ms | 175ms |
-| state | 49.3ms | 160ms | 80.4ms | 628ms |
-| swimlane | 52.3ms | 159ms | 68.8ms | 283ms |
-| timeline | 30.6ms | 146ms | 50ms | 131ms |
-| treeView | 33.4ms | 132ms | 57.9ms | 253ms |
-| treemap | 28.4ms | 142ms | 50.4ms | 255ms |
-| usecase | 54ms | 171ms | 63.5ms | 606ms |
-| venn | 36.4ms | 152ms | 50.4ms | 145ms |
-| wardley | 31.9ms | 159ms | 52.2ms | 265ms |
-| xychart | 29.4ms | 165ms | 51.1ms | 144ms |
-:::
-
-## Entrypoint Sizes
-
-`pnpm check:size` bundles each entrypoint for browsers with esbuild and compresses it with gzip level 9 and Brotli. Measured at `9fcd8c4` on an Apple M4 Max with Node 24.15.0 and Rust 1.97.0, with size modules built on `nightly-2026-06-29`.
-
-| Entrypoint                |       Raw |    Gzip |  Brotli | Budget (gzip) |
-| ------------------------- | --------: | ------: | ------: | ------------: |
-| `melee`                   |       244 |     210 |     164 |        20,000 |
-| `melee/compiler/wasm`     |     2,191 |   1,068 |     953 |        20,000 |
-| `melee/compiler/wasm/all` | 1,703,908 | 714,991 | 563,441 |          None |
-
-`melee/compiler/wasm/all` inlines the size-optimized module for every type as base64. Sizes are in bytes.
-
-## Module Sizes
-
-The same run measured each size-optimized diagram module as a separate `.wasm` file. Node, the CLI, and the Worker load the speed-optimized module with every type: 3,189,468 bytes raw and 1,098,975 gzip.
-
-| Module      |     Raw |    Gzip |
-| ----------- | ------: | ------: |
-| `flowchart` | 316,041 | 136,921 |
-| `class`     | 256,912 | 115,954 |
-| `state`     | 254,656 | 115,340 |
-| `sequence`  | 175,349 |  86,742 |
-| `gantt`     | 184,670 |  91,786 |
-| `info`      |  79,571 |  37,800 |
-
-Flowchart has a 145,000-byte gzip budget, enforced by `pnpm check:size`. Other types report their size without a budget.
-
-## Flowchart Render
-
-[`bench/size.md`](https://github.com/wevm/melee/blob/main/bench/size.md) records how the flowchart module reached its size, and its warm render time over 174 flowchart vectors in Node. It was measured at `fe875aa` on an Apple M4 Max with Node 24.15.0, where Pele took 11 to 12 ms.
-
-| Profile                           |    Gzip |     Warm render |
-| --------------------------------- | ------: | --------------: |
-| `opt-level = "z"`, `wasm-opt -Oz` | 136,897 | 11.7 to 12.1 ms |
-| `opt-level = "s"`, `wasm-opt -Os` | 177,930 |          8.3 ms |
-| `opt-level = 3`, `wasm-opt -O3`   | 253,521 |   7.2 to 7.4 ms |
-
-Browsers get the first profile and Node gets the last. Other builds shared the machine, so times varied by about 1 ms between runs.
-
-## Reproduce
-
-```sh
-# Builds every module, then reports entrypoint and module sizes
-pnpm build:wasm && pnpm check:size
-
-# Compares render speed and runtime size with Pele and Mermaid in Node and Chrome
-pnpm bench:compare
-```
