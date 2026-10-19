@@ -4,7 +4,7 @@ import { bench, describe } from 'vite-plus/test'
 import { render } from 'melee/compiler'
 import * as Vectors from '../test/Vectors.js'
 
-const types = ['flowchart'] as const
+const types = Vectors.types()
 
 for (const type of types) {
   const sources = Vectors.of(type)
