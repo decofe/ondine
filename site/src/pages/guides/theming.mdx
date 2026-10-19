@@ -114,7 +114,7 @@ flowchart LR
 
 ### Color Chart Series
 
-Charts draw series with `--melee-series-1` through `--melee-series-8`. Each defaults to a shade between the foreground and background.
+Charts draw series with `--melee-series-1` through `--melee-series-8`. Each defaults to a shade between half and all of the foreground, so series stay visible on the background.
 
 ```css title="styles.css"
 /* Colors the first three series */
@@ -174,7 +174,7 @@ Diagrams served as images cannot read page styles. The [image Worker](/guides/gi
 | `--melee-border`                         | `--melee-fg`                                                                                      | Shape outlines                              |
 | `--melee-muted`                          | `--melee-fg`                                                                                      | Secondary text                              |
 | `--melee-surface`                        | `--melee-bg`                                                                                      | Node fills                                  |
-| `--melee-surface-alt`                    | `--melee-bg`                                                                                      | Subgraph and cluster fills                  |
+| `--melee-surface-alt`                    | 20% `--melee-fg`                                                                                  | Cluster fills, grids, and finished work     |
 | `--melee-accent`                         | `--melee-fg`                                                                                      | Highlighted elements                        |
 | `--melee-critical`                       | `--melee-fg`                                                                                      | Elements a diagram marks as critical        |
 | `--melee-series-1` to `--melee-series-8` | Foreground shades                                                                                 | Chart series                                |
