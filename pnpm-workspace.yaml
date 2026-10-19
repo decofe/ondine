@@ -3,7 +3,7 @@ packages:
   - playground
 
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
 
 catalog:
   '@changesets/cli': '^3.0.3'
@@ -26,5 +26,3 @@ catalog:
 minimumReleaseAgeExclude:
   - zyzz@0.0.34
 
-allowBuilds:
-  esbuild: true
