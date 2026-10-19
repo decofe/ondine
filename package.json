@@ -6,7 +6,7 @@
     "changeset:version": "changeset version",
     "check": "vp check --fix",
     "check:size": "node scripts/size.ts",
-    "check:types": "tsc",
+    "check:types": "tsc && tsc -p playground",
     "dev": "pnpm build:wasm && zile dev",
     "test": "pnpm build:wasm && vp test"
   },
