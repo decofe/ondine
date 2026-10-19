@@ -45,7 +45,6 @@ namespace styles {
     '& > svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     backgroundColor: 'surface',
     borderColor: 'line',
-    borderRadius: 'panel',
     borderStyle: 'solid',
     borderWidth: '1px !custom',
     display: 'flex',

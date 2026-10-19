@@ -8,7 +8,6 @@ const base = defineVars({
     strong: { dark: '#ffffff', light: '#000000' },
     surface: 'var(--vocs-background-color-code-block)',
   },
-  radius: { panel: '8px' },
   spacing: { lg: '1.5rem', md: '1rem', sm: '0.5rem', xs: '0.25rem' },
 })
 
