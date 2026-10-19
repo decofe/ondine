@@ -14,11 +14,12 @@ use crate::yaml::push_number;
 /// variables keep their defaults. Node fills default to the background, and lines, borders,
 /// and muted text to the foreground, so setting `--melee-bg` and `--melee-fg` themes a diagram. The text color is set as
 /// well: an icon is drawn in `currentColor`, which would otherwise be whatever color the page
-/// gives the diagram's container. Shapes and edges inherit the stroke width.
+/// gives the diagram's container. Shapes and edges inherit the stroke width, which defaults to the
+/// 2 pixels that the diagrams' fixed-width outlines already use.
 pub(crate) const ROOT_STYLE: &str = "--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);\
 --_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));\
 --_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));\
---_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg)";
+--_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg)";
 
 /// The monospace font, as set on the root.
 pub(crate) const FONT_MONO: &str = "var(--_fm)";
@@ -41,11 +42,13 @@ pub(crate) const CRITICAL: &str = "var(--melee-critical,var(--_fg))";
 pub(crate) const STROKE: &str = "var(--_sw)";
 
 /// The font stack labels are drawn in when the page sets no `--melee-font`.
-const FONT: &str = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+const FONT: &str = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace";
 
 /// The root's font declarations at `size` pixels. Melee measures every font as monospace, so the
 /// font comes only from `--melee-font`, for both Pele's normal and monospace stacks. The rest of
-/// what text inherits is pinned, as none of it was measured.
+/// what text inherits is pinned, as none of it was measured. Kerning and ligatures are off and
+/// glyphs are placed at their exact size, so every character keeps the uniform advance that
+/// layout assumed.
 pub(crate) fn font_style(size: f64) -> String {
     let mut out = String::with_capacity(256);
     out.push_str(";--_fm:var(--melee-font,");
@@ -54,7 +57,9 @@ pub(crate) fn font_style(size: f64) -> String {
     push_number(&mut out, size);
     out.push_str("px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,");
     out.push_str(FONT);
-    out.push(')');
+    out.push_str(
+        ");font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision",
+    );
     out
 }
 
