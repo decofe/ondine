@@ -16,6 +16,7 @@ const root = Path.resolve(import.meta.dirname, '..')
 const types = [
   'architecture',
   'block',
+  'c4',
   'class',
   'cynefin',
   'er',
@@ -23,11 +24,13 @@ const types = [
   'gantt',
   'git',
   'info',
+  'ishikawa',
   'journey',
   'kanban',
   'mindmap',
   'packet',
   'pie',
+  'quadrant',
   'radar',
   'requirement',
   'sankey',
@@ -38,6 +41,7 @@ const types = [
   'usecase',
   'venn',
   'wardley',
+  'xychart',
 ] as const
 
 /**
