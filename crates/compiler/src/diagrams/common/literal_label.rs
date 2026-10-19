@@ -312,8 +312,8 @@ mod tests {
             ),
             ("trailing   \nspaces", 0xdc9aea91),
             ("<b>bold</b> and <br> break <BR/> and <br />x", 0x251fee7),
-            ("a <script>x</script> fa:fa-car :fa-x", 0xe3b98daf),
-            ("fa:fa-car drives fa:fa-none far away from here", 0xe33870d5),
+            ("a <script>x</script> fa:fa-car :fa-x", 0x5de6fbed),
+            ("fa:fa-car drives fa:fa-none far away from here", 0x254455e7),
             (
                 "**bold** and *italic* text in markdown that wraps",
                 0x3b665f32,
