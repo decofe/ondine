@@ -122,6 +122,17 @@ The compiler is written in Rust and reaches JavaScript through a `wasm32-unknown
 - Benchmark compiler stages (preprocess, parse, layout, emit) with `criterion` over the vector corpus. Cross-library comparisons stay in `bench/`, which measures complete public workflows.
 - Native release builds use `opt-level = 3`, `lto = "fat"`, `codegen-units = 1`, and `strip = "symbols"`.
 
+## Porting from Pele
+
+The compiler ports Pele (MIT, `obsidianmd/pele` at `458322a5b8abb1ae57ddf127c32017ab9fb14a92`) to Rust. Pele already matches Mermaid's parsers and draws good layouts, so behavior is ported first and improved later with evidence.
+
+- **Mirror modules:** `src/<path>.ts` in Pele becomes `crates/compiler/src/<path>.rs`, with kebab-case names in snake_case. Keep the same functions, constants, algorithms, iteration orders, and tie breaks. Name a deliberate difference in a comment.
+- **JavaScript semantics:** Pele indexes strings in UTF-16. Compute any position, length, or comparison that reaches output or diagnostics in UTF-16 units. `Math.round` rounds halves toward positive infinity. `Array.prototype.sort` is stable, so use `sort_by`. `Map` and `Set` iterate in insertion order.
+- **No regular expressions:** Replace each Pele regular expression with a hand-written matcher with the same semantics, including case-insensitivity, anchoring, and greedy or lazy repetition. The `regex` crate is banned for size.
+- **Text widths:** Use the monospace branch of Pele's `metricsMeasurer` for every style: 0.6 em for each ASCII and other character, 1.2 em for wide characters, and 0 for zero-width characters.
+- **Theme:** Emit `--melee-*` custom properties in place of `--pele-*`. Defaults are monochrome: background `#fff`, foreground and lines `#000`, node fills equal to the background, square corners, and a monospace font stack.
+- **Evidence:** Derive expected values in tests by running Pele's TypeScript (for example `npx tsx` against a Pele checkout), never from the Rust port. Model parity tests compare Melee's model JSON with Pele's `parse()` output for every vector.
+
 ## Alphabetical Ordering
 
 - Alphabetize imports, named import/export specifiers, public exports, type/interface properties, object properties, enum/union members, unordered lists, configuration maps, scripts, and dependencies. Use case-insensitive lexical order consistently.

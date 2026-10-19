@@ -1,0 +1,23 @@
+[package]
+name = "wasm"
+description = "WebAssembly adapter that exposes the Melee compiler to JavaScript hosts."
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+default = ["flowchart"]
+flowchart = ["compiler/flowchart"]
+model = ["compiler/model"]
+
+[dependencies]
+compiler.workspace = true
+
+[lints]
+workspace = true

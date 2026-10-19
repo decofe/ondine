@@ -1,0 +1,22 @@
+[package]
+name = "compiler"
+description = "Pure Mermaid-to-SVG compiler: preprocessing, parsing, layout, and SVG emission."
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[features]
+default = ["flowchart"]
+# Each diagram type compiles only into the modules that render it.
+flowchart = []
+# Serializes parsed models as JSON for parity tests. Release modules leave it out.
+model = []
+
+[dev-dependencies]
+insta.workspace = true
+
+[lints]
+workspace = true
