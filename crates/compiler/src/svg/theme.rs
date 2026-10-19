@@ -11,12 +11,13 @@ use crate::util::chars::is_space;
 use crate::yaml::push_number;
 
 /// Private aliases set once on the root element, so each use is short and the public `--melee-*`
-/// variables keep their defaults. Node fills default to the background. The text color is set as
+/// variables keep their defaults. Node fills default to the background, and lines, borders,
+/// and muted text to the foreground, so setting `--melee-bg` and `--melee-fg` themes a diagram. The text color is set as
 /// well: an icon is drawn in `currentColor`, which would otherwise be whatever color the page
 /// gives the diagram's container. Shapes and edges inherit the stroke width.
 pub(crate) const ROOT_STYLE: &str = "--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);\
---_m:var(--melee-muted,#000);--_l:var(--melee-line,#000);--_s:var(--melee-surface,var(--_bg));\
---_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,#000);--_c:var(--melee-accent,#000);\
+--_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));\
+--_a:var(--melee-surface-alt,var(--_bg));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));\
 --_sw:var(--melee-stroke,1.5px);stroke-width:var(--_sw);color:var(--_fg)";
 
 /// The monospace font, as set on the root.
@@ -35,7 +36,7 @@ pub(crate) const RADIUS: &str = radius!();
 pub(crate) const ROUNDED: &str = concat!(" rx=\"", radius!(), "\"");
 /// The color of what a diagram marks as critical. It is not one of the series colors, as a theme
 /// may put those in any order.
-pub(crate) const CRITICAL: &str = "var(--melee-critical,#000)";
+pub(crate) const CRITICAL: &str = "var(--melee-critical,var(--_fg))";
 /// The stroke width of shapes and edges, as set on the root.
 pub(crate) const STROKE: &str = "var(--_sw)";
 
