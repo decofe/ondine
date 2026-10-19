@@ -12,7 +12,9 @@ Source commit: `a1e869f5605d9196812e01945d8e64318e06d246`. Retrieved 2026-10-19.
 - Pele (pinned in `test/vectors/README.md`) is the reference for coverage, layout quality, speed, and size. Melee must match or beat it on every shared vector. Never claim an advantage without matched evidence.
 - Render monochrome, monospace diagrams: pure foreground and background colors, square outlines, rounded orthogonal edges. Expose colors, fonts, and stroke widths as `--melee-*` CSS custom properties so schemes change without re-rendering.
 - Measure text with a uniform monospace advance. Output must not depend on fonts, canvas, the DOM, or the host, so Node and browsers emit identical bytes.
-- Keep the root browser entrypoint, including its JavaScript glue and one diagram type's WebAssembly, under 20 kB gzip. Other diagram types load as separate modules with recorded budgets.
+- Compile diagrams ahead of time, as Zyzz compiles styles. `melee/compiler` (Node), `melee/vite`, the `melee` CLI, and the image Worker produce SVG at build or request time. The root `melee` entrypoint only mounts precompiled SVG and stays under 20 kB gzip.
+- Offer in-browser compilation as an opt-in: `melee/compiler/wasm` loads caller-supplied WebAssembly modules, one per diagram type or `all`. Each module has a measured gzip budget in `scripts/size.ts`.
+- Build two profiles. Node, the CLI, and the Worker use the speed-optimized `all` module. Browsers use size-optimized modules built with the pinned nightly.
 - Emit trusted, inert SVG under Mermaid's strict security level. Escape every authored string, allow no scripts, event handlers, or external references, and keep IDs unique per render.
 - Keep modules small and extensible through explicit data and narrow functions. Avoid global registration, mutable singletons, and general plugin frameworks.
 - Author all playground, documentation, and example styles with Zyzz. The published package has no Zyzz runtime dependency.

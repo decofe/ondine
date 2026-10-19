@@ -13,16 +13,17 @@ The proof of concept on the `poc` branch wraps Merman. It ships a 20 MB playgrou
 | Appearance      | Monochrome, monospace, square outlines, rounded orthogonal edges. Light and dark via CSS variables.                                                      | Reviewed screenshot sheets                                      |
 | Layout quality  | Equal to or better than Pele on every vector: fewer edge crossings, no node or label overlap, smaller area.                                              | Layout metrics ledger                                           |
 | Speed           | Faster than Pele on every vector, same machine. Pele reports 0.05 to 0.3 ms per diagram.                                                                 | `bench/` comparison                                             |
-| Size            | JS glue plus WASM for one type (flowchart) under 20 kB gzip. Other types load on demand with their own budgets. Pele is about 230 kB gzip for all types. | Size report per artifact                                        |
+| Size            | The `melee` runtime under 20 kB gzip (210 B today). In-browser modules carry per-type gzip budgets. Pele is about 230 kB gzip for all types. | `pnpm check:size`                                               |
 
 Sub-microsecond rendering is not reachable: one cache miss costs about 100 ns. The speed goal is to beat Pele on every vector, with a median under 0.1 ms for corpus diagrams.
 
 ## Decisions
 
 1. **Port Pele's design to Rust.** Write parsers and layout by hand for each type, following Pele's structure (MIT, keep the notice). Do not depend on Merman or Mermaid at runtime.
-2. **Size budget.** Two delivery paths, decided October 19, 2026:
-   - **Build time:** the Vite plugin, CLI, and Worker compile diagrams ahead of time. The browser runtime only mounts precompiled SVG and stays under 20 kB gzip.
-   - **In browser:** each diagram type ships as its own WebAssembly module with a measured gzip budget. The first faithful flowchart port measured 177 kB gzip (Pele's core plus flowchart is 45 kB), so size work continues with recorded floors.
+2. **Compile first.** Decided October 19, 2026: Melee compiles diagrams ahead of time, as Zyzz compiles styles.
+   - **Build time:** `melee/compiler`, `melee/vite`, the `melee` CLI, and the image Worker produce SVG. The `melee` runtime only mounts it and stays under 20 kB gzip.
+   - **In browser (opt-in):** `melee/compiler/wasm` with one size-optimized module per type, each with a measured budget. Flowchart is 137 kB gzip with the pinned nightly; see `bench/size.md`.
+   - **Profiles:** the speed build is about 1.6× faster than Pele and serves Node, the CLI, and the Worker.
 3. **Monospace measurement.** Every glyph has a 0.6 em advance (Geist Mono, SF Mono, Menlo). Text width needs no canvas, font tables, or DOM, so Node and browser output match byte for byte. Wide and zero-width Unicode use fixed rules.
 4. **Theming through CSS variables** (`--melee-bg`, `--melee-fg`, `--melee-line`, `--melee-font`, and so on), as in Pele. Changing the scheme needs no re-render.
 5. **Parity scope.** Parity with Mermaid covers syntax and diagram models. Layout and pixels are intentionally different, as in Pele. Pele is the baseline for layout quality and speed, not for output bytes.
@@ -98,10 +99,12 @@ Order by corpus share and shared layout: sequence, class, state, ER, block, git,
 
 ### 5a. Build-time path
 
-- [ ] `melee/runtime`: mounts precompiled SVG with unique IDs, under 20 kB gzip (target: under 1 kB).
-- [ ] `melee` CLI: renders `.mmd` files and Markdown fences to SVG.
-- [ ] `melee/vite`: imports `.mmd` files as precompiled SVG.
-- [ ] Deploy the Worker and the playground to Cloudflare.
+- [x] `melee`: mounts precompiled SVG, 210 B gzip.
+- [x] `melee` CLI: renders `.mmd` files and standard input to SVG.
+- [ ] CLI: render Markdown ` ```mermaid ` fences to linked images.
+- [x] `melee/vite`: imports `.mmd` files as precompiled SVG.
+- [x] `melee/compiler` (Node) and `melee/compiler/wasm` (browsers and Workers).
+- [x] Deploy the Worker and the playground to Cloudflare on every push to `main`.
 
 ### 6. Speed and size
 
