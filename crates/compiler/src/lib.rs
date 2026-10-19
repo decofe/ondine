@@ -25,6 +25,7 @@ mod svg {
 
 mod text {
     pub(crate) mod entities;
+    pub(crate) mod icons;
     pub(crate) mod label;
     pub(crate) mod measure;
 }
