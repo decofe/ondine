@@ -1,10 +1,10 @@
 # Why Ondine
 
-Mermaid source, compiled ahead of time into SVG that pages display without a renderer.
+Ondine compiles Mermaid source ahead of time into SVG that pages display without a renderer.
 
 ## Overview
 
-A Mermaid diagram usually renders in the browser: the page downloads a parser and layout engine, measures text with the DOM, and draws after the page loads. Ondine moves all of that to build time.
+A Mermaid diagram usually renders in the browser. The page downloads a parser and a layout engine, measures text with the DOM, and draws the diagram after the page loads. Ondine does all of this work at build time.
 
 ```mermaid
 flowchart LR
@@ -17,23 +17,23 @@ flowchart LR
   compile -- SVG --> mount
 ```
 
-## Compiled Ahead of Time
+## Build-Time Compilation
 
-Diagrams compile in the Vite plugin, the CLI, a Node script, or the image Worker. A syntax error fails the build with its line and column, so a broken diagram never reaches a page.
+The Vite plugin, the CLI, a Node script, or the image Worker compiles each diagram. A syntax error stops the build and reports its line and column. Thus, a broken diagram never reaches a page.
 
-The compiler reads no files, clock, or environment. The same source and options produce the same bytes in Node, browsers, and Workers.
+The compiler reads no files, no clock, and no environment. The same source and options produce the same bytes in Node, in browsers, and in Workers.
 
 ## Fast Mounts
 
-The page receives finished SVG, so displaying a diagram only inserts markup. No parsing, layout, or text measurement runs in the browser, and diagrams appear with the rest of the page.
+The page receives finished SVG, so a mount only inserts markup. The browser does no parsing, layout, or text measurement. Diagrams appear at the same time as the rest of the page.
 
 ## Small Bundles
 
-Pages ship the SVG and the `ondine` runtime that mounts it, 210 bytes gzip. The parser, layout engine, and renderer stay in the build.
+Pages ship the SVG and the `ondine` runtime that mounts it. The runtime is 210 bytes gzip. The parser, the layout engine, and the renderer stay in the build.
 
 ## Mermaid Syntax
 
-Ondine targets the complete syntax of Mermaid 12.1.0. Each diagram type accepts and rejects the same input as Mermaid and builds the same model. Layout and appearance differ by design.
+Ondine targets the complete syntax of Mermaid 12.1.0. Each diagram type accepts and rejects the same input as Mermaid and builds the same model. Layout and appearance are different by design.
 
 ## More
 

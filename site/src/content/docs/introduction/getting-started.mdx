@@ -4,7 +4,7 @@ Compile Mermaid diagrams to SVG ahead of time and mount them with a 210-byte run
 
 ## Overview
 
-Ondine renders Mermaid source to SVG. A Rust compiler parses, lays out, and draws each diagram at build time, so pages ship SVG markup instead of a diagram renderer.
+Ondine renders Mermaid source to SVG. A Rust compiler parses, lays out, and draws each diagram at build time. Pages then ship SVG markup and no diagram renderer.
 
 ```mermaid
 flowchart LR
@@ -13,7 +13,13 @@ flowchart LR
   svg --> page[Page]
 ```
 
-The compiler runs through the Vite plugin, the `ondine` CLI, the Node API, an image Worker for Markdown hosts, and, when a page must compile at runtime, a WebAssembly module in the browser.
+The compiler runs in these integrations:
+
+- **Vite:** The Vite plugin compiles diagram imports.
+- **CLI:** The `ondine` CLI writes SVG files.
+- **Node:** The Node API returns SVG to scripts and servers.
+- **Worker:** An image Worker serves SVG to Markdown hosts.
+- **Browser:** If a page must compile at runtime, a WebAssembly module compiles in the browser.
 
 ## Install
 
@@ -48,12 +54,12 @@ yarn add ondine
 
 ## Setup
 
-Choose the integration that matches the build. Each one runs the same compiler and produces the same bytes.
+Select the integration that matches the build. Each integration runs the same compiler and emits the same bytes.
 
 <Tabs>
 <Tab title="Vite">
 
-Add the plugin to `vite.config.ts`. Imports of `.mmd` and `.mermaid` files then compile at build time.
+Add the plugin to `vite.config.ts`. The plugin then compiles imports of `.mmd` and `.mermaid` files at build time.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
@@ -65,7 +71,7 @@ export default defineConfig({
 })
 ```
 
-Import a diagram and mount it. The default export holds the SVG, its size, and the detected type.
+Import a diagram, then mount it. The default export contains the SVG, its size, and the detected diagram type.
 
 ```ts title="main.ts"
 import { mount } from 'ondine'
@@ -78,7 +84,7 @@ mount(document.getElementById('flow')!, flow)
 </Tab>
 <Tab title="CLI">
 
-Render Mermaid files to SVG files beside them, or into a separate directory.
+The CLI renders each Mermaid file to an SVG file beside it, or into a different directory.
 
 ```sh
 # Writes flow.svg next to flow.mmd
@@ -88,7 +94,7 @@ npx ondine flow.mmd
 npx ondine diagrams/*.mmd --out-dir public/diagrams
 ```
 
-With no files, the CLI reads standard input and writes SVG to standard output.
+If no files are given, the CLI reads standard input and writes SVG to standard output.
 
 ```sh
 # Pipes Mermaid in and SVG out
@@ -107,7 +113,7 @@ import { render } from 'ondine/compiler'
 const { svg } = render('flowchart LR\n  A --> B')
 ```
 
-The compiler module loads on the first call, and later calls reuse it.
+The compiler module loads on the first call. Later calls use the same module.
 
 </Tab>
 </Tabs>

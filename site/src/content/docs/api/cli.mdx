@@ -2,17 +2,17 @@
 
 Render Mermaid files or standard input to SVG, and Mermaid fences in Markdown to images, from the command line.
 
-The `ondine` binary ships with the package and compiles with the same module as `ondine/compiler`. The [CLI](/docs/guides/cli) guide covers common tasks.
+The package includes the `ondine` binary. The binary compiles with the same module as `ondine/compiler`. The [CLI](/docs/guides/cli) guide shows common tasks.
 
 ```sh
-# Writes flow.svg next to flow.mmd
+# Writes flow.svg beside flow.mmd
 npx ondine flow.mmd
 ```
 
 ## Usage
 
 ```sh
-# Renders files, or standard input when no files are given
+# Renders the files, or standard input if there are no files
 ondine [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--check]
 ```
 
@@ -22,21 +22,23 @@ ondine [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--chec
 
 - **Type:** paths
 
-Mermaid files to render. Each writes an `.svg` file whose name drops a `.mmd` or `.mermaid` extension, beside the source or in `--out-dir`. Other extensions are kept, so `flow.txt` writes `flow.txt.svg`.
+The Mermaid files to render. For each file, the command writes an `.svg` file beside the source or in `--out-dir`. The name drops a `.mmd` or `.mermaid` extension. Other extensions stay, so `flow.txt` becomes `flow.txt.svg`.
 
 ```sh
 # Writes a.svg and b.svg
 ondine a.mmd b.mermaid
 ```
 
-With no files, the command reads Mermaid from standard input and writes SVG to standard output.
+If there are no files, the command reads Mermaid from standard input and writes SVG to standard output.
 
 ```sh
-# Pipes Mermaid in and SVG out
+# Reads Mermaid from standard input and writes SVG to standard output
 ondine < flow.mmd > flow.svg
 ```
 
-Files ending in `.md` or `.markdown` are rewritten in place. Each ` ```mermaid ` fence, at any indentation, becomes a block that a later run recognizes and re-renders:
+## Markdown
+
+If a file ends in `.md` or `.markdown`, the command rewrites the file in place. Each ` ```mermaid ` fence, at any indentation, becomes a block. A later run recognizes this block and renders it again:
 
 ```html title="README.md"
 <!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
@@ -53,7 +55,10 @@ Files ending in `.md` or `.markdown` are rewritten in place. Each ` ```mermaid `
 <!-- /ondine -->
 ```
 
-The payload is the source as UTF-8, zlib deflate, then base64url. The image's `alt` is the diagram's `accTitle`, or its type. Fences in other languages are skipped whole, and fences inside blockquotes are not rewritten. MDX files are not rewritten, since MDX rejects HTML comments. Use [`ondine/remark`](/docs/api/remark) for them.
+- **Payload:** The source as UTF-8, compressed with zlib deflate, then encoded as base64url.
+- **Alt text:** The `accTitle` of the diagram, or else its type.
+- **Other fences:** The command skips fences in other languages whole. It does not rewrite fences inside blockquotes.
+- **MDX:** The command does not rewrite MDX files, because MDX rejects HTML comments. Use [`ondine/remark`](/docs/api/remark) for MDX files.
 
 ## Options
 
@@ -62,7 +67,7 @@ The payload is the source as UTF-8, zlib deflate, then base64url. The image's `a
 - **Alias:** `-o`
 - **Type:** directory
 
-The directory for rendered files, created when missing.
+The directory for rendered files. If the directory does not exist, the command creates it.
 
 ```sh
 # Writes public/flow.svg
@@ -71,7 +76,9 @@ ondine flow.mmd -o public
 
 ### --svg
 
-Links SVG files from Markdown instead of the Worker. Each diagram writes `<name>-<n>.light.svg` and `<name>-<n>.dark.svg`, numbered in document order, beside the Markdown or in `--out-dir`. SVG files a previous block linked that the file no longer links are removed.
+Links SVG files from Markdown instead of the Worker. For each diagram, the command writes `<name>-<n>.light.svg` and `<name>-<n>.dark.svg` beside the Markdown or in `--out-dir`. The number `<n>` follows document order.
+
+If a previous block linked an SVG file and the Markdown no longer links it, the command removes that SVG file.
 
 ```sh
 # Writes guide-1.light.svg and guide-1.dark.svg beside guide.md
@@ -83,7 +90,7 @@ ondine guide.md --svg
 - **Type:** URL
 - **Default:** `https://ondine.sh`
 
-The image Worker origin that Markdown images link. A diagram whose request path would exceed the Worker's 4,096-character limit is reported as an error and left unchanged.
+The origin of the image Worker that Markdown images link. If the request path of a diagram is longer than the Worker limit of 4,096 characters, the command reports an error and does not change that diagram.
 
 ```sh
 # Links a self-hosted Worker
@@ -92,19 +99,19 @@ ondine README.md --worker https://diagrams.example.com
 
 ### --restore
 
-Turns each block a previous run wrote back into a ` ```mermaid ` fence, and removes the SVG files it linked.
+Changes each block from a previous run back into a ` ```mermaid ` fence, and removes the SVG files that the block linked.
 
 ```sh
-# Brings back the editable fences
+# Restores the editable fences
 ondine README.md --restore
 ```
 
 ### --check
 
-Writes and removes nothing. Each file that a run would change is reported as `file is out of date`, and the command exits with code 1.
+Writes and removes nothing. If a run would change a file, the command reports `file is out of date` and exits with code 1.
 
 ```sh
-# Fails CI when diagrams are stale
+# Fails CI if a diagram is out of date
 ondine README.md --svg --check
 ```
 
@@ -112,7 +119,7 @@ ondine README.md --svg --check
 
 - **Alias:** `-h`
 
-Prints usage and exits with code 0.
+Prints the usage text and exits with code 0.
 
 ```sh
 # Shows the usage text
@@ -121,7 +128,12 @@ ondine --help
 
 ## Output
 
-Each rendered file is reported on standard error as `source -> output`, and each removed SVG file as `source: removed file`. Markdown runs report only files they change. Errors are reported on standard error as `file:line:column: message`, or `file: message` without a position. Errors in Markdown are positioned in the Markdown file. Standard input is named `<stdin>`.
+The command writes each report on standard error:
+
+- **Rendered files:** `source -> output`. A Markdown run reports only the files that it changes.
+- **Removed files:** `source: removed file`.
+- **Errors:** `file:line:column: message`, or `file: message` if the error has no position. An error in a Markdown fence has a position in the Markdown file.
+- **Standard input:** The name `<stdin>`.
 
 ```txt
 flow.mmd -> flow.svg

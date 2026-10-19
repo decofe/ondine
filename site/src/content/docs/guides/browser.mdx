@@ -4,7 +4,7 @@ Compile Mermaid in the browser or an edge runtime when the source is only known 
 
 ## Overview
 
-Most pages compile diagrams at build time. Editors, previews, and user-supplied diagrams need the compiler at runtime instead. `ondine/compiler/wasm` provides it, with the WebAssembly module supplied by the caller.
+Most pages compile diagrams at build time. Editors, previews, and diagrams from users need the compiler at runtime. `ondine/compiler/wasm` supplies this compiler, and the caller supplies the WebAssembly module.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
@@ -15,15 +15,15 @@ const renderer = create({ modules: { all } })
 const { svg } = renderer.render('flowchart LR\n  A --> B')
 ```
 
-The glue in `ondine/compiler/wasm` is about 1 kB gzip. `ondine/compiler/wasm/all` inlines every diagram type as base64, about 715 kB gzip, as [Benchmarks](/docs/introduction/benchmarks) records.
+The JavaScript glue in `ondine/compiler/wasm` is about 1 kB gzip. `ondine/compiler/wasm/all` inlines every diagram type as base64. It is about 715 kB gzip, as [Benchmarks](/docs/introduction/benchmarks) records.
 
 ## Walkthrough
 
-The steps below build a live preview that redraws as source changes.
+The steps below make a live preview. The preview renders the diagram again after each change to the source.
 
 ### Load the Module
 
-Import `ondine/compiler/wasm/all` with a dynamic import, so the module downloads only when the preview opens.
+Load `ondine/compiler/wasm/all` with a dynamic import. The browser then downloads the module only when the preview opens.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
@@ -35,7 +35,7 @@ const renderer = create({ modules: { all: wasm } })
 
 ### Render on Input
 
-Each call compiles synchronously. A renderer keeps its module instance, so create it once.
+Each `render` call compiles synchronously. A renderer keeps its module instance. Create the renderer once and use it for each input event.
 
 ```ts title="preview.ts"
 import { RenderError } from 'ondine/compiler/wasm'
@@ -56,7 +56,7 @@ input.addEventListener('input', () => {
 
 ### Show Errors
 
-`RenderError` carries the line, column, and a snippet with a caret, matching Mermaid's diagnostics.
+`RenderError` has the line, the column, and a snippet with a caret. These values match the diagnostics of Mermaid.
 
 ```mermaid
 stateDiagram-v2
@@ -68,21 +68,21 @@ stateDiagram-v2
 
 ## Recipes
 
-### Run in a Worker
+### Cloudflare Workers
 
-Cloudflare Workers refuse to compile WebAssembly at runtime. Import a `.wasm` file so the bundler compiles it ahead of time, then pass the `WebAssembly.Module`.
+Cloudflare Workers reject WebAssembly compilation at runtime. Import a `.wasm` file so that the bundler compiles the module ahead of time. Then pass the `WebAssembly.Module` to `create`.
 
 ```ts title="worker.ts"
 import { create } from 'ondine/compiler/wasm'
 import all from 'ondine/compiler/wasm/all.wasm'
 
-// The module arrives precompiled, so no runtime compilation happens
+// Uses the precompiled module, so no compilation occurs at runtime
 const renderer = create({ modules: { all } })
 ```
 
 ### Load One Type
 
-A page that compiles only one diagram type imports that type's module from `ondine/compiler/wasm/<type>`, which is much smaller than `all`. [Diagram Modules](/docs/api/compiler-wasm/types) lists every type.
+If a page compiles only one diagram type, import the module for that type from `ondine/compiler/wasm/<type>`. This module is much smaller than `all`. [Diagram Modules](/docs/api/compiler-wasm/types) lists every type.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
@@ -92,9 +92,9 @@ import { wasm as flowchart } from 'ondine/compiler/wasm/flowchart'
 const renderer = create({ modules: { flowchart } })
 ```
 
-### Compile Off the Main Thread
+### Offload Compilation
 
-Large diagrams can take milliseconds. Move the renderer into a Web Worker and post SVG back to the page.
+A large diagram can take milliseconds to compile. Move the renderer into a Web Worker. Then post the SVG back to the page.
 
 ```ts title="compile.worker.ts"
 import { create } from 'ondine/compiler/wasm'
@@ -121,7 +121,7 @@ self.onmessage = (event: MessageEvent<string>) => {
     title="create"
     icon="code"
     to="/docs/api/compiler/create"
-    description="Build a renderer over specific modules."
+    description="Make a renderer from specific modules."
   />
   <Card
     title="Benchmarks"

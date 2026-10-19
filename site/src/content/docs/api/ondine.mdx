@@ -2,7 +2,7 @@
 
 Mount precompiled diagrams in the browser without the compiler.
 
-The root `ondine` entrypoint is 210 bytes gzip and imports nothing from the compiler. It inserts SVG that `ondine/vite`, the CLI, `ondine/compiler`, or the image Worker produced ahead of time.
+The root `ondine` entrypoint is 210 bytes gzip and imports nothing from the compiler. It inserts SVG that `ondine/vite`, the CLI, `ondine/compiler`, or the image Worker compiled ahead of time.
 
 ```ts title="main.ts"
 import { mount } from 'ondine'

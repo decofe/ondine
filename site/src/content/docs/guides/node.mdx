@@ -4,12 +4,12 @@ Render Mermaid to SVG from build scripts, servers, and static site generators.
 
 ## Overview
 
-`render` from `ondine/compiler` takes Mermaid source and returns the SVG document with its size and detected type. It loads the speed-optimized compiler module on the first call and reuses it afterward.
+`render` from `ondine/compiler` compiles Mermaid source. It returns the SVG document, its size, and the detected diagram type. The first call loads the speed-optimized compiler module, and later calls use the same module.
 
 ```ts title="build.ts"
 import { render } from 'ondine/compiler'
 
-// Compiles synchronously, with no browser or DOM
+// Compiles synchronously, without a browser or a DOM
 const { height, svg, type, width } = render('flowchart LR\n  A --> B')
 ```
 
@@ -20,11 +20,11 @@ flowchart LR
 
 ## Walkthrough
 
-The steps below render a Markdown site's diagrams during its build.
+The steps below render the diagrams of a Markdown site during the site build.
 
 ### Render Source
 
-Pass the text of a ` ```mermaid ` block or a `.mmd` file.
+Pass the text of a ` ```mermaid ` fence or a `.mmd` file to `render`.
 
 ```ts title="build.ts"
 import * as Fs from 'node:fs'
@@ -37,7 +37,7 @@ Fs.writeFileSync('flow.svg', render(source).svg)
 
 ### Handle Errors
 
-Invalid source throws a `RenderError` with a code, a one-based line and column, and a snippet with a caret under the column.
+If the source is invalid, `render` throws a `RenderError`. The error has a code, a one-based line and column, and a snippet with a caret under the column.
 
 ```ts title="build.ts"
 import { render, RenderError } from 'ondine/compiler'
@@ -53,7 +53,7 @@ try {
 
 ### Insert the SVG
 
-Compiled output is inert, so templates can insert it as raw HTML. Several diagrams can share a page.
+The compiled SVG is inert, so a template can insert it as raw HTML. Several diagrams can share a page. Give each diagram its own `idPrefix` to keep the IDs unique.
 
 ```ts title="build.ts"
 import { render } from 'ondine/compiler'
@@ -66,18 +66,18 @@ const html = `<figure>${render('pie\n  "A" : 1\n  "B" : 2').svg}</figure>`
 
 ### Fit a Column
 
-`maxWidth` sets the available width. When a diagram running across does not fit, `autoDirection` draws it running down.
+`maxWidth` sets the width available to the diagram. If a diagram that runs across does not fit, the compiler draws it running down. The `autoDirection` option controls this behavior.
 
 ```ts
 import { render } from 'ondine/compiler'
 
-// Turns a long left-to-right chain into a top-to-bottom one
+// Draws a long left-to-right chain from top to bottom
 render('flowchart LR\n  A --> B --> C --> D --> E --> F', { maxWidth: 320 })
 ```
 
 ### Collect Links
 
-`click` directives with URLs come back in `links`, in drawing order, for tools that check or rewrite them.
+`render` returns the URLs of `click` directives in `links`, in drawing order. Tools can use this list to check or rewrite the URLs.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -88,7 +88,7 @@ const { links } = render('flowchart LR\n  A --> B\n  click A "https://example.co
 
 ### Bound the Work
 
-Untrusted source can be limited by length, edges, and output size. Each limit throws a `RenderError` with code `limit`.
+Options limit the source length, the number of edges, and the SVG length of untrusted source. If the input exceeds a limit, `render` throws a `RenderError` with code `limit`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -101,7 +101,7 @@ export function handle(source: string) {
 
 ### Create a Renderer
 
-`create` builds a renderer over specific compiler modules, as [In-Browser Compilation](/docs/guides/browser) describes. Node code rarely needs it.
+`create` makes a renderer from specific compiler modules. [In-Browser Compilation](/docs/guides/browser) shows how to use it. Node code seldom needs `create`.
 
 ## More
 

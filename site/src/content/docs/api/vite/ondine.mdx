@@ -2,7 +2,7 @@
 
 Create a Vite plugin that imports `.mmd` and `.mermaid` files as precompiled SVG.
 
-The plugin compiles each matching module in its `transform` hook, ignoring query strings in the ID. The module's default export is the rendered diagram, and the page bundle holds no compiler.
+The plugin compiles each matching module in its `transform` hook and ignores query strings in the module ID. The default export of the module is the rendered diagram, and the page bundle contains no compiler.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
@@ -28,7 +28,7 @@ ondine(options?)
 - **Type:** `Omit<render.Options, 'idPrefix'>{:ts}`
 - **Default:** `{}{:ts}`
 
-Rendering options applied to every imported diagram. Every [`render` option](/docs/api/compiler/render#parameters) is accepted except `idPrefix`. The plugin derives each file's prefix from a hash of its path.
+The rendering options for every imported diagram. The plugin accepts every [`render` option](/docs/api/compiler/render#parameters) except `idPrefix`. It makes the prefix for each file from a hash of the file path.
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
@@ -46,7 +46,7 @@ export default defineConfig({
 
 - **Type:** `Plugin{:ts}`
 
-A Vite plugin. Each import of a Mermaid file resolves to a module whose default export has these fields:
+A Vite plugin. Each import of a Mermaid file resolves to a module with a default export that has these fields:
 
 | Field    | Type     | Description               |
 | -------- | -------- | ------------------------- |
@@ -58,14 +58,14 @@ A Vite plugin. Each import of a Mermaid file resolves to a module whose default 
 ```ts title="main.ts"
 import flow from './flow.mmd'
 
-// The SVG and its size, computed at build time
+// The plugin computes the SVG and its size at build time
 const { height, svg, type, width } = flow
 ```
 
-`links` from `render` is not included.
+The default export does not include `links` from `render`.
 
 ## Errors
 
 ### Transform Error
 
-A [`RenderError`](/docs/api/compiler/RenderError) becomes a Vite transform error with the file, line, column, and Mermaid's message. It fails `vite build` and shows in the development overlay. Other errors are rethrown unchanged.
+The plugin converts a [`RenderError`](/docs/api/compiler/RenderError) to a Vite transform error with the file, line, column, and Mermaid message. This error fails `vite build` and shows in the development overlay. The plugin throws other errors again without changes.

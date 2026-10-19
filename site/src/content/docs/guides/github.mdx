@@ -4,7 +4,7 @@ Embed Ondine diagrams in READMEs and other Markdown that cannot run scripts or l
 
 ## Overview
 
-GitHub draws ` ```mermaid ` fences with its own renderer. To show a Ondine diagram, a README links an image from the image Worker, which compiles the diagram encoded in the URL on request.
+GitHub draws ` ```mermaid ` fences with its own renderer. To show an Ondine diagram, a README links an image from the image Worker. On each request, the Worker compiles the diagram that the URL encodes.
 
 ```mermaid
 sequenceDiagram
@@ -16,11 +16,11 @@ sequenceDiagram
 
 ## Walkthrough
 
-The steps below encode a diagram and embed it with light and dark variants.
+The steps below encode a diagram, then embed it with light and dark variants.
 
 ### Encode the Source
 
-The payload is the source as UTF-8, compressed with zlib deflate, then encoded as base64url. This is the encoding Kroki uses.
+The payload is the source as UTF-8, compressed with zlib deflate, then encoded as base64url. Kroki uses the same encoding.
 
 ```ts title="encode.ts"
 import * as Zlib from 'node:zlib'
@@ -29,7 +29,7 @@ import * as Zlib from 'node:zlib'
 const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url')
 ```
 
-Markdown written by hand or by an agent can skip compression. The `/svg` path reads the source percent-encoded in its `source` query parameter.
+Markdown written by hand or by an agent can omit the compression. The `/svg` path reads percent-encoded source from its `source` query parameter.
 
 ```md title="README.md"
 <!-- Encodes the same diagram with encodeURIComponent -->
@@ -39,7 +39,7 @@ Markdown written by hand or by an agent can skip compression. The `/svg` path re
 
 ### Embed the Image
 
-Without a `scheme` parameter, one image follows the viewer's color scheme through `prefers-color-scheme`.
+If the URL has no `scheme` parameter, one image follows the color scheme of the viewer through `prefers-color-scheme`.
 
 ```md title="README.md"
 <!-- Follows the reader's color scheme -->
@@ -49,7 +49,7 @@ Without a `scheme` parameter, one image follows the viewer's color scheme throug
 
 ### Pin Each Scheme
 
-GitHub draws images inside a page whose scheme may differ from the system's. A `<picture>` with pinned variants follows the scheme GitHub chose.
+GitHub draws images in a page, and the scheme of that page can be different from the system scheme. A `<picture>` with pinned variants follows the scheme that GitHub selects.
 
 ```html title="README.md"
 <!-- Chooses the variant that matches GitHub's theme -->
@@ -66,27 +66,27 @@ GitHub draws images inside a page whose scheme may differ from the system's. A `
 
 ### Rewrite a README
 
-The [CLI](/docs/guides/cli#render-markdown) rewrites every ` ```mermaid ` fence in a Markdown file to the `<picture>` above, keeping the source in the block so later runs re-render it.
+The [CLI](/docs/guides/cli#render-markdown) rewrites each ` ```mermaid ` fence in a Markdown file to the `<picture>` above. The source stays in the block, so later runs render it again.
 
 ```sh
-# Rewrites the fences in README.md, then fails CI when it goes stale
+# Rewrites the fences in README.md, then fails CI when the file is out of date
 npx ondine README.md
 npx ondine README.md --check
 ```
 
-`--worker` links another deployment, and `--svg` commits SVG files instead of linking the Worker.
+The `--worker` option links a different deployment. The `--svg` option writes SVG files and links them instead of the Worker.
 
 ### Read Errors
 
-Invalid source returns status 400 with an SVG card that states the error, so a broken diagram explains itself in the README.
+For invalid source, the Worker returns status 400 with an SVG card that shows the error. Thus, the README shows the error in place of the broken diagram.
 
 ### Stay Under Limits
 
-Paths over 4,096 characters and sources over 64 KiB after inflating are rejected. GitHub's image proxy rejects URLs over about 8 kB, so long diagrams may need splitting.
+The Worker rejects paths longer than 4,096 characters and sources larger than 64 KiB after inflation. The GitHub image proxy rejects URLs longer than about 8 kB. If a diagram is too long, split it into smaller diagrams.
 
 ### Deploy a Worker
 
-The image Worker is part of the documentation site in `site/` and answers at `https://ondine.sh`.
+The image Worker is part of the documentation site in `site/`. It serves requests at `https://ondine.sh`.
 
 ```sh
 # Builds the site with the image route and deploys it with Wrangler

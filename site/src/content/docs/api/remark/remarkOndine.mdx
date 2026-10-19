@@ -1,8 +1,8 @@
 # remarkOndine
 
-Replace each ` ```mermaid ` fence with the SVG Ondine renders from it.
+Replace each ` ```mermaid ` fence with the SVG that Ondine renders from it.
 
-The plugin renders every `code` node whose language is `mermaid` and replaces it with HTML elements, so the page holds SVG and no compiler. Fences in other languages are left alone.
+The plugin renders each `code` node with the language `mermaid` and replaces the node with HTML elements. The page then contains the SVG but no compiler. The plugin does not change fences in other languages.
 
 ```ts title="vite.config.ts"
 import mdx from '@mdx-js/rollup'
@@ -29,7 +29,7 @@ remarkOndine(options?)
 - **Type:** `Omit<render.Options, 'idPrefix'>{:ts}`
 - **Default:** `{}{:ts}`
 
-Rendering options applied to every diagram. Every [`render` option](/docs/api/compiler/render#parameters) is accepted except `idPrefix`. The plugin derives each prefix from a hash of the file path and the diagram's position in the file.
+The rendering options for every diagram. The plugin accepts every [`render` option](/docs/api/compiler/render#parameters) except `idPrefix`. It makes each prefix from a hash of the file path and the order of the diagram in the file.
 
 ```ts title="vite.config.ts"
 import mdx from '@mdx-js/rollup'
@@ -48,7 +48,7 @@ export default defineConfig({
 
 - **Type:** `(tree, file) => undefined{:ts}`
 
-A transformer that replaces each fence with a `ondineDiagram` node. It becomes this HTML, as hast elements rather than a markup string, so `@mdx-js/mdx` in both formats and `remark-rehype` keep it without raw HTML support:
+A transformer that replaces each fence with an `ondineDiagram` node. The node holds hast elements, not a markup string. Thus `@mdx-js/mdx` in both formats and `remark-rehype` keep it without raw HTML support. The node becomes this HTML:
 
 ```html
 <!-- One diagram, with its detected type -->
@@ -57,10 +57,10 @@ A transformer that replaces each fence with a `ondineDiagram` node. It becomes t
 </div>
 ```
 
-When the tree is written back to Markdown with `remark-stringify`, each diagram turns back into its fence.
+If `remark-stringify` writes the tree back to Markdown, each diagram becomes a `mermaid` fence again.
 
 ## Errors
 
 ### Render Error
 
-A diagram that fails to render throws an `Error` whose message is `file:line:column: message`, positioned in the Markdown file. The [`RenderError`](/docs/api/compiler/RenderError) is its `cause`. The error fails the build.
+If a diagram does not render, the plugin throws an `Error` with the message `file:line:column: message`. The line and column give the location in the Markdown file. The [`RenderError`](/docs/api/compiler/RenderError) is the `cause` of this error, and the error fails the build.

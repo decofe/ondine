@@ -4,30 +4,51 @@ Set a diagram's colors, font, corners, and strokes with CSS custom properties, w
 
 ## Overview
 
-Every compiled diagram reads its appearance from `--ondine-*` custom properties on the root `<svg>` or any ancestor. Unset properties fall back to the defaults: a white background, black foreground, square corners, and a monospace font.
+Each compiled diagram reads its appearance from `--ondine-*` custom properties on the root `<svg>` or on an ancestor. If a property is not set, the diagram uses the default: a white background, a black foreground, square corners, and a monospace font.
 
-Two properties theme a whole diagram. Node fills follow `--ondine-bg`, while lines, borders, and text follow `--ondine-fg`.
+Two properties set the theme of a full diagram. Node fills use `--ondine-bg`. Lines, borders, and text use `--ondine-fg`.
 
 ```css title="styles.css"
-/* Draws every diagram on the page in light text on black */
+/* Draws each diagram on the page in white text on a black background */
 .ondine {
   --ondine-bg: #000;
   --ondine-fg: #fff;
 }
 ```
 
-Each SVG carries the classes `ondine` and `ondine-<type>`, such as `ondine-flowchart`, so a rule can target one diagram type.
+Each SVG has the classes `ondine` and `ondine-<type>`, such as `ondine-flowchart`. A rule can use the second class to select one diagram type.
+
+### Properties
+
+| Property                                   | Default                                                                                           | Applies to                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `--ondine-bg`                              | `#fff`                                                                                            | Background, and the default for fills       |
+| `--ondine-fg`                              | `#000`                                                                                            | Text, and the default for lines and borders |
+| `--ondine-line`                            | `--ondine-fg`                                                                                     | Edges and connectors                        |
+| `--ondine-border`                          | `--ondine-fg`                                                                                     | Shape outlines                              |
+| `--ondine-muted`                           | `--ondine-fg`                                                                                     | Secondary text                              |
+| `--ondine-surface`                         | `--ondine-bg`                                                                                     | Node fills                                  |
+| `--ondine-surface-alt`                     | 20% `--ondine-fg`                                                                                 | Cluster fills, grids, and finished work     |
+| `--ondine-accent`                          | `--ondine-fg`                                                                                     | Highlighted elements                        |
+| `--ondine-critical`                        | `--ondine-fg`                                                                                     | Elements a diagram marks as critical        |
+| `--ondine-series-1` to `--ondine-series-8` | Foreground shades                                                                                 | Chart series                                |
+| `--ondine-font`                            | `ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace` | Label font stack                            |
+| `--ondine-stroke`                          | `2px`                                                                                             | Outline and edge width                      |
+| `--ondine-radius`                          | `0`                                                                                               | Rectangle corner radius                     |
+| `--ondine-title-weight`                    | `bold`                                                                                            | Diagram titles                              |
+| `--ondine-heading-weight`                  | `bold`                                                                                            | Section and group headings                  |
+| `--ondine-bold-weight`                     | `bold`                                                                                            | Bold labels                                 |
 
 ## Walkthrough
 
-The steps below set a page's diagrams to follow the color scheme and the page's font.
+The steps below make the diagrams on a page follow the color scheme and use the font of the page.
 
 ### Follow the Scheme
 
-`light-dark()` picks a value for the element's `color-scheme`, so one declaration covers both schemes.
+`light-dark()` selects a value from the `color-scheme` of the element. Thus one declaration sets the colors for the two schemes.
 
 ```css title="styles.css"
-/* Swaps background and foreground with the color scheme */
+/* Swaps the background and foreground colors when the color scheme changes */
 :root {
   color-scheme: light dark;
 }
@@ -38,7 +59,7 @@ The steps below set a page's diagrams to follow the color scheme and the page's 
 }
 ```
 
-This site sets the same two properties, so every diagram on it follows the theme switch.
+This site sets the same two properties. Thus each diagram on this site follows the theme switch.
 
 ```mermaid
 flowchart LR
@@ -47,10 +68,10 @@ flowchart LR
 
 ### Match the Page
 
-Set `--ondine-bg` to the surface the diagram sits on, so node fills blend with the page.
+Set `--ondine-bg` to the color of the surface below the diagram. The node fills then match the page.
 
 ```css title="styles.css"
-/* Uses the page's surface color for node fills */
+/* Uses the surface color of the page for node fills */
 .ondine {
   --ondine-bg: var(--surface);
 }
@@ -58,10 +79,10 @@ Set `--ondine-bg` to the surface the diagram sits on, so node fills blend with t
 
 ### Set the Font
 
-`--ondine-font` replaces the font stack. Ondine measures every character at 0.6 em, so a monospace font keeps labels inside their shapes.
+`--ondine-font` replaces the font stack. Ondine measures each character at 0.6 em. Thus a monospace font keeps labels inside their shapes.
 
 ```css title="styles.css"
-/* Draws labels in the page's monospace font */
+/* Draws labels in the monospace font of the page */
 .ondine {
   --ondine-font: 'Geist Mono', ui-monospace, monospace;
 }
@@ -71,10 +92,10 @@ Set `--ondine-bg` to the surface the diagram sits on, so node fills blend with t
 
 ### Round Corners
 
-`--ondine-radius` rounds rectangles, which are square by default.
+Rectangles have square corners by default. `--ondine-radius` sets the corner radius.
 
 ```css title="styles.css"
-/* Rounds node corners */
+/* Rounds the corners of nodes */
 .ondine {
   --ondine-radius: 6px;
 }
@@ -91,10 +112,10 @@ flowchart LR
 
 ### Change Stroke Width
 
-`--ondine-stroke` sets the width of shape outlines and edges. It defaults to `2px`.
+`--ondine-stroke` sets the width of shape outlines and edges. The default is `2px`.
 
 ```css title="styles.css"
-/* Draws heavier outlines and edges */
+/* Draws thicker outlines and edges */
 .ondine {
   --ondine-stroke: 3px;
 }
@@ -111,7 +132,7 @@ flowchart LR
 
 ### Color Chart Series
 
-Charts draw series with `--ondine-series-1` through `--ondine-series-8`. Each defaults to a shade between half and all of the foreground, so series stay visible on the background.
+Charts color each series with `--ondine-series-1` through `--ondine-series-8`. Each default is a shade that contains between half and all of the foreground color. Thus each series stays visible on the background.
 
 ```css title="styles.css"
 /* Colors the first three series */
@@ -135,7 +156,7 @@ pie title Languages
 
 ### Lighten Bold Text
 
-Titles, headings, and bold labels read their weights from `--ondine-title-weight`, `--ondine-heading-weight`, and `--ondine-bold-weight`.
+Titles, headings, and bold labels read their font weights from `--ondine-title-weight`, `--ondine-heading-weight`, and `--ondine-bold-weight`.
 
 ```css title="styles.css"
 /* Draws titles and bold labels at normal weight */
@@ -159,28 +180,13 @@ classDiagram
 
 ### Pin a Scheme
 
-Diagrams served as images cannot read page styles. The [image Worker](/docs/guides/github) embeds the properties itself and accepts `?scheme=light` or `?scheme=dark`.
+A diagram in an image cannot read the styles of the page. Thus the [image Worker](/docs/guides/github) puts the properties in the SVG. It also accepts `?scheme=light` or `?scheme=dark`.
 
-## Properties
+```md title="README.md"
+<!-- Shows the dark scheme for every reader -->
 
-| Property                                   | Default                                                                                           | Applies to                                  |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `--ondine-bg`                              | `#fff`                                                                                            | Background, and the default for fills       |
-| `--ondine-fg`                              | `#000`                                                                                            | Text, and the default for lines and borders |
-| `--ondine-line`                            | `--ondine-fg`                                                                                     | Edges and connectors                        |
-| `--ondine-border`                          | `--ondine-fg`                                                                                     | Shape outlines                              |
-| `--ondine-muted`                           | `--ondine-fg`                                                                                     | Secondary text                              |
-| `--ondine-surface`                         | `--ondine-bg`                                                                                     | Node fills                                  |
-| `--ondine-surface-alt`                     | 20% `--ondine-fg`                                                                                 | Cluster fills, grids, and finished work     |
-| `--ondine-accent`                          | `--ondine-fg`                                                                                     | Highlighted elements                        |
-| `--ondine-critical`                        | `--ondine-fg`                                                                                     | Elements a diagram marks as critical        |
-| `--ondine-series-1` to `--ondine-series-8` | Foreground shades                                                                                 | Chart series                                |
-| `--ondine-font`                            | `ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace` | Label font stack                            |
-| `--ondine-stroke`                          | `2px`                                                                                             | Outline and edge width                      |
-| `--ondine-radius`                          | `0`                                                                                               | Rectangle corner radius                     |
-| `--ondine-title-weight`                    | `bold`                                                                                            | Diagram titles                              |
-| `--ondine-heading-weight`                  | `bold`                                                                                            | Section and group headings                  |
-| `--ondine-bold-weight`                     | `bold`                                                                                            | Bold labels                                 |
+![Flow](https://ondine.sh/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=dark)
+```
 
 ## More
 

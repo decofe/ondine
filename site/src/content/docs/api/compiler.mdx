@@ -2,7 +2,7 @@
 
 Render Mermaid to SVG in Node, build tools, and servers.
 
-`ondine/compiler` loads the speed-optimized compiler module for every diagram type from the package's files. It needs Node's filesystem, so browsers and Workers use [`ondine/compiler/wasm`](/docs/api/compiler-wasm) instead.
+`ondine/compiler` loads the speed-optimized compiler module for every diagram type from the files of the package. This entrypoint uses the Node filesystem. Browsers and Workers use [`ondine/compiler/wasm`](/docs/api/compiler-wasm) instead.
 
 ```ts title="build.ts"
 import { render } from 'ondine/compiler'
@@ -24,7 +24,7 @@ const { svg } = render('flowchart LR\n  A --> B')
     title="create"
     icon="boxes"
     to="/docs/api/compiler/create"
-    description="Create a renderer over modules supplied by the caller."
+    description="Make a renderer from modules that the caller supplies."
   />
 </Cards>
 
@@ -35,7 +35,7 @@ const { svg } = render('flowchart LR\n  A --> B')
     title="RenderError"
     icon="triangle-alert"
     to="/docs/api/compiler/RenderError"
-    description="Thrown when source cannot be rendered, with its position."
+    description="Thrown for source that cannot be rendered, with the error position."
   />
 </Cards>
 
@@ -48,6 +48,6 @@ const { svg } = render('flowchart LR\n  A --> B')
 ```ts
 import type { Render } from 'ondine/compiler'
 
-// Types a helper's options like render's
+// Uses the options type of render for a helper
 const options: Render.render.Options = { maxWidth: 640 }
 ```

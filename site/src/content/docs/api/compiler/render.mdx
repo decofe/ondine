@@ -2,7 +2,7 @@
 
 Render Mermaid source to an SVG document in Node.
 
-`render` from `ondine/compiler` compiles with the speed-optimized module for every diagram type. The module loads on the first call, and later calls reuse its instance. The [Node Compiler](/docs/guides/node) guide covers common tasks.
+`render` from `ondine/compiler` compiles with the speed-optimized module for every diagram type. The module loads on the first call, and later calls use the same instance. The [Node Compiler](/docs/guides/node) guide shows common tasks.
 
 ```ts title="build.ts"
 import { render } from 'ondine/compiler'
@@ -19,7 +19,7 @@ flowchart LR
 ## Signature
 
 ```ts
-// Throws RenderError when the source cannot be rendered
+// Throws RenderError if the source cannot be rendered
 render(source, options?)
 ```
 
@@ -29,7 +29,7 @@ render(source, options?)
 
 - **Type:** `string{:ts}`
 
-Mermaid source, including optional front matter and `%%{init}%%` directives. The diagram type is detected from its first keyword.
+The Mermaid source, with optional front matter and `%%{init}%%` directives. The compiler detects the diagram type from the first keyword.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -43,7 +43,7 @@ render('sequenceDiagram\n  Alice->>Bob: Hi')
 - **Type:** `boolean{:ts}`
 - **Default:** `true{:ts}`
 
-Lets a diagram that runs across be drawn running down when it does not fit `maxWidth`.
+If this option is `true` and a diagram that runs across does not fit `maxWidth`, the layout turns the diagram to run down.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -57,7 +57,7 @@ render('flowchart LR\n  A --> B --> C --> D --> E', { autoDirection: false, maxW
 - **Type:** `number{:ts}`
 - **Default:** `640{:ts}`
 
-The width under which `autoDirection` turns a diagram.
+The width in pixels below which `autoDirection` turns a diagram.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -71,7 +71,7 @@ render('flowchart LR\n  A --> B', { directionBreakpoint: 480, maxWidth: 400 })
 - **Type:** `number{:ts}`
 - **Default:** `16{:ts}`
 
-Font size in pixels. Labels are measured at 0.6 of this size per character, so shapes grow with it.
+The font size, in pixels. The compiler measures each label character at 0.6 of this size, so shapes grow with the font size.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -85,7 +85,7 @@ render('flowchart LR\n  A --> B', { fontSize: 20 })
 - **Type:** `string{:ts}`
 - **Default:** `'ondine'{:ts}`
 
-Prefix for the IDs of the accessible title and description that `accTitle` and `accDescr` produce. Give each diagram on a page its own prefix.
+The prefix for the IDs of the accessible title and description that `accTitle` and `accDescr` produce. Give each diagram on a page a different prefix.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -99,7 +99,7 @@ render('flowchart LR\n  accTitle: Request flow\n  A --> B', { idPrefix: 'intro' 
 - **Type:** `number{:ts}`
 - **Default:** `50000{:ts}`
 
-The most characters of source to accept. Longer source throws a `RenderError` with code `limit`.
+The maximum number of source characters. If the source is longer, `render` throws a `RenderError` with code `limit`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -113,7 +113,7 @@ render('flowchart LR\n  A --> B', { limit: 10_000 })
 - **Type:** `number{:ts}`
 - **Default:** `5000{:ts}`
 
-The most edges a flowchart may have. More throws a `RenderError` with code `limit`.
+The maximum number of edges in a flowchart. If a flowchart has more edges, `render` throws a `RenderError` with code `limit`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -126,7 +126,7 @@ render('flowchart LR\n  A --> B', { maxEdges: 500 })
 
 - **Type:** `number{:ts}`
 
-The width available to the diagram, in pixels. Without it, the diagram takes the width its layout needs.
+The width available to the diagram, in pixels. If this option is not set, the diagram uses the width that its layout needs.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -140,7 +140,7 @@ render('flowchart LR\n  A --> B', { maxWidth: 640 })
 - **Type:** `number{:ts}`
 - **Default:** `Date.now(){:ts}`
 
-The time gantt charts schedule against, in milliseconds since the epoch. The compiler reads no clock, so a fixed value makes output reproducible.
+The time that gantt charts schedule against, in milliseconds since the epoch. The compiler reads no clock, so a fixed value makes the output reproducible.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -154,7 +154,7 @@ render('gantt\n  section A\n  Task :3d', { now: Date.UTC(2024, 0, 15) })
 - **Type:** `number{:ts}`
 - **Default:** `4000000{:ts}`
 
-The most characters of SVG to produce. Larger output throws a `RenderError` with code `limit`.
+The maximum number of SVG characters. If the output is longer, `render` throws a `RenderError` with code `limit`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -168,7 +168,7 @@ render('flowchart LR\n  A --> B', { outputLimit: 1_000_000 })
 - **Type:** `number{:ts}`
 - **Default:** `8{:ts}`
 
-Padding around the diagram, in pixels.
+The padding around the diagram, in pixels.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -197,7 +197,7 @@ render('flowchart LR\n  A --> B', { responsive: false })
 
 - **Type:** `number{:ts}`
 
-Height in pixels, matching the `height` attribute of the root `<svg>`.
+The height in pixels. This value is equal to the `height` attribute of the root `<svg>`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -210,7 +210,7 @@ const { height, width } = render('flowchart LR\n  A --> B')
 
 - **Type:** `readonly { href: string; id: string; internal: boolean }[]{:ts}`
 
-Links from `click` directives, in drawing order. `id` names the element, and `internal` marks links within the page.
+The links from `click` directives, in drawing order. `id` names the element, and `internal` marks a link to a location in the same page.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -223,7 +223,7 @@ const { links } = render('flowchart LR\n  A --> B\n  click A "https://example.co
 
 - **Type:** `string{:ts}`
 
-The SVG document. Its root carries the classes `ondine` and `ondine-<type>` and reads its theme from `--ondine-*` custom properties.
+The SVG document. The root element has the classes `ondine` and `ondine-<type>`, and it reads its theme from `--ondine-*` custom properties.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -249,7 +249,7 @@ const { type } = render('pie\n  "A" : 1')
 
 - **Type:** `number{:ts}`
 
-Width in pixels, matching the `width` attribute of the root `<svg>`.
+The width in pixels. This value is equal to the `width` attribute of the root `<svg>`.
 
 ```ts
 import { render } from 'ondine/compiler'
@@ -262,7 +262,7 @@ const { width } = render('flowchart LR\n  A --> B')
 
 ### RenderError
 
-Thrown when the source cannot be rendered, with a `code` of `limit`, `semantic`, `syntax`, or `unsupported-diagram`. See [`RenderError`](/docs/api/compiler/RenderError).
+If `render` cannot render the source, it throws a `RenderError`. The error `code` is `limit`, `semantic`, `syntax`, or `unsupported-diagram`. See [`RenderError`](/docs/api/compiler/RenderError).
 
 ```ts
 import { render, RenderError } from 'ondine/compiler'

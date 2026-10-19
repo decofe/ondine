@@ -2,7 +2,7 @@
 
 The error thrown when Mermaid source cannot be rendered.
 
-`RenderError` is exported from `ondine/compiler` and `ondine/compiler/wasm`. Its message matches Mermaid's diagnostic for the same input, and its fields locate the problem in the source.
+`ondine/compiler` and `ondine/compiler/wasm` both export `RenderError`. Its message matches the Mermaid diagnostic for the same input, and its fields give the location of the problem in the source.
 
 ```ts title="build.ts"
 import { render, RenderError } from 'ondine/compiler'
@@ -18,11 +18,11 @@ try {
 ## Signature
 
 ```ts
-// Thrown by render; constructed by the library
+// The library constructs this error, and render throws it
 class RenderError extends Error
 ```
 
-`name` is `'Render.RenderError'`. Check errors with `instanceof`.
+`name` is `'Render.RenderError'`. Use `instanceof` to identify this error.
 
 ## Properties
 
@@ -54,7 +54,7 @@ try {
 
 - **Type:** `number{:ts}`
 
-One-based UTF-16 column, or `0` when the error has no position.
+The one-based UTF-16 column, or `0` if the error has no position.
 
 ```ts
 // Points an editor cursor at the error
@@ -65,7 +65,7 @@ const offset = error.column > 0 ? error.column - 1 : 0
 
 - **Type:** `number{:ts}`
 
-One-based line, or `0` when the error has no position.
+The one-based line, or `0` if the error has no position.
 
 ```ts
 // Formats a compiler-style location
@@ -76,7 +76,7 @@ const location = error.line > 0 ? `flow.mmd:${error.line}:${error.column}` : 'fl
 
 - **Type:** `string{:ts}`
 
-Mermaid's diagnostic text, which may span several lines.
+The Mermaid diagnostic text. This text can have more than one line.
 
 ```ts
 // 'Diagram type "agentflow" is not supported yet.'
@@ -87,7 +87,7 @@ console.log(error.message)
 
 - **Type:** `string{:ts}`
 
-The offending source line with a caret under the column, or an empty string.
+The source line with the error and a caret below the column, or an empty string.
 
 ```ts
 // Prints the line and a caret below it
@@ -98,7 +98,7 @@ if (error.snippet) console.error(error.snippet)
 
 - **Type:** `string | undefined{:ts}`
 
-The detected diagram type, when detection succeeded before the failure.
+The detected diagram type, if the compiler detected the type before the failure. Otherwise, the value is `undefined`.
 
 ```ts
 // 'flowchart' for a flowchart syntax error, undefined for undetected text

@@ -2,7 +2,7 @@
 
 Create a renderer over compiler modules supplied by the caller.
 
-`create` is exported from `ondine/compiler/wasm` and `ondine/compiler`. Each module holds one diagram type, or `all` of them, as a compiled `WebAssembly.Module` or base64 bytes. The [In-Browser Compilation](/docs/guides/browser) guide covers common tasks.
+`ondine/compiler/wasm` and `ondine/compiler` both export `create`. Each module contains one diagram type, or `all` diagram types, as a compiled `WebAssembly.Module` or as base64 bytes. The [In-Browser Compilation](/docs/guides/browser) guide shows common tasks.
 
 ```ts title="preview.ts"
 import { create } from 'ondine/compiler/wasm'
@@ -16,7 +16,7 @@ const { svg } = renderer.render('flowchart LR\n  A --> B')
 ## Signature
 
 ```ts
-// A renderer that instantiates each module once, on first use
+// Returns a renderer that instantiates each module once, on first use
 create(options)
 ```
 
@@ -26,7 +26,7 @@ create(options)
 
 - **Type:** `Readonly<Record<string, WebAssembly.Module | string>>{:ts}`
 
-WebAssembly modules by diagram type, as compiled modules or base64 bytes. Base64 bytes compile synchronously on first use. Hosts that refuse runtime compilation, such as Cloudflare Workers, pass a module their bundler compiled.
+The WebAssembly modules by diagram type, as compiled modules or base64 bytes. The renderer compiles base64 bytes synchronously on first use. If the host refuses runtime compilation, as Cloudflare Workers do, pass a module that the bundler compiled.
 
 ```ts
 import { create } from 'ondine/compiler/wasm'
@@ -36,7 +36,7 @@ import all from 'ondine/compiler/wasm/all.wasm'
 const renderer = create({ modules: { all } })
 ```
 
-The renderer sends source to the first module. When that module reports a type it does not include, the renderer retries with the module registered under that type.
+The renderer sends the source to the first module. If that module reports a diagram type that it does not contain, the renderer sends the source again to the module with that type as its key.
 
 ## Returns
 
@@ -44,7 +44,7 @@ The renderer sends source to the first module. When that module reports a type i
 
 - **Type:** `(source: string, options?: render.Options) => render.ReturnType{:ts}`
 
-Renders `source` with the module for its diagram type. It takes the same options and returns the same result as [`render`](/docs/api/compiler/render) from `ondine/compiler`.
+Renders `source` with the module for its diagram type. It accepts the same options and returns the same result as [`render`](/docs/api/compiler/render) from `ondine/compiler`.
 
 ```ts
 import { create } from 'ondine/compiler/wasm'
@@ -60,7 +60,7 @@ renderer.render('flowchart LR\n  A --> B', { maxWidth: 480 })
 
 ### Error
 
-`render` throws a plain `Error` with the message `Render.create needs at least one module.` when `modules` is empty.
+If `modules` is empty, `render` throws a plain `Error` with the message `Render.create needs at least one module.`
 
 ```ts
 import { create } from 'ondine/compiler/wasm'
@@ -71,4 +71,4 @@ create({ modules: {} }).render('flowchart LR\n  A --> B')
 
 ### RenderError
 
-`render` throws a [`RenderError`](/docs/api/compiler/RenderError) when the source cannot be rendered, including when no supplied module includes its diagram type.
+If `render` cannot render the source, it throws a [`RenderError`](/docs/api/compiler/RenderError). This also applies if no supplied module contains the diagram type of the source.

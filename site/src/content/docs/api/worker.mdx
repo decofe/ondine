@@ -1,8 +1,8 @@
 # Image Worker
 
-Serve diagrams as SVG images from a Cloudflare Worker, for Markdown hosts such as GitHub.
+Serve diagrams as SVG and PNG images from a Cloudflare Worker, for Markdown hosts such as GitHub.
 
-The Worker at `https://ondine.sh` compiles the Mermaid source encoded in the request path with every diagram type. It ships with the documentation site in `site/`, and its compiler module is precompiled at build time, so requests download nothing. The [GitHub Images](/docs/guides/github) guide covers common tasks.
+The Worker at `https://ondine.sh` reads the Mermaid source from the request and compiles it with the module for every diagram type. The Worker is part of the documentation site in `site/`. The build precompiles its compiler module, so a request downloads nothing. The [GitHub Images](/docs/guides/github) guide shows common tasks.
 
 ```md title="README.md"
 <!-- Renders a two-node flowchart that follows the reader's scheme -->
@@ -19,13 +19,13 @@ GET /<payload>.png
 GET /png?source=<source>
 ```
 
-`HEAD` is also accepted. Other methods return `405` with an `allow: GET, HEAD` header, and other paths return `404`.
+The Worker also accepts `HEAD`. Other methods return `405` with an `allow: GET, HEAD` header. Other paths return `404`.
 
 ### payload
 
 - **Type:** base64url string
 
-The Mermaid source as UTF-8, deflated with zlib, then encoded as base64url without padding.
+The Mermaid source as UTF-8, compressed with zlib deflate, then encoded as base64url without padding.
 
 ```ts
 import * as Zlib from 'node:zlib'
@@ -38,7 +38,7 @@ const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url'
 
 - **Type:** percent-encoded string
 
-The Mermaid source in the query of `/svg`, for authors and agents that cannot deflate. URLs grow faster than with a payload.
+The Mermaid source in the query of `/svg` or `/png`. Authors and agents that cannot compress the source use this form. A URL with `source` grows faster than a URL with a payload.
 
 ```md
 <!-- Renders a two-node flowchart from plain source -->
@@ -50,7 +50,7 @@ The Mermaid source in the query of `/svg`, for authors and agents that cannot de
 
 - **Type:** `'light' | 'dark'{:ts}`
 
-Pins one color scheme. Without it, the image switches with `prefers-color-scheme`.
+Sets one color scheme for an SVG image. If `scheme` is not set, the image changes with `prefers-color-scheme`.
 
 ```html
 <!-- Shows the dark variant when GitHub uses a dark theme -->
@@ -67,33 +67,36 @@ Pins one color scheme. Without it, the image switches with `prefers-color-scheme
 
 ### PNG Cards
 
-The `.png` and `/png` forms draw the diagram on a 1200x630 card in the light scheme, sized for link previews. Link previewers such as Slackbot that request an SVG address receive an HTML page whose `og:image` is the card.
+The `.png` and `/png` forms draw the diagram on a 1200x630 card in the light scheme. This size fits link previews. If a link previewer such as Slackbot requests an SVG address, it receives an HTML page whose `og:image` is the card.
 
 ```md
-<!-- Shows the diagram where SVG images are not displayed -->
+<!-- Shows the diagram on hosts that do not display SVG images -->
 
 ![Flow](https://ondine.sh/png?source=flowchart%20LR%0A%20%20A%20--%3E%20B)
 ```
 
 ### Success
 
-Status `200` with the compiled SVG. A `<style>` element after the root tag sets `--ondine-bg`, `--ondine-fg`, and `--ondine-line` for the scheme, since images cannot inherit page styles.
+The Worker returns status `200` with the compiled SVG. A `<style>` element after the root tag sets `--ondine-bg`, `--ondine-fg`, and `--ondine-line` for the scheme, because images cannot inherit page styles.
 
 | Header                    | Value                                                  |
 | ------------------------- | ------------------------------------------------------ |
 | `cache-control`           | `public, max-age=86400, stale-while-revalidate=604800` |
 | `content-security-policy` | `default-src 'none'; style-src 'unsafe-inline'`        |
 | `content-type`            | `image/svg+xml; charset=utf-8`                         |
+| `vary`                    | `User-Agent`                                           |
 | `x-content-type-options`  | `nosniff`                                              |
+
+A PNG card has the content type `image/png` and no `vary` header.
 
 ### Errors
 
-Status `400` with an SVG card that reads "Ondine could not render this diagram." followed by the error message, cached for 300 seconds.
+The Worker returns status `400` with a card that shows "Ondine could not render this diagram." and then the error message. Caches keep this response for 300 seconds. A PNG request receives the card as a PNG.
 
 | Cause                               | Message                                  |
 | ----------------------------------- | ---------------------------------------- |
 | Path or query over 4,096 characters | `Payload exceeds 4096 characters.`       |
-| `/svg` without `source`             | `The source query parameter is missing.` |
+| `/svg` or `/png` without `source`   | `The source query parameter is missing.` |
 | Invalid base64url                   | `Payload is not base64url.`              |
 | Invalid zlib data or UTF-8          | `Payload is not zlib-deflated UTF-8.`    |
 | Source over 64 KiB after inflating  | `Source exceeds 65536 bytes.`            |
