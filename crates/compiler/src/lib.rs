@@ -9,6 +9,8 @@
 
 mod detect;
 mod error;
+#[cfg(feature = "model")]
+mod model;
 mod preprocess;
 mod yaml;
 
@@ -45,6 +47,8 @@ mod util {
 mod diagrams;
 
 pub use error::{Code, Error};
+#[cfg(feature = "model")]
+pub use model::{Model, model};
 
 /// A link drawn in a diagram, as Pele's `LinkInfo` reports it.
 #[derive(Clone, Debug, PartialEq, Eq)]

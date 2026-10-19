@@ -2,8 +2,9 @@
  * Builds one size-optimized WebAssembly module per diagram type and inlines each as base64 in
  * `src/internal/<type>.generated.ts`, beside the raw `src/internal/<type>.generated.wasm` for hosts
  * that only accept precompiled modules. Also builds `all.fast.generated.wasm`, every type optimized
- * for speed, which `melee/compiler` loads in Node. Outputs are gitignored and rewritten only when
- * they change. Writes the matching `melee/compiler/wasm/<type>` and `<type>.wasm` exports into
+ * for speed, which `melee/compiler` loads in Node, and `test/oracles/model.generated.wasm`, every
+ * type with the `model` export that the oracle tests read. Outputs are gitignored and rewritten only
+ * when they change. Writes the matching `melee/compiler/wasm/<type>` and `<type>.wasm` exports into
  * `package.json`.
  * @module
  */
@@ -79,11 +80,15 @@ for (const type of ['all', ...types]) {
 // Build tools, servers, and the CLI download nothing, so their module trades size for speed.
 write(Path.join(root, 'src/internal/all.fast.generated.wasm'), build('all', { fast: true }))
 
+// Tests compare parsed models, which no published module exports.
+write(Path.join(root, 'test/oracles/model.generated.wasm'), build('all,model', { model: true }))
+
 /** Builds the `wasm` crate with one diagram feature, optimizes it, and returns its bytes. */
 function build(feature: string, options: build.Options = {}): Buffer {
   const fast = options.fast === true
-  const targetDir = `target/wasm-${feature}${fast ? '-fast' : ''}`
-  const sized = !fast && nightlyInstalled
+  const model = options.model === true
+  const targetDir = model ? 'target/wasm-model' : `target/wasm-${feature}${fast ? '-fast' : ''}`
+  const sized = !fast && !model && nightlyInstalled
 
   // Rebuilding `std` with `optimize_for_size` and aborting panics without formatting their messages
   // removes `core::fmt` and selects smaller `std` algorithms.
@@ -116,6 +121,10 @@ function build(feature: string, options: build.Options = {}): Buffer {
   )
 
   const input = Path.join(root, targetDir, 'wasm32-unknown-unknown/wasm/wasm.wasm')
+
+  // Only tests load the model module, so it skips optimization.
+  if (model) return Fs.readFileSync(input)
+
   const output = Path.join(root, targetDir, 'optimized.wasm')
 
   // Rust's wasm32 target enables these proposals by default, so the optimizer must accept them.
@@ -153,6 +162,8 @@ declare namespace build {
   type Options = {
     /** Optimizes for speed instead of size, on the stable toolchain. */
     readonly fast?: boolean | undefined
+    /** Builds the unoptimized test module with the `model` export, on the stable toolchain. */
+    readonly model?: boolean | undefined
   }
 }
 
