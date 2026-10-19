@@ -3,7 +3,7 @@ name = "melee-core"
 version = "0.0.0"
 edition = "2024"
 license = "MIT"
-description = "A minimal grayscale Mermaid compiler backed by Merman"
+description = "A minimal monochrome Mermaid compiler backed by Merman"
 
 [dependencies]
 merman = "=0.9.0"

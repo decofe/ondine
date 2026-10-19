@@ -1,18 +1,18 @@
-/** @module Semantic grayscale palettes inspired by Geist component and text roles. */
+/** @module Monochrome palettes with monospace type, square outlines, and orthogonal edges. */
 
 import type { MermaidConfig } from 'mermaid'
 
 /** Compiler theme selection. Fonts are system fonts unless supplied by the host. */
 export type Scheme = 'dark' | 'light'
 
-/** Build a grayscale Mermaid configuration without loading fonts or remote assets. */
+/** Build a monochrome Mermaid configuration without loading fonts or remote assets. */
 export function create(options: create.Options = {}): MermaidConfig {
   const dark = options.scheme === 'dark'
-  const background = dark ? '#0a0a0a' : '#ffffff'
-  const border = dark ? '#3d3d3d' : '#d4d4d4'
-  const fill = dark ? '#1a1a1a' : '#f2f2f2'
-  const line = dark ? '#a0a0a0' : '#8f8f8f'
-  const text = dark ? '#ededed' : '#171717'
+  const background = dark ? '#000000' : '#ffffff'
+  const border = dark ? '#ffffff' : '#000000'
+  const fill = background
+  const line = border
+  const text = border
   const shades = dark
     ? ['#1a1a1a', '#292929', '#3d3d3d', '#515151', '#6e6e6e', '#8f8f8f', '#a0a0a0', '#b4b4b4', '#c7c7c7', '#dedede', '#ededed', '#fafafa']
     : ['#f2f2f2', '#e8e8e8', '#dedede', '#d4d4d4', '#c7c7c7', '#b4b4b4', '#a0a0a0', '#8f8f8f', '#767676', '#666666', '#515151', '#3d3d3d']
@@ -22,9 +22,13 @@ export function create(options: create.Options = {}): MermaidConfig {
     securityLevel: 'strict',
     theme: 'base',
     look: 'classic',
-    themeCSS: '.node rect{rx:6px;ry:6px}.node,.actor,.note{filter:none!important}',
-    fontFamily: 'Geist, Inter, ui-sans-serif, system-ui, sans-serif',
-    flowchart: { curve: 'basis', htmlLabels: true, padding: 18, nodeSpacing: 36, rankSpacing: 56 },
+    themeCSS: [
+      '.node,.actor,.note{filter:none!important}',
+      '.node rect,.cluster rect,rect.actor,rect.note{rx:0;ry:0}',
+      '.node :is(rect,polygon,circle,ellipse,path),.cluster rect,.flowchart-link,.edgePath path{stroke-width:1.5px}',
+    ].join(''),
+    fontFamily: '"Geist Mono", "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    flowchart: { curve: 'rounded', htmlLabels: true, padding: 18, nodeSpacing: 40, rankSpacing: 56 },
     themeVariables: {
       darkMode: dark,
       useGradient: false,
@@ -33,7 +37,7 @@ export function create(options: create.Options = {}): MermaidConfig {
       primaryColor: fill,
       primaryTextColor: text,
       primaryBorderColor: border,
-      secondaryColor: dark ? '#292929' : '#fafafa',
+      secondaryColor: fill,
       secondaryTextColor: text,
       secondaryBorderColor: border,
       tertiaryColor: background,
@@ -43,7 +47,7 @@ export function create(options: create.Options = {}): MermaidConfig {
       textColor: text,
       mainBkg: fill,
       nodeBorder: border,
-      clusterBkg: dark ? '#111111' : '#fafafa',
+      clusterBkg: fill,
       clusterBorder: border,
       edgeLabelBackground: background,
       titleColor: text,

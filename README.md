@@ -1,6 +1,6 @@
 # Melee
 
-Minimal grayscale diagrams from Mermaid source. A native Rust compiler produces SVG. A tiny browser runtime mounts the result without shipping a parser, layout engine, fonts, or WASM.
+Minimal monochrome diagrams from Mermaid source. A native Rust compiler produces SVG. A tiny browser runtime mounts the result without shipping a parser, layout engine, fonts, or WASM.
 
 > [!NOTE]
 > This is a compiler-first implementation. The under-20-kB budget applies to the complete browser runtime for **precompiled diagrams**. The optional playground downloads a separate, much larger Rust/WASM compiler for live source editing. Full independent syntax parity is a release target, not an established claim.
@@ -111,7 +111,7 @@ Render.mount(document.querySelector('#diagram')!, { diagram })
 
 ## Appearance
 
-The default theme uses gray surfaces, subtle borders, restrained lines, and a system font stack preferring Geist when the host provides it. No font is bundled. Light and dark variants are compiled independently. Authored style directives are preserved and may introduce color.
+The default theme is monochrome: pure black and white, square outlines, rounded orthogonal edges, and a monospace font stack preferring Geist Mono when the host provides it. No font is bundled. Light and dark variants are compiled independently. Authored style directives are preserved and may introduce color.
 
 ```ts
 const diagram = await compiler.compile(source, { scheme: 'dark' })

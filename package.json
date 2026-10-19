@@ -27,7 +27,7 @@
   "[!start-pkg]": "",
   "name": "melee",
   "version": "0.0.0",
-  "description": "Minimal grayscale diagrams compiled from Mermaid.",
+  "description": "Minimal monochrome diagrams compiled from Mermaid.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

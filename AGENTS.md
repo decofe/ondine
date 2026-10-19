@@ -8,7 +8,7 @@
 - Treat complete Mermaid syntax parity as an acceptance target. Family smoke tests are evidence of family coverage, not proof of full syntax or visual parity. Never market incomplete coverage as complete.
 - Keep the Mermaid reference backend explicit. Never silently fall back on errors, add Mermaid as a runtime dependency, hide downloads behind lazy imports, or count a loader as the full renderer.
 - Keep output responsive, accessible, deterministic where the backend supports it, and safe under the strict upstream security policy. Compiler artifacts are trusted SVG. Runtime shape checks do not sanitize arbitrary SVG.
-- Preserve source semantics, labels, ordering, and authored overrides. The default appearance uses grayscale surfaces, subtle borders, and restrained typography inspired by Geist. No mandatory external fonts.
+- Preserve source semantics, labels, ordering, and authored overrides. The default appearance is monochrome: pure black and white, square outlines, rounded orthogonal edges, and monospace type. Text measurement assumes a uniform monospace advance. No mandatory external fonts.
 - Before changing pinned Mermaid or Merman versions, run all fixtures against both backends and record their baseline versions.
 
 ## Layout

@@ -1,10 +1,19 @@
-//! Compile Mermaid to grayscale SVG with a native, headless Rust pipeline.
+//! Compile Mermaid to monochrome SVG with a native, headless Rust pipeline.
 //!
 //! Parsing and layout are provided by Merman. Browser code consumes only SVG.
 
+use std::sync::Arc;
+
+use merman::svg::{
+    DeterministicTextMeasurer, MeasurementProfileId, TextMeasurementPolicy, TextMeasurementProfile,
+    TextMeasurementProfileIdentity,
+};
 use merman::{
     Engine, MermaidConfig, OperationControl, RenderOutput, RenderRequest, Renderer, SvgRequest,
 };
+
+/// Advance width of one monospace glyph in em, shared by Geist Mono, SF Mono, and Menlo.
+const MONOSPACE_ADVANCE: f64 = 0.6;
 
 /// The output color scheme. Themes are generated from the TypeScript contract.
 #[derive(Clone, Copy, Debug, Default)]
@@ -17,6 +26,7 @@ pub enum Scheme {
 /// A reusable native compiler. Its renderer owns parsing and layout defaults.
 pub struct Compiler {
     renderer: Renderer,
+    svg: SvgRequest,
 }
 
 impl Compiler {
@@ -28,8 +38,25 @@ impl Compiler {
         };
         let config = MermaidConfig::from_value(serde_json::from_str(theme)?);
         let engine = Engine::new().with_site_config(config);
+
+        // Themes use monospace fonts, so every glyph is measured with the same advance.
+        let identity = TextMeasurementProfileIdentity::new(
+            MeasurementProfileId::new("melee.monospace")?,
+            env!("CARGO_PKG_VERSION"),
+        )?;
+        let measurer = DeterministicTextMeasurer {
+            char_width_factor: MONOSPACE_ADVANCE,
+            ..Default::default()
+        };
+        let profile = TextMeasurementProfile::new(identity, Arc::new(measurer));
+        let mut svg = SvgRequest::default();
+        svg.environment = svg
+            .environment
+            .with_text_measurement_policy(TextMeasurementPolicy::uniform(profile));
+
         Ok(Self {
             renderer: Renderer::new().with_engine(engine),
+            svg,
         })
     }
 
@@ -38,7 +65,7 @@ impl Compiler {
         if source.len() > 1_000_000 {
             return Err("Source exceeds 1 MB".into());
         }
-        let request = RenderRequest::svg(source, OperationControl::new(), SvgRequest::default());
+        let request = RenderRequest::svg(source, OperationControl::new(), self.svg.clone());
         let output = self.renderer.render(request)?;
         let RenderOutput::Svg(Some(svg)) = output else {
             return Err("Expected a Mermaid diagram".into());

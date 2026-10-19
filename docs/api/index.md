@@ -6,7 +6,7 @@
 | `melee` | `Render` | Browser mounting and instance cleanup |
 | `melee/compiler` | `Compiler` | Persistent native and reference compilation |
 | `melee/compiler` | `Native` | Native JSON-line worker transport |
-| `melee/compiler` | `Theme` | Shared grayscale configuration |
+| `melee/compiler` | `Theme` | Shared monochrome configuration |
 | `melee/vite` | `melee` | Build-time `.mmd` imports |
 
 ## Compiler.create
