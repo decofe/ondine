@@ -72,7 +72,9 @@ jobs:
 
   test:
     name: Test Runtime
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1, pinned to the Chromium the screenshot baselines were captured in, installs
+    # its browser dependencies only up to Ubuntu 24.04.
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Clone repository
