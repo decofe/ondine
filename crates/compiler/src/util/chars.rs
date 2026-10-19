@@ -17,6 +17,21 @@ pub(crate) fn is_space(c: u32) -> bool {
         || c == 0xfeff
 }
 
+/// Whether `text` contains `needle`. Unlike `str::contains`, it sets up no searcher, which costs
+/// more than the scan over source lines and labels.
+pub(crate) fn has(text: &str, needle: &str) -> bool {
+    let bytes = text.as_bytes();
+    let Some(&first) = needle.as_bytes().first() else {
+        return true;
+    };
+    bytes.iter().enumerate().any(|(at, &byte)| {
+        byte == first
+            && bytes
+                .get(at..)
+                .is_some_and(|rest| rest.starts_with(needle.as_bytes()))
+    })
+}
+
 /// A space or a tab.
 pub(crate) fn is_blank(c: u32) -> bool {
     c == 32 || c == 9

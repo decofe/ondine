@@ -4,7 +4,7 @@
 use std::borrow::Cow;
 
 use crate::error::{Code, Error};
-use crate::util::chars::{is_line_end, is_space, is_word};
+use crate::util::chars::{has, is_line_end, is_space, is_word};
 use crate::yaml::{self, Value};
 
 /// Configuration from front matter and init directives, as JavaScript object properties in order.
@@ -41,7 +41,7 @@ fn word(c: char) -> bool {
 
 /// Removes comment lines (`%%` not followed by `{`) and leading whitespace.
 pub(crate) fn cleanup_comments(text: &str) -> String {
-    let stripped = if text.contains("%%") {
+    let stripped = if has(text, "%%") {
         Cow::Owned(remove_comments(text))
     } else {
         Cow::Borrowed(text)
@@ -325,7 +325,7 @@ fn directive_at(s: &str, start: usize) -> Option<Directive<'_>> {
 }
 
 fn directives(text: &str, config: &mut Config) -> String {
-    if !text.contains("%%{") {
+    if !has(text, "%%{") {
         return text.to_owned();
     }
 
@@ -615,7 +615,7 @@ pub(crate) fn preprocess(source: &str) -> Result<Preprocessed, Error> {
     let mut title = None;
     let mut line_offset = 0;
 
-    let front = if text.contains("---") {
+    let front = if has(&text, "---") {
         match_front_matter(&text)
     } else {
         None

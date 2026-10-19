@@ -7,7 +7,7 @@ use crate::svg::builder::js_round;
 use crate::text::entities::decode;
 use crate::text::icons::{IconResolver, icon_markup};
 use crate::text::measure::{self, BOLD, ITALIC};
-use crate::util::chars::{is_space, is_word};
+use crate::util::chars::{has, is_space, is_word};
 
 /// A run of text in one style, or an icon.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -155,7 +155,7 @@ fn find_icon(text: &str, from: usize) -> Option<(usize, usize)> {
 
 /// Adds text to a line, turning `fa:fa-name` references the host has icons for into icon spans.
 fn push_icons(line: &mut Vec<Span>, text: &str, style: u8, icons: Option<IconResolver<'_>>) {
-    if !text.contains(":fa-") {
+    if !has(text, ":fa-") {
         push_text(line, text, style);
         return;
     }
