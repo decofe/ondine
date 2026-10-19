@@ -1,0 +1,28 @@
+import { Card, Cards } from 'vocs'
+
+# melee/vite
+
+Compile Mermaid file imports to SVG during the Vite build.
+
+`melee/vite` exports one Vite plugin. It requires Vite as a peer dependency and compiles with the same module as `melee/compiler`. The [Vite](/guides/vite) guide covers common tasks.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { melee } from 'melee/vite'
+
+export default defineConfig({
+  // Compiles .mmd and .mermaid imports
+  plugins: [melee()],
+})
+```
+
+## Functions
+
+<Cards>
+  <Card
+    title="melee"
+    icon="zap"
+    to="/api/vite/melee"
+    description="The Vite plugin and its rendering options."
+  />
+</Cards>

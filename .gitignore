@@ -6,3 +6,4 @@ src/internal/*.generated.ts
 src/internal/*.generated.wasm
 bench/results
 .wrangler
+site/src/pages.gen.ts

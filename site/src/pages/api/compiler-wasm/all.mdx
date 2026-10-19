@@ -1,0 +1,31 @@
+# melee/compiler/wasm/all
+
+The size-optimized compiler module for every diagram type, inlined as base64.
+
+`melee/compiler/wasm/all` exports one value, `wasm`, for [`create`](/api/compiler/create). The entrypoint is about 715 kB gzip, so pages load it with a dynamic import when a compiler is needed.
+
+```ts title="preview.ts"
+import { create } from 'melee/compiler/wasm'
+
+// Downloads the module only when the preview opens
+const { wasm } = await import('melee/compiler/wasm/all')
+const renderer = create({ modules: { all: wasm } })
+```
+
+## Exports
+
+### wasm
+
+- **Type:** `string{:ts}`
+
+The module's bytes as base64. `create` compiles them synchronously on the first render.
+
+```ts
+import { create } from 'melee/compiler/wasm'
+import { wasm } from 'melee/compiler/wasm/all'
+
+// Registers the module under the key all
+create({ modules: { all: wasm } })
+```
+
+Hosts that refuse runtime compilation, such as Cloudflare Workers, cannot compile these bytes. They pass a precompiled `WebAssembly.Module` to `create` instead.

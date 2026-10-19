@@ -1,0 +1,78 @@
+# CLI
+
+Render Mermaid files or standard input to SVG from the command line.
+
+The `melee` binary ships with the package and compiles with the same module as `melee/compiler`. The [CLI](/guides/cli) guide covers common tasks.
+
+```sh
+# Writes flow.svg next to flow.mmd
+npx melee flow.mmd
+```
+
+## Usage
+
+```sh
+# Renders files, or standard input when no files are given
+melee [files...] [--out-dir <dir>]
+```
+
+## Arguments
+
+### files
+
+- **Type:** paths
+
+Mermaid files to render. Each writes an `.svg` file whose name drops a `.mmd` or `.mermaid` extension, beside the source or in `--out-dir`. Other extensions are kept, so `flow.txt` writes `flow.txt.svg`.
+
+```sh
+# Writes a.svg and b.svg
+melee a.mmd b.mermaid
+```
+
+With no files, the command reads Mermaid from standard input and writes SVG to standard output.
+
+```sh
+# Pipes Mermaid in and SVG out
+melee < flow.mmd > flow.svg
+```
+
+## Options
+
+### --out-dir
+
+- **Alias:** `-o`
+- **Type:** directory
+
+The directory for rendered files, created when missing.
+
+```sh
+# Writes public/flow.svg
+melee flow.mmd -o public
+```
+
+### --help
+
+- **Alias:** `-h`
+
+Prints usage and exits with code 0.
+
+```sh
+# Shows the usage text
+melee --help
+```
+
+## Output
+
+Each rendered file is reported on standard error as `source -> output`. Errors are reported on standard error as `file:line:column: message`, or `file: message` without a position. Standard input is named `<stdin>`.
+
+```txt
+flow.mmd -> flow.svg
+bad.mmd:3:1: Parse error on line 3:
+```
+
+## Exit Codes
+
+| Code | Meaning                                                                |
+| ---- | ---------------------------------------------------------------------- |
+| `0`  | Every input rendered.                                                  |
+| `1`  | At least one input failed to render. The remaining files still render. |

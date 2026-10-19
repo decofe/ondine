@@ -1,0 +1,84 @@
+# Image Worker
+
+Serve diagrams as SVG images from a Cloudflare Worker, for Markdown hosts such as GitHub.
+
+The Worker in `worker/` compiles the Mermaid source encoded in the request path with every diagram type. Its compiler module is precompiled by Wrangler, so requests download nothing. The [GitHub Images](/guides/github) guide covers common tasks.
+
+```md title="README.md"
+<!-- Renders a two-node flowchart that follows the reader's scheme -->
+
+![Flow](https://<worker>/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+```
+
+> [!NOTE]
+> The Worker's public address is not published yet. Examples use `https://<worker>`.
+
+## Request
+
+```txt
+GET /<payload>.svg?scheme=light|dark
+```
+
+`HEAD` is also accepted. Other methods return `405` with an `allow: GET, HEAD` header, and other paths return `404`.
+
+### payload
+
+- **Type:** base64url string
+
+The Mermaid source as UTF-8, deflated with zlib, then encoded as base64url without padding.
+
+```ts
+import * as Zlib from 'node:zlib'
+
+// Encodes a diagram for the request path
+const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url')
+```
+
+### scheme
+
+- **Type:** `'light' | 'dark'{:ts}`
+
+Pins one color scheme. Without it, the image switches with `prefers-color-scheme`.
+
+```html
+<!-- Shows the dark variant when GitHub uses a dark theme -->
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://<worker>/<payload>.svg?scheme=dark"
+  />
+  <img alt="Flow" src="https://<worker>/<payload>.svg?scheme=light" />
+</picture>
+```
+
+## Response
+
+### Success
+
+Status `200` with the compiled SVG. A `<style>` element after the root tag sets `--melee-bg`, `--melee-fg`, and `--melee-line` for the scheme, since images cannot inherit page styles.
+
+| Header                    | Value                                                  |
+| ------------------------- | ------------------------------------------------------ |
+| `cache-control`           | `public, max-age=86400, stale-while-revalidate=604800` |
+| `content-security-policy` | `default-src 'none'; style-src 'unsafe-inline'`        |
+| `content-type`            | `image/svg+xml; charset=utf-8`                         |
+| `x-content-type-options`  | `nosniff`                                              |
+
+### Errors
+
+Status `400` with an SVG card that reads "Melee could not render this diagram." followed by the error message, cached for 300 seconds.
+
+| Cause                              | Message                               |
+| ---------------------------------- | ------------------------------------- |
+| Path over 4,096 characters         | `Payload exceeds 4096 characters.`    |
+| Invalid base64url                  | `Payload is not base64url.`           |
+| Invalid zlib data or UTF-8         | `Payload is not zlib-deflated UTF-8.` |
+| Source over 64 KiB after inflating | `Source exceeds 65536 bytes.`         |
+| Invalid Mermaid                    | The `RenderError` message             |
+
+## Deploy
+
+```sh
+# Builds the compiler modules and deploys with Wrangler
+pnpm --dir worker deploy
+```

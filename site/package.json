@@ -1,0 +1,30 @@
+{
+  "name": "@melee/site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "NODE_OPTIONS=--import=tsx vite build",
+    "deploy": "pnpm build && wrangler deploy",
+    "dev": "NODE_OPTIONS=--import=tsx vite dev",
+    "generate": "node --import=tsx scripts/generate.ts"
+  },
+  "dependencies": {
+    "melee": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-server-dom-webpack": "catalog:",
+    "vocs": "catalog:",
+    "waku": "catalog:",
+    "zyzz": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

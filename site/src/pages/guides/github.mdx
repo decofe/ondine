@@ -1,0 +1,100 @@
+import { Card, Cards } from 'vocs'
+
+# GitHub Images
+
+Embed Melee diagrams in READMEs and other Markdown that cannot run scripts or load styles.
+
+## Overview
+
+GitHub draws ` ```mermaid ` fences with its own renderer. To show a Melee diagram, a README links an image from the image Worker, which compiles the diagram encoded in the URL on request.
+
+```mermaid
+sequenceDiagram
+  participant README
+  participant Worker as Image Worker
+  README->>Worker: GET /<payload>.svg
+  Worker-->>README: image/svg+xml
+```
+
+> [!NOTE]
+> The Worker deploys from `worker/` in the repository. Its public address is not published yet, so the examples below use `https://<worker>`.
+
+## Walkthrough
+
+The steps below encode a diagram and embed it with light and dark variants.
+
+### Encode the Source
+
+The payload is the source as UTF-8, compressed with zlib deflate, then encoded as base64url. This is the encoding Kroki uses.
+
+```ts title="encode.ts"
+import * as Zlib from 'node:zlib'
+
+// Produces the path segment for one diagram
+const payload = Zlib.deflateSync('flowchart LR\n  A --> B').toString('base64url')
+```
+
+### Embed the Image
+
+Without a `scheme` parameter, one image follows the viewer's color scheme through `prefers-color-scheme`.
+
+```md title="README.md"
+<!-- Follows the reader's color scheme -->
+
+![Request flow](https://<worker>/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+```
+
+### Pin Each Scheme
+
+GitHub draws images inside a page whose scheme may differ from the system's. A `<picture>` with pinned variants follows the scheme GitHub chose.
+
+```html title="README.md"
+<!-- Chooses the variant that matches GitHub's theme -->
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="https://<worker>/<payload>.svg?scheme=dark"
+  />
+  <img alt="Request flow" src="https://<worker>/<payload>.svg?scheme=light" />
+</picture>
+```
+
+## Recipes
+
+### Read Errors
+
+Invalid source returns status 400 with an SVG card that states the error, so a broken diagram explains itself in the README.
+
+### Stay Under Limits
+
+Paths over 4,096 characters and sources over 64 KiB after inflating are rejected. GitHub's image proxy rejects URLs over about 8 kB, so long diagrams may need splitting.
+
+### Deploy a Worker
+
+```sh
+# Builds the compiler and deploys worker/ with Wrangler
+pnpm --dir worker deploy
+```
+
+## More
+
+<Cards>
+  <Card
+    title="Image Worker"
+    icon="image"
+    to="/api/worker"
+    description="Request format, responses, headers, and limits."
+  />
+  <Card
+    title="Theming"
+    icon="palette"
+    to="/guides/theming"
+    description="See the properties each scheme sets."
+  />
+  <Card
+    title="CLI"
+    icon="terminal"
+    to="/guides/cli"
+    description="Commit rendered SVG files instead."
+  />
+</Cards>

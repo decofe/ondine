@@ -1,0 +1,147 @@
+import { Card, Cards, Tab, Tabs } from 'vocs'
+
+# Vite
+
+Import `.mmd` and `.mermaid` files as SVG compiled during the Vite build.
+
+## Overview
+
+The `melee` plugin from `melee/vite` compiles each imported Mermaid file when Vite transforms it. The module's default export is the rendered diagram, so the page bundle holds SVG markup and no compiler.
+
+```ts title="main.ts"
+import flow from './flow.mmd'
+
+// { height, svg, type, width }, computed at build time
+console.log(flow.type)
+```
+
+A syntax error fails the transform with the file, line, and column, so Vite reports it in the terminal and the error overlay.
+
+## Walkthrough
+
+The steps below add the plugin, write a diagram, and show it on a page.
+
+### Add the Plugin
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { melee } from 'melee/vite'
+
+export default defineConfig({
+  // Compiles .mmd and .mermaid imports to SVG
+  plugins: [melee()],
+})
+```
+
+### Write a Diagram
+
+Save Mermaid source in a `.mmd` or `.mermaid` file.
+
+```mermaid
+flowchart LR
+  request[Request] --> cache{Cached?}
+  cache -- yes --> hit[Return]
+  cache -- no --> origin[Fetch] --> hit
+```
+
+### Show the Diagram
+
+Mount the import into an element, or pass its `svg` to a framework.
+
+<Tabs>
+<Tab title="DOM">
+
+```ts title="main.ts"
+import { mount } from 'melee'
+import flow from './flow.mmd'
+
+// Replaces the element's contents with the SVG
+mount(document.getElementById('flow')!, flow)
+```
+
+</Tab>
+<Tab title="React">
+
+```tsx title="Flow.tsx"
+import flow from './flow.mmd'
+
+export function Flow() {
+  // Compiled output is inert SVG, so it is inserted as markup
+  return <div dangerouslySetInnerHTML={{ __html: flow.svg }} />
+}
+```
+
+</Tab>
+</Tabs>
+
+## Recipes
+
+### Type the Imports
+
+The package does not declare a module type for Mermaid files yet. Add a declaration file to the project.
+
+```ts title="src/mermaid.d.ts"
+// Types the default export of every Mermaid import
+declare module '*.mmd' {
+  const diagram: { height: number; svg: string; type: string; width: number }
+  export default diagram
+}
+
+declare module '*.mermaid' {
+  const diagram: { height: number; svg: string; type: string; width: number }
+  export default diagram
+}
+```
+
+### Fit a Column
+
+`maxWidth` tells the compiler how wide the diagram may be. A diagram that runs across and does not fit is drawn running down instead.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { melee } from 'melee/vite'
+
+export default defineConfig({
+  // Lays out every diagram for a 640-pixel column
+  plugins: [melee({ maxWidth: 640 })],
+})
+```
+
+The plugin accepts every [`render` option](/api/compiler/render#parameters) except `idPrefix`, which it derives from each file's path.
+
+### Pin the Schedule
+
+Gantt charts schedule relative tasks against the current time. Set `now` for reproducible builds.
+
+```ts title="vite.config.ts"
+import { defineConfig } from 'vite'
+import { melee } from 'melee/vite'
+
+export default defineConfig({
+  // Schedules every gantt chart against January 15, 2024
+  plugins: [melee({ now: Date.UTC(2024, 0, 15) })],
+})
+```
+
+## More
+
+<Cards>
+  <Card
+    title="Mounting"
+    icon="layout"
+    to="/guides/mounting"
+    description="Insert compiled diagrams into the page."
+  />
+  <Card
+    title="Theming"
+    icon="palette"
+    to="/guides/theming"
+    description="Set colors, fonts, and strokes with CSS custom properties."
+  />
+  <Card
+    title="melee/vite"
+    icon="file-code"
+    to="/api/vite/melee"
+    description="Reference for the plugin and its options."
+  />
+</Cards>

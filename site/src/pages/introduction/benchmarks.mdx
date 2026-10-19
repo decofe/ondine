@@ -1,0 +1,59 @@
+# Benchmarks
+
+Measured sizes of each entrypoint and compiler module, and flowchart render times.
+
+## Overview
+
+These numbers cover download size and flowchart render time only. Each table names its run. A cross-library suite over the full corpus, cold and warm, in Node and Chrome, is not published yet.
+
+> [!NOTE]
+> Speed comparisons beyond flowchart are pending. No claim here extends past the measurements shown.
+
+## Entrypoint Sizes
+
+`pnpm check:size` bundles each entrypoint for browsers with esbuild and compresses it with gzip level 9 and Brotli. Measured at `9fcd8c4` on an Apple M4 Max with Node 24.15.0 and Rust 1.97.0, with size modules built on `nightly-2026-06-29`.
+
+| Entrypoint                |       Raw |    Gzip |  Brotli | Budget (gzip) |
+| ------------------------- | --------: | ------: | ------: | ------------: |
+| `melee`                   |       244 |     210 |     164 |        20,000 |
+| `melee/compiler/wasm`     |     2,191 |   1,068 |     953 |        20,000 |
+| `melee/compiler/wasm/all` | 1,703,908 | 714,991 | 563,441 |          None |
+
+`melee/compiler/wasm/all` inlines the size-optimized module for every type as base64. Sizes are in bytes.
+
+## Module Sizes
+
+The same run measured each size-optimized diagram module as a separate `.wasm` file. Node, the CLI, and the Worker load the speed-optimized module with every type: 3,189,468 bytes raw and 1,098,975 gzip.
+
+| Module      |     Raw |    Gzip |
+| ----------- | ------: | ------: |
+| `flowchart` | 316,041 | 136,921 |
+| `class`     | 256,912 | 115,954 |
+| `state`     | 254,656 | 115,340 |
+| `sequence`  | 175,349 |  86,742 |
+| `gantt`     | 184,670 |  91,786 |
+| `info`      |  79,571 |  37,800 |
+
+Flowchart has a 145,000-byte gzip budget, enforced by `pnpm check:size`. Other types report their size without a budget.
+
+## Flowchart Render
+
+[`bench/size.md`](https://github.com/wevm/melee/blob/main/bench/size.md) records how the flowchart module reached its size, and its warm render time over 174 flowchart vectors in Node. It was measured at `fe875aa` on an Apple M4 Max with Node 24.15.0, where Pele took 11 to 12 ms.
+
+| Profile                           |    Gzip |     Warm render |
+| --------------------------------- | ------: | --------------: |
+| `opt-level = "z"`, `wasm-opt -Oz` | 136,897 | 11.7 to 12.1 ms |
+| `opt-level = "s"`, `wasm-opt -Os` | 177,930 |          8.3 ms |
+| `opt-level = 3`, `wasm-opt -O3`   | 253,521 |   7.2 to 7.4 ms |
+
+Browsers get the first profile and Node gets the last. Other builds shared the machine, so times varied by about 1 ms between runs.
+
+## Reproduce
+
+```sh
+# Builds every module, then reports entrypoint and module sizes
+pnpm build:wasm && pnpm check:size
+
+# Compares warm flowchart render time with Pele in Node
+pnpm bench
+```
