@@ -11,7 +11,41 @@ version.workspace = true
 [features]
 default = ["all"]
 # Every diagram type, for native builds and tests.
-all = ["agentflow", "architecture", "block", "c4", "class", "cynefin", "er", "eventmodeling", "flowchart", "gantt", "git", "info", "ishikawa", "journey", "kanban", "mindmap", "packet", "pie", "quadrant", "radar", "railroad", "requirement", "sankey", "sequence", "state", "swimlane", "timeline", "treemap", "treeview", "usecase", "venn", "wardley", "xychart"]
+all = [
+  "agentflow",
+  "architecture",
+  "block",
+  "c4",
+  "class",
+  "cynefin",
+  "er",
+  "eventmodeling",
+  "flowchart",
+  "gantt",
+  "git",
+  "info",
+  "ishikawa",
+  "journey",
+  "kanban",
+  "mindmap",
+  "packet",
+  "pie",
+  "quadrant",
+  "radar",
+  "railroad",
+  "requirement",
+  "sankey",
+  "sequence",
+  "state",
+  "swimlane",
+  "timeline",
+  "treemap",
+  "treeview",
+  "usecase",
+  "venn",
+  "wardley",
+  "xychart",
+]
 # Each diagram type compiles only into the modules that render it.
 agentflow = []
 architecture = []
