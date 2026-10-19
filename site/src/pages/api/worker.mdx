@@ -7,11 +7,11 @@ The Worker in `worker/` compiles the Mermaid source encoded in the request path 
 ```md title="README.md"
 <!-- Renders a two-node flowchart that follows the reader's scheme -->
 
-![Flow](https://<worker>/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+![Flow](https://melee.broken-thunder-fb8b.workers.dev/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
 ```
 
 > [!NOTE]
-> The Worker's public address is not published yet. Examples use `https://<worker>`.
+> The Worker's public address is not published yet. Examples use `https://melee.broken-thunder-fb8b.workers.dev`.
 
 ## Request
 
@@ -45,9 +45,9 @@ Pins one color scheme. Without it, the image switches with `prefers-color-scheme
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="https://<worker>/<payload>.svg?scheme=dark"
+    srcset="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=dark"
   />
-  <img alt="Flow" src="https://<worker>/<payload>.svg?scheme=light" />
+  <img alt="Flow" src="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=light" />
 </picture>
 ```
 

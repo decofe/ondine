@@ -6,13 +6,13 @@ The proof of concept on the `poc` branch wraps Merman. It ships a 20 MB playgrou
 
 ## Goals
 
-| Goal            | Target                                                                                                                                                   | Evidence                                                        |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Syntax parity   | Every Mermaid 12.1.0 type accepts and rejects the same input as Mermaid, and builds the same diagram model.                                              | Ported Mermaid specs, grammar oracles, and differential fuzzing |
-| Render coverage | Every vector renders valid, inert, deterministic SVG.                                                                                                    | Corpus render suite                                             |
-| Appearance      | Monochrome, monospace, square outlines, rounded orthogonal edges. Light and dark via CSS variables.                                                      | Reviewed screenshot sheets                                      |
-| Layout quality  | Equal to or better than Pele on every vector: fewer edge crossings, no node or label overlap, smaller area.                                              | Layout metrics ledger                                           |
-| Speed           | Faster than Pele on every vector, same machine. Pele reports 0.05 to 0.3 ms per diagram.                                                                 | `bench/` comparison                                             |
+| Goal            | Target                                                                                                                                       | Evidence                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Syntax parity   | Every Mermaid 12.1.0 type accepts and rejects the same input as Mermaid, and builds the same diagram model.                                  | Ported Mermaid specs, grammar oracles, and differential fuzzing |
+| Render coverage | Every vector renders valid, inert, deterministic SVG.                                                                                        | Corpus render suite                                             |
+| Appearance      | Monochrome, monospace, square outlines, rounded orthogonal edges. Light and dark via CSS variables.                                          | Reviewed screenshot sheets                                      |
+| Layout quality  | Equal to or better than Pele on every vector: fewer edge crossings, no node or label overlap, smaller area.                                  | Layout metrics ledger                                           |
+| Speed           | Faster than Pele on every vector, same machine. Pele reports 0.05 to 0.3 ms per diagram.                                                     | `bench/` comparison                                             |
 | Size            | The `melee` runtime under 20 kB gzip (210 B today). In-browser modules carry per-type gzip budgets. Pele is about 230 kB gzip for all types. | `pnpm check:size`                                               |
 
 Sub-microsecond rendering is not reachable: one cache miss costs about 100 ns. The speed goal is to beat Pele on every vector, with a median under 0.1 ms for corpus diagrams.

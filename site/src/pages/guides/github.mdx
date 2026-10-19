@@ -17,7 +17,7 @@ sequenceDiagram
 ```
 
 > [!NOTE]
-> The Worker deploys from `worker/` in the repository. Its public address is not published yet, so the examples below use `https://<worker>`.
+> The Worker deploys from `worker/` in the repository. Its public address is not published yet, so the examples below use `https://melee.broken-thunder-fb8b.workers.dev`.
 
 ## Walkthrough
 
@@ -41,7 +41,7 @@ Without a `scheme` parameter, one image follows the viewer's color scheme throug
 ```md title="README.md"
 <!-- Follows the reader's color scheme -->
 
-![Request flow](https://<worker>/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
+![Request flow](https://melee.broken-thunder-fb8b.workers.dev/eJxLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg)
 ```
 
 ### Pin Each Scheme
@@ -53,9 +53,12 @@ GitHub draws images inside a page whose scheme may differ from the system's. A `
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
-    srcset="https://<worker>/<payload>.svg?scheme=dark"
+    srcset="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=dark"
   />
-  <img alt="Request flow" src="https://<worker>/<payload>.svg?scheme=light" />
+  <img
+    alt="Request flow"
+    src="https://melee.broken-thunder-fb8b.workers.dev/<payload>.svg?scheme=light"
+  />
 </picture>
 ```
 
