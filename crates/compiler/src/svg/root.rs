@@ -59,12 +59,9 @@ pub(crate) struct Accessible<'a> {
 
 /// Moves the themed corner radius of each `<rect>` into its style. Browsers only lately take a
 /// variable in the `rx` attribute, and all of them take one in a style. It goes first there, so a
-/// radius the diagram's author set comes after it and wins.
-fn rounded(content: &str) -> Cow<'_, str> {
-    if !content.contains(ROUNDED) {
-        return Cow::Borrowed(content);
-    }
-
+/// radius the diagram's author set comes after it and wins. Also returns whether any moved.
+fn rounded(content: &str) -> (Cow<'_, str>, bool) {
+    let mut moved = false;
     let bytes = content.as_bytes();
     let mut out = String::with_capacity(content.len() + 64);
     let mut start = 0;
@@ -84,19 +81,20 @@ fn rounded(content: &str) -> Cow<'_, str> {
         let tag_end = after + close + 1;
         let tag = content.get(tag_start..tag_end).unwrap_or("");
         out.push_str(content.get(start..tag_start).unwrap_or(""));
-        push_rounded(&mut out, tag);
+        moved |= push_rounded(&mut out, tag);
         start = tag_end;
         at = tag_end;
     }
     out.push_str(content.get(start..).unwrap_or(""));
-    Cow::Owned(out)
+    (Cow::Owned(out), moved)
 }
 
-/// Appends one `<rect>` tag with its themed radius moved into its style.
-fn push_rounded(out: &mut String, tag: &str) {
+/// Appends one `<rect>` tag with its themed radius moved into its style, and returns whether it
+/// had one.
+fn push_rounded(out: &mut String, tag: &str) -> bool {
     let Some(at) = tag.find(ROUNDED) else {
         out.push_str(tag);
-        return;
+        return false;
     };
 
     let mut rest = String::with_capacity(tag.len());
@@ -106,7 +104,7 @@ fn push_rounded(out: &mut String, tag: &str) {
         out.push_str(rest.get(..style + 8).unwrap_or(""));
         out.push_str("rx:var(--_r);");
         out.push_str(rest.get(style + 8..).unwrap_or(""));
-        return;
+        return true;
     }
 
     let end = if rest.ends_with("/>") {
@@ -117,6 +115,7 @@ fn push_rounded(out: &mut String, tag: &str) {
     out.push_str(rest.get(..end).unwrap_or(""));
     out.push_str(" style=\"rx:var(--_r)\"");
     out.push_str(rest.get(end..).unwrap_or(""));
+    true
 }
 
 /// The weights of bold text, each set only in a diagram that has such text: the alias and the
@@ -158,17 +157,41 @@ pub(crate) fn svg_document(
         aria.push_str("-desc\"");
     }
 
-    let content = rounded(content);
+    // One scan finds the themed radius and every alias the content reads.
+    let mut radius = false;
+    let mut themed = false;
+    let mut used = [false; WEIGHTS.len()];
+    for (at, _) in content.match_indices("var(--") {
+        let rest = content.get(at + 6..).unwrap_or("");
+        let Some(name) = rest.strip_prefix('_') else {
+            themed |= content
+                .get(at.saturating_sub(ROUNDED.len() - RADIUS.len() - 1)..)
+                .is_some_and(|tail| tail.starts_with(ROUNDED));
+            continue;
+        };
+        radius |= name.starts_with("r)");
+        for (used, (alias, _)) in used.iter_mut().zip(WEIGHTS) {
+            *used |= name
+                .strip_prefix(alias.get(3..).unwrap_or(""))
+                .is_some_and(|tail| tail.starts_with(')'));
+        }
+    }
+
+    let content = if themed {
+        let (content, moved) = rounded(content);
+        radius |= moved;
+        content
+    } else {
+        Cow::Borrowed(content)
+    };
+
     let mut weights = String::new();
-    if content.contains("var(--_r)") {
+    if radius {
         weights.push_str(";--_r:");
         weights.push_str(RADIUS);
     }
-    for (alias, name) in WEIGHTS {
-        let mut use_ = String::from("var(");
-        use_.push_str(alias);
-        use_.push(')');
-        if content.contains(&use_) {
+    for ((alias, name), used) in WEIGHTS.into_iter().zip(used) {
+        if used {
             weights.push(';');
             weights.push_str(alias);
             weights.push_str(":var(--melee-");
