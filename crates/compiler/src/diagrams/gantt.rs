@@ -1,7 +1,7 @@
 //! Gantt charts: tasks on a time axis, with sections, dependencies, excluded days, and
 //! milestones. Port of Pele's `src/diagrams/gantt/index.ts`.
 //!
-//! Pele reads and writes dates in the host's local time zone. Melee works in UTC, so it matches
+//! Pele reads and writes dates in the host's local time zone. Ondine works in UTC, so it matches
 //! Pele running with `TZ=UTC`. Pele schedules against the current time when the host gives no
 //! `now`. The compiler reads no clock, so it schedules against the epoch instead.
 
@@ -574,7 +574,7 @@ mod tests {
             if differing <= 20 {
                 write!(
                     report,
-                    "\n{}\n  input: {:?}\n  pele:  {expected:?}\n  melee: {actual:?}",
+                    "\n{}\n  input: {:?}\n  pele:  {expected:?}\n  ondine: {actual:?}",
                     case.str("origin").unwrap_or("?"),
                     case.str("input").unwrap(),
                 )

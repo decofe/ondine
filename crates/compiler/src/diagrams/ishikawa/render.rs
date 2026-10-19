@@ -310,9 +310,9 @@ fn draw(model: &IshikawaDb, options: &RenderOptions, down: bool) -> Rendered {
             min_y = min_y.min(box_y - category.box_h / 2.0);
             max_y = max_y.max(box_y + category.box_h / 2.0);
 
-            groups.push_str("<g class=\"melee-ishikawa-category\" data-id=\"");
+            groups.push_str("<g class=\"ondine-ishikawa-category\" data-id=\"");
             groups.push_str(&esc_text(category.text));
-            groups.push_str("\"><path class=\"melee-ishikawa-bones\" d=\"");
+            groups.push_str("\"><path class=\"ondine-ishikawa-bones\" d=\"");
             groups.push_str(&d);
             groups.push_str("\" fill=\"none\" stroke=\"var(--_l)\"/>");
             groups.push_str(&marker(
@@ -338,11 +338,11 @@ fn draw(model: &IshikawaDb, options: &RenderOptions, down: bool) -> Rendered {
                 &category.label,
                 end_x,
                 box_y,
-                " class=\"melee-label\"",
+                " class=\"ondine-label\"",
                 None,
             ));
             if !texts.is_empty() {
-                groups.push_str("<g class=\"melee-ishikawa-causes\" font-size=\"");
+                groups.push_str("<g class=\"ondine-ishikawa-causes\" font-size=\"");
                 push_number(&mut groups, small);
                 groups.push_str("\">");
                 groups.push_str(&texts);
@@ -352,14 +352,14 @@ fn draw(model: &IshikawaDb, options: &RenderOptions, down: bool) -> Rendered {
         }
 
         let r = head_h / 2.0;
-        body.push_str("<path class=\"melee-ishikawa-spine\" d=\"M");
+        body.push_str("<path class=\"ondine-ishikawa-spine\" d=\"M");
         push_num(&mut body, tail);
         body.push_str(",0H");
         push_num(&mut body, -(ARROW - 1.0));
         body.push_str("\" fill=\"none\" stroke=\"var(--_l)\"/>");
         body.push_str(&marker("arrow_point", 0.0, 0.0, 1.0, 0.0, "var(--_l)"));
         body.push_str(&groups);
-        body.push_str("<g class=\"melee-ishikawa-head\" data-id=\"");
+        body.push_str("<g class=\"ondine-ishikawa-head\" data-id=\"");
         body.push_str(&esc_text(&root.text));
         body.push_str("\"><path d=\"M0,");
         push_num(&mut body, -r);
@@ -378,7 +378,7 @@ fn draw(model: &IshikawaDb, options: &RenderOptions, down: bool) -> Rendered {
             &head,
             12.0 + head.width / 2.0,
             0.0,
-            " class=\"melee-label\" font-weight=\"var(--_hw)\"",
+            " class=\"ondine-label\" font-weight=\"var(--_hw)\"",
             None,
         ));
         body.push_str("</g>");
@@ -393,7 +393,7 @@ fn draw(model: &IshikawaDb, options: &RenderOptions, down: bool) -> Rendered {
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !body.is_empty() {
@@ -509,11 +509,11 @@ fn vertical_causes(model: &IshikawaDb, options: &RenderOptions) -> Rendered {
         width = width.max(entry.x - pad + entry.w);
 
         let framed = entry.depth < 2;
-        nodes.push_str("<g class=\"melee-node ");
+        nodes.push_str("<g class=\"ondine-node ");
         nodes.push_str(match entry.depth {
-            0 => "melee-ishikawa-head",
-            1 => "melee-ishikawa-category",
-            _ => "melee-ishikawa-cause",
+            0 => "ondine-ishikawa-head",
+            1 => "ondine-ishikawa-category",
+            _ => "ondine-ishikawa-cause",
         });
         nodes.push_str("\" data-id=\"");
         nodes.push_str(&esc_text(text));
@@ -534,7 +534,7 @@ fn vertical_causes(model: &IshikawaDb, options: &RenderOptions) -> Rendered {
             });
             nodes.push_str(" fill=\"var(--_s)\" stroke=\"var(--_b)\"/>");
         }
-        let mut attrs = String::from(" class=\"melee-label\"");
+        let mut attrs = String::from(" class=\"ondine-label\"");
         if entry.depth < 2 {
             attrs.push_str(" font-weight=\"var(--_hw)\"");
         }
@@ -555,7 +555,7 @@ fn vertical_causes(model: &IshikawaDb, options: &RenderOptions) -> Rendered {
         let (x, top, h) = (entry.x, entry.y, entry.h);
         if let Some(parent) = entry.parent.and_then(|parent| order.get(parent)) {
             let gx = parent.x + indent / 2.0;
-            edges.push_str("<path class=\"melee-edge\" d=\"M");
+            edges.push_str("<path class=\"ondine-edge\" d=\"M");
             push_num(&mut edges, gx);
             edges.push(',');
             push_num(&mut edges, parent.y + parent.h);
@@ -573,7 +573,7 @@ fn vertical_causes(model: &IshikawaDb, options: &RenderOptions) -> Rendered {
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&edges);

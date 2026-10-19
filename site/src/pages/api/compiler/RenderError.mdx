@@ -2,10 +2,10 @@
 
 The error thrown when Mermaid source cannot be rendered.
 
-`RenderError` is exported from `melee/compiler` and `melee/compiler/wasm`. Its message matches Mermaid's diagnostic for the same input, and its fields locate the problem in the source.
+`RenderError` is exported from `ondine/compiler` and `ondine/compiler/wasm`. Its message matches Mermaid's diagnostic for the same input, and its fields locate the problem in the source.
 
 ```ts title="build.ts"
-import { render, RenderError } from 'melee/compiler'
+import { render, RenderError } from 'ondine/compiler'
 
 try {
   render('flowchart LR\n  A -->')
@@ -40,7 +40,7 @@ The kind of failure.
 | `unsupported-diagram` | No diagram type is detected, or the type is not ported yet.                        |
 
 ```ts
-import { render, RenderError } from 'melee/compiler'
+import { render, RenderError } from 'ondine/compiler'
 
 try {
   render('flowchart LR\n  A --> B', { limit: 5 })

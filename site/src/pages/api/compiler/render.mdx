@@ -2,10 +2,10 @@
 
 Render Mermaid source to an SVG document in Node.
 
-`render` from `melee/compiler` compiles with the speed-optimized module for every diagram type. The module loads on the first call, and later calls reuse its instance. The [Node Compiler](/guides/node) guide covers common tasks.
+`render` from `ondine/compiler` compiles with the speed-optimized module for every diagram type. The module loads on the first call, and later calls reuse its instance. The [Node Compiler](/guides/node) guide covers common tasks.
 
 ```ts title="build.ts"
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Compiles synchronously and returns the SVG with its metadata
 const { svg } = render('flowchart LR\n  A --> B')
@@ -32,7 +32,7 @@ render(source, options?)
 Mermaid source, including optional front matter and `%%{init}%%` directives. The diagram type is detected from its first keyword.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Detects a sequence diagram
 render('sequenceDiagram\n  Alice->>Bob: Hi')
@@ -46,7 +46,7 @@ render('sequenceDiagram\n  Alice->>Bob: Hi')
 Lets a diagram that runs across be drawn running down when it does not fit `maxWidth`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Keeps left-to-right even when the chain is wider than 400 pixels
 render('flowchart LR\n  A --> B --> C --> D --> E', { autoDirection: false, maxWidth: 400 })
@@ -60,7 +60,7 @@ render('flowchart LR\n  A --> B --> C --> D --> E', { autoDirection: false, maxW
 The width under which `autoDirection` turns a diagram.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Turns diagrams only in columns narrower than 480 pixels
 render('flowchart LR\n  A --> B', { directionBreakpoint: 480, maxWidth: 400 })
@@ -74,7 +74,7 @@ render('flowchart LR\n  A --> B', { directionBreakpoint: 480, maxWidth: 400 })
 Font size in pixels. Labels are measured at 0.6 of this size per character, so shapes grow with it.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Draws labels at 20 pixels
 render('flowchart LR\n  A --> B', { fontSize: 20 })
@@ -83,12 +83,12 @@ render('flowchart LR\n  A --> B', { fontSize: 20 })
 ### options.idPrefix
 
 - **Type:** `string{:ts}`
-- **Default:** `'melee'{:ts}`
+- **Default:** `'ondine'{:ts}`
 
 Prefix for the IDs of the accessible title and description that `accTitle` and `accDescr` produce. Give each diagram on a page its own prefix.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Emits <title id="intro-title">
 render('flowchart LR\n  accTitle: Request flow\n  A --> B', { idPrefix: 'intro' })
@@ -102,7 +102,7 @@ render('flowchart LR\n  accTitle: Request flow\n  A --> B', { idPrefix: 'intro' 
 The most characters of source to accept. Longer source throws a `RenderError` with code `limit`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Rejects source over 10,000 characters
 render('flowchart LR\n  A --> B', { limit: 10_000 })
@@ -116,7 +116,7 @@ render('flowchart LR\n  A --> B', { limit: 10_000 })
 The most edges a flowchart may have. More throws a `RenderError` with code `limit`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Rejects flowcharts with more than 500 edges
 render('flowchart LR\n  A --> B', { maxEdges: 500 })
@@ -129,7 +129,7 @@ render('flowchart LR\n  A --> B', { maxEdges: 500 })
 The width available to the diagram, in pixels. Without it, the diagram takes the width its layout needs.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Lays out for a 640-pixel column
 render('flowchart LR\n  A --> B', { maxWidth: 640 })
@@ -143,7 +143,7 @@ render('flowchart LR\n  A --> B', { maxWidth: 640 })
 The time gantt charts schedule against, in milliseconds since the epoch. The compiler reads no clock, so a fixed value makes output reproducible.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Schedules against January 15, 2024
 render('gantt\n  section A\n  Task :3d', { now: Date.UTC(2024, 0, 15) })
@@ -157,7 +157,7 @@ render('gantt\n  section A\n  Task :3d', { now: Date.UTC(2024, 0, 15) })
 The most characters of SVG to produce. Larger output throws a `RenderError` with code `limit`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Rejects SVG over 1,000,000 characters
 render('flowchart LR\n  A --> B', { outputLimit: 1_000_000 })
@@ -171,7 +171,7 @@ render('flowchart LR\n  A --> B', { outputLimit: 1_000_000 })
 Padding around the diagram, in pixels.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Draws the diagram flush with its edges
 render('flowchart LR\n  A --> B', { padding: 0 })
@@ -185,7 +185,7 @@ render('flowchart LR\n  A --> B', { padding: 0 })
 Whether the SVG scales to its container. Responsive output sets `max-width: 100%` and `height: auto` on the root element.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Keeps the SVG at its intrinsic width and height
 render('flowchart LR\n  A --> B', { responsive: false })
@@ -200,7 +200,7 @@ render('flowchart LR\n  A --> B', { responsive: false })
 Height in pixels, matching the `height` attribute of the root `<svg>`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Reserves space before the diagram loads
 const { height, width } = render('flowchart LR\n  A --> B')
@@ -213,7 +213,7 @@ const { height, width } = render('flowchart LR\n  A --> B')
 Links from `click` directives, in drawing order. `id` names the element, and `internal` marks links within the page.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // [{ href: 'https://example.com/', id: 'A', internal: false }]
 const { links } = render('flowchart LR\n  A --> B\n  click A "https://example.com"')
@@ -223,12 +223,12 @@ const { links } = render('flowchart LR\n  A --> B\n  click A "https://example.co
 
 - **Type:** `string{:ts}`
 
-The SVG document. Its root carries the classes `melee` and `melee-<type>` and reads its theme from `--melee-*` custom properties.
+The SVG document. Its root carries the classes `ondine` and `ondine-<type>` and reads its theme from `--ondine-*` custom properties.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
-// '<svg xmlns="http://www.w3.org/2000/svg" class="melee melee-flowchart" …'
+// '<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart" …'
 const { svg } = render('flowchart LR\n  A --> B')
 ```
 
@@ -239,7 +239,7 @@ const { svg } = render('flowchart LR\n  A --> B')
 The detected diagram type, such as `flowchart`, `sequence`, or `gitGraph`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // 'pie'
 const { type } = render('pie\n  "A" : 1')
@@ -252,7 +252,7 @@ const { type } = render('pie\n  "A" : 1')
 Width in pixels, matching the `width` attribute of the root `<svg>`.
 
 ```ts
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // 160
 const { width } = render('flowchart LR\n  A --> B')
@@ -265,7 +265,7 @@ const { width } = render('flowchart LR\n  A --> B')
 Thrown when the source cannot be rendered, with a `code` of `limit`, `semantic`, `syntax`, or `unsupported-diagram`. See [`RenderError`](/api/compiler/RenderError).
 
 ```ts
-import { render, RenderError } from 'melee/compiler'
+import { render, RenderError } from 'ondine/compiler'
 
 try {
   render('not a diagram')

@@ -12,6 +12,6 @@ Page.start({
   async prepare() {},
   render(source) {
     id++
-    return mermaid.render(`melee-bench-${id}`, source)
+    return mermaid.render(`ondine-bench-${id}`, source)
   },
 })

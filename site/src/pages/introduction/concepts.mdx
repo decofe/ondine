@@ -2,11 +2,11 @@ import { Card, Cards } from 'vocs'
 
 # Concepts & Principles
 
-The model behind Melee: where diagrams compile, how they are measured, and what the output guarantees.
+The model behind Ondine: where diagrams compile, how they are measured, and what the output guarantees.
 
 ## Overview
 
-Melee splits into a compiler and a runtime. The compiler is Rust built to WebAssembly, and turns Mermaid source into an SVG document. The runtime inserts that document into a page.
+Ondine splits into a compiler and a runtime. The compiler is Rust built to WebAssembly, and turns Mermaid source into an SVG document. The runtime inserts that document into a page.
 
 ```mermaid
 flowchart TB
@@ -19,18 +19,18 @@ flowchart TB
 
 ## Compile Targets
 
-The compiler ships as WebAssembly in two profiles. Node, the CLI, and the image Worker load one module optimized for speed. Browsers load a module optimized for size from `melee/compiler/wasm/all`.
+The compiler ships as WebAssembly in two profiles. Node, the CLI, and the image Worker load one module optimized for speed. Browsers load a module optimized for size from `ondine/compiler/wasm/all`.
 
-| Entrypoint            | Runs in           | Module                    |
-| --------------------- | ----------------- | ------------------------- |
-| `melee/compiler`      | Node              | Every type, speed profile |
-| `melee/vite`          | Vite builds       | Every type, speed profile |
-| `melee/remark`        | Markdown builds   | Every type, speed profile |
-| `melee` CLI           | Node              | Every type, speed profile |
-| `melee/compiler/wasm` | Browsers, Workers | Supplied by the caller    |
-| `melee`               | Browsers          | None                      |
+| Entrypoint             | Runs in           | Module                    |
+| ---------------------- | ----------------- | ------------------------- |
+| `ondine/compiler`      | Node              | Every type, speed profile |
+| `ondine/vite`          | Vite builds       | Every type, speed profile |
+| `ondine/remark`        | Markdown builds   | Every type, speed profile |
+| `ondine` CLI           | Node              | Every type, speed profile |
+| `ondine/compiler/wasm` | Browsers, Workers | Supplied by the caller    |
+| `ondine`               | Browsers          | None                      |
 
-Browsers that compile only some types load one size-optimized module per type from `melee/compiler/wasm/<type>`. Each module also ships as a raw `.wasm` file for hosts that compile WebAssembly ahead of time.
+Browsers that compile only some types load one size-optimized module per type from `ondine/compiler/wasm/<type>`. Each module also ships as a raw `.wasm` file for hosts that compile WebAssembly ahead of time.
 
 ## Text Measurement
 
@@ -40,7 +40,7 @@ Measurement needs no canvas, font tables, or DOM. A diagram compiled in Node is 
 
 ## Theme Variables
 
-The SVG reads its colors, font, corner radius, and stroke width from `--melee-*` custom properties, with monochrome defaults. Setting `--melee-bg` and `--melee-fg` themes a whole diagram. [Theming](/guides/theming) lists every property.
+The SVG reads its colors, font, corner radius, and stroke width from `--ondine-*` custom properties, with monochrome defaults. Setting `--ondine-bg` and `--ondine-fg` themes a whole diagram. [Theming](/guides/theming) lists every property.
 
 ```mermaid
 pie title Series shades
@@ -56,7 +56,7 @@ Chart series default to shades between the foreground and background, so charts 
 
 Output follows Mermaid's strict security level. Every authored string is escaped, and the SVG holds no scripts, event handlers, or external references.
 
-Inserting compiled SVG with `innerHTML` is therefore safe, which is all [`mount`](/api/melee/mount) does.
+Inserting compiled SVG with `innerHTML` is therefore safe, which is all [`mount`](/api/ondine/mount) does.
 
 ## More
 

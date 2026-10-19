@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /**
  * @module Checks the record of divergences from Mermaid 12.1.0: each entry's examples still
- * disagree with Mermaid, the entry alone explains the disagreement, and Pele decides them as Melee
+ * disagree with Mermaid, the entry alone explains the disagreement, and Pele decides them as Ondine
  * does when the entry says Pele shares it.
  */
 import { parse as peleParse } from 'pele'
@@ -11,10 +11,10 @@ import * as Oracle from './Oracle.js'
 
 const oracle = Oracle.create()
 
-/** The module name of the diagram type Melee or Mermaid detects in `parsed`. */
+/** The module name of the diagram type Ondine or Mermaid detects in `parsed`. */
 function typeOf(parsed: Oracle.Parsed): Corpus.Type {
   const found = Object.entries(Corpus.types).find(
-    (entry) => entry[1] === parsed.melee.type || entry[1] === parsed.mermaid.type,
+    (entry) => entry[1] === parsed.ondine.type || entry[1] === parsed.mermaid.type,
   )
   if (found === undefined) throw new Error('No diagram type detected')
   return found[0] as Corpus.Type
@@ -48,7 +48,7 @@ describe('divergences', () => {
     if (divergence.pele)
       test(`${divergence.id} is shared with Pele`, () => {
         for (const example of divergence.examples)
-          expect(pele(example), example).toBe(oracle.melee(example).ok)
+          expect(pele(example), example).toBe(oracle.ondine(example).ok)
       })
   }
 })

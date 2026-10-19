@@ -682,7 +682,7 @@ mod tests {
                 .unwrap();
             write!(
                 report,
-                "\n{origin}\n  input: {:?}\n  pele:  {:?}\n  melee: {:?}",
+                "\n{origin}\n  input: {:?}\n  pele:  {:?}\n  ondine: {:?}",
                 case.str("input").unwrap(),
                 expected(case),
                 actual(case)

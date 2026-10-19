@@ -1,5 +1,5 @@
 /**
- * @module Packs `melee` as it publishes, installs the tarball into a copy of
+ * @module Packs `ondine` as it publishes, installs the tarball into a copy of
  * `test/fixtures/consumer`, and type checks, builds, and runs that project.
  */
 import * as ChildProcess from 'node:child_process'
@@ -15,7 +15,7 @@ describe('pack', () => {
   let tarball: string
 
   beforeAll(() => {
-    dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-packed-'))
+    dir = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-packed-'))
     consumer = Path.join(dir, 'consumer')
 
     // Packs as `changeset:publish` does: `publish:prepare` builds and strips development fields,
@@ -33,7 +33,7 @@ describe('pack', () => {
     tarball = Path.join(dir, name)
 
     Fs.cpSync(Path.join(root, 'test/fixtures/consumer'), consumer, { recursive: true })
-    Fs.copyFileSync(tarball, Path.join(consumer, 'melee.tgz'))
+    Fs.copyFileSync(tarball, Path.join(consumer, 'ondine.tgz'))
 
     // The fixture's `catalog:` dependencies resolve to the versions installed here, which the
     // store already holds.
@@ -156,7 +156,7 @@ describe('pack', () => {
     const result = JSON.parse(run(['node', 'render.ts'], { cwd: consumer }))
 
     expect(result.compiler.slice(0, 120)).toMatchInlineSnapshot(
-      `"<svg xmlns="http://www.w3.org/2000/svg" class="melee melee-flowchart" viewBox="0 0 160 64" width="160" height="64" style"`,
+      `"<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart" viewBox="0 0 160 64" width="160" height="64" style"`,
     )
     expect(result.base64 === result.compiler).toMatchInlineSnapshot(`true`)
     expect(result.raw === result.compiler).toMatchInlineSnapshot(`true`)
@@ -171,81 +171,81 @@ describe('pack', () => {
   test('loads every compiler module', () => {
     expect(JSON.parse(run(['node', 'modules.ts'], { cwd: consumer }))).toMatchInlineSnapshot(`
       {
-        "melee/compiler/wasm/agentflow": true,
-        "melee/compiler/wasm/agentflow.wasm": true,
-        "melee/compiler/wasm/all": true,
-        "melee/compiler/wasm/all.fast.wasm": true,
-        "melee/compiler/wasm/all.wasm": true,
-        "melee/compiler/wasm/architecture": true,
-        "melee/compiler/wasm/architecture.wasm": true,
-        "melee/compiler/wasm/block": true,
-        "melee/compiler/wasm/block.wasm": true,
-        "melee/compiler/wasm/c4": true,
-        "melee/compiler/wasm/c4.wasm": true,
-        "melee/compiler/wasm/class": true,
-        "melee/compiler/wasm/class.wasm": true,
-        "melee/compiler/wasm/cynefin": true,
-        "melee/compiler/wasm/cynefin.wasm": true,
-        "melee/compiler/wasm/er": true,
-        "melee/compiler/wasm/er.wasm": true,
-        "melee/compiler/wasm/eventmodeling": true,
-        "melee/compiler/wasm/eventmodeling.wasm": true,
-        "melee/compiler/wasm/flowchart": true,
-        "melee/compiler/wasm/flowchart.wasm": true,
-        "melee/compiler/wasm/gantt": true,
-        "melee/compiler/wasm/gantt.wasm": true,
-        "melee/compiler/wasm/git": true,
-        "melee/compiler/wasm/git.wasm": true,
-        "melee/compiler/wasm/info": true,
-        "melee/compiler/wasm/info.wasm": true,
-        "melee/compiler/wasm/ishikawa": true,
-        "melee/compiler/wasm/ishikawa.wasm": true,
-        "melee/compiler/wasm/journey": true,
-        "melee/compiler/wasm/journey.wasm": true,
-        "melee/compiler/wasm/kanban": true,
-        "melee/compiler/wasm/kanban.wasm": true,
-        "melee/compiler/wasm/mindmap": true,
-        "melee/compiler/wasm/mindmap.wasm": true,
-        "melee/compiler/wasm/packet": true,
-        "melee/compiler/wasm/packet.wasm": true,
-        "melee/compiler/wasm/pie": true,
-        "melee/compiler/wasm/pie.wasm": true,
-        "melee/compiler/wasm/quadrant": true,
-        "melee/compiler/wasm/quadrant.wasm": true,
-        "melee/compiler/wasm/radar": true,
-        "melee/compiler/wasm/radar.wasm": true,
-        "melee/compiler/wasm/railroad": true,
-        "melee/compiler/wasm/railroad.wasm": true,
-        "melee/compiler/wasm/requirement": true,
-        "melee/compiler/wasm/requirement.wasm": true,
-        "melee/compiler/wasm/sankey": true,
-        "melee/compiler/wasm/sankey.wasm": true,
-        "melee/compiler/wasm/sequence": true,
-        "melee/compiler/wasm/sequence.wasm": true,
-        "melee/compiler/wasm/state": true,
-        "melee/compiler/wasm/state.wasm": true,
-        "melee/compiler/wasm/swimlane": true,
-        "melee/compiler/wasm/swimlane.wasm": true,
-        "melee/compiler/wasm/timeline": true,
-        "melee/compiler/wasm/timeline.wasm": true,
-        "melee/compiler/wasm/treemap": true,
-        "melee/compiler/wasm/treemap.wasm": true,
-        "melee/compiler/wasm/treeview": true,
-        "melee/compiler/wasm/treeview.wasm": true,
-        "melee/compiler/wasm/usecase": true,
-        "melee/compiler/wasm/usecase.wasm": true,
-        "melee/compiler/wasm/venn": true,
-        "melee/compiler/wasm/venn.wasm": true,
-        "melee/compiler/wasm/wardley": true,
-        "melee/compiler/wasm/wardley.wasm": true,
-        "melee/compiler/wasm/xychart": true,
-        "melee/compiler/wasm/xychart.wasm": true,
+        "ondine/compiler/wasm/agentflow": true,
+        "ondine/compiler/wasm/agentflow.wasm": true,
+        "ondine/compiler/wasm/all": true,
+        "ondine/compiler/wasm/all.fast.wasm": true,
+        "ondine/compiler/wasm/all.wasm": true,
+        "ondine/compiler/wasm/architecture": true,
+        "ondine/compiler/wasm/architecture.wasm": true,
+        "ondine/compiler/wasm/block": true,
+        "ondine/compiler/wasm/block.wasm": true,
+        "ondine/compiler/wasm/c4": true,
+        "ondine/compiler/wasm/c4.wasm": true,
+        "ondine/compiler/wasm/class": true,
+        "ondine/compiler/wasm/class.wasm": true,
+        "ondine/compiler/wasm/cynefin": true,
+        "ondine/compiler/wasm/cynefin.wasm": true,
+        "ondine/compiler/wasm/er": true,
+        "ondine/compiler/wasm/er.wasm": true,
+        "ondine/compiler/wasm/eventmodeling": true,
+        "ondine/compiler/wasm/eventmodeling.wasm": true,
+        "ondine/compiler/wasm/flowchart": true,
+        "ondine/compiler/wasm/flowchart.wasm": true,
+        "ondine/compiler/wasm/gantt": true,
+        "ondine/compiler/wasm/gantt.wasm": true,
+        "ondine/compiler/wasm/git": true,
+        "ondine/compiler/wasm/git.wasm": true,
+        "ondine/compiler/wasm/info": true,
+        "ondine/compiler/wasm/info.wasm": true,
+        "ondine/compiler/wasm/ishikawa": true,
+        "ondine/compiler/wasm/ishikawa.wasm": true,
+        "ondine/compiler/wasm/journey": true,
+        "ondine/compiler/wasm/journey.wasm": true,
+        "ondine/compiler/wasm/kanban": true,
+        "ondine/compiler/wasm/kanban.wasm": true,
+        "ondine/compiler/wasm/mindmap": true,
+        "ondine/compiler/wasm/mindmap.wasm": true,
+        "ondine/compiler/wasm/packet": true,
+        "ondine/compiler/wasm/packet.wasm": true,
+        "ondine/compiler/wasm/pie": true,
+        "ondine/compiler/wasm/pie.wasm": true,
+        "ondine/compiler/wasm/quadrant": true,
+        "ondine/compiler/wasm/quadrant.wasm": true,
+        "ondine/compiler/wasm/radar": true,
+        "ondine/compiler/wasm/radar.wasm": true,
+        "ondine/compiler/wasm/railroad": true,
+        "ondine/compiler/wasm/railroad.wasm": true,
+        "ondine/compiler/wasm/requirement": true,
+        "ondine/compiler/wasm/requirement.wasm": true,
+        "ondine/compiler/wasm/sankey": true,
+        "ondine/compiler/wasm/sankey.wasm": true,
+        "ondine/compiler/wasm/sequence": true,
+        "ondine/compiler/wasm/sequence.wasm": true,
+        "ondine/compiler/wasm/state": true,
+        "ondine/compiler/wasm/state.wasm": true,
+        "ondine/compiler/wasm/swimlane": true,
+        "ondine/compiler/wasm/swimlane.wasm": true,
+        "ondine/compiler/wasm/timeline": true,
+        "ondine/compiler/wasm/timeline.wasm": true,
+        "ondine/compiler/wasm/treemap": true,
+        "ondine/compiler/wasm/treemap.wasm": true,
+        "ondine/compiler/wasm/treeview": true,
+        "ondine/compiler/wasm/treeview.wasm": true,
+        "ondine/compiler/wasm/usecase": true,
+        "ondine/compiler/wasm/usecase.wasm": true,
+        "ondine/compiler/wasm/venn": true,
+        "ondine/compiler/wasm/venn.wasm": true,
+        "ondine/compiler/wasm/wardley": true,
+        "ondine/compiler/wasm/wardley.wasm": true,
+        "ondine/compiler/wasm/xychart": true,
+        "ondine/compiler/wasm/xychart.wasm": true,
       }
     `)
   })
 
   test('renders from the command line', () => {
-    const svg = run(['pnpm', 'exec', 'melee'], { cwd: consumer, input: 'flowchart LR\n  A --> B' })
+    const svg = run(['pnpm', 'exec', 'ondine'], { cwd: consumer, input: 'flowchart LR\n  A --> B' })
     const result = JSON.parse(run(['node', 'render.ts'], { cwd: consumer }))
 
     expect(svg === result.compiler).toMatchInlineSnapshot(`true`)

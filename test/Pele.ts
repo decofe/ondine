@@ -1,15 +1,15 @@
 /**
- * Renders vectors with Pele as Melee's reference. Pele measures text with Melee's monospace rule,
- * and its output is rewritten to Melee's class names and theme, so the two SVG documents can be
+ * Renders vectors with Pele as Ondine's reference. Pele measures text with Ondine's monospace rule,
+ * and its output is rewritten to Ondine's class names and theme, so the two SVG documents can be
  * compared byte for byte.
  * @module
  */
 import * as Pele from 'pele'
 
-// Pele formats gantt dates in local time. Melee works in UTC, so Pele runs in UTC to match.
+// Pele formats gantt dates in local time. Ondine works in UTC, so Pele runs in UTC to match.
 process.env.TZ = 'UTC'
 
-/** Melee's monospace widths, in thousandths of an em: 600 per glyph, 1,200 wide, 0 zero-width. */
+/** Ondine's monospace widths, in thousandths of an em: 600 per glyph, 1,200 wide, 0 zero-width. */
 const measurer: Pele.TextMeasurer = {
   width(text, size) {
     let units = 0
@@ -22,7 +22,7 @@ const measurer: Pele.TextMeasurer = {
   },
 }
 
-/** Pele's result for `source`, rewritten to Melee's names, or its error message. */
+/** Pele's result for `source`, rewritten to Ondine's names, or its error message. */
 export function render(source: string, options: Pele.RenderOptions = {}): render.ReturnType {
   try {
     const result = Pele.render(source, { ...options, measurer })
@@ -45,15 +45,15 @@ export function content(svg: string): string {
 
 function normalize(svg: string): string {
   return svg
-    .replace(/class="pele /g, 'class="melee ')
-    .replace(/class="pele"/g, 'class="melee"')
-    .replace(/\bpele-(?=[a-z])/g, 'melee-')
-    .replace(/var\(--melee-radius,4px\)/g, 'var(--melee-radius,0)')
-    .replace(/var\(--melee-critical,#[0-9a-f]+\)/g, 'var(--melee-critical,var(--_fg))')
-    .replace(/var\(--melee-series-(\d),#[0-9a-f]+\)/g, (_, n: string) => {
-      // Melee's series default to shades between the foreground and background.
+    .replace(/class="pele /g, 'class="ondine ')
+    .replace(/class="pele"/g, 'class="ondine"')
+    .replace(/\bpele-(?=[a-z])/g, 'ondine-')
+    .replace(/var\(--ondine-radius,4px\)/g, 'var(--ondine-radius,0)')
+    .replace(/var\(--ondine-critical,#[0-9a-f]+\)/g, 'var(--ondine-critical,var(--_fg))')
+    .replace(/var\(--ondine-series-(\d),#[0-9a-f]+\)/g, (_, n: string) => {
+      // Ondine's series default to shades between the foreground and background.
       const shades = ['100', '57', '86', '50', '79', '64', '93', '71']
-      return `var(--melee-series-${n},color-mix(in srgb,var(--_fg) ${shades[Number(n) - 1]}%,var(--_bg)))`
+      return `var(--ondine-series-${n},color-mix(in srgb,var(--_fg) ${shades[Number(n) - 1]}%,var(--_bg)))`
     })
 }
 

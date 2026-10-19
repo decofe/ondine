@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * @module Compares Melee's parsers with Mermaid 12.1.0's grammars directly, on the corpus sources
+ * @module Compares Ondine's parsers with Mermaid 12.1.0's grammars directly, on the corpus sources
  * and mutations that need no preprocessing: the vendored jison grammars, which fill Mermaid's own
  * databases, and the Langium grammars of `@mermaid-js/parser`. On the corpus, each vendored jison
  * grammar must also decide as the parser bundled in `mermaid` does. `FUZZ` sets the number of
@@ -17,13 +17,13 @@ const timeout = 600_000
 
 const oracle = Oracle.create()
 
-/** The sources of `sources` that Melee detects as `type` and that need no preprocessing. */
+/** The sources of `sources` that Ondine detects as `type` and that need no preprocessing. */
 function plain(type: Corpus.Type, sources: readonly string[]): readonly string[] {
   return sources.filter(
     (source) =>
       source.isWellFormed() &&
       Grammar.plain(source) &&
-      oracle.melee(source).type === Corpus.types[type],
+      oracle.ondine(source).type === Corpus.types[type],
   )
 }
 
@@ -45,15 +45,15 @@ describe('parse', () => {
 
           for (const [index, source] of sources.entries()) {
             const parsed = {
-              melee: oracle.melee(source),
+              ondine: oracle.ondine(source),
               mermaid: await Grammar.parse(type, source),
               source,
             }
 
             // A Langium grammar builds a syntax tree only, without a database to compare, and
-            // Mermaid's database then rejects some trees, as Melee does.
+            // Mermaid's database then rejects some trees, as Ondine does.
             if (grammar.kind === 'langium') {
-              if (parsed.mermaid.ok && !parsed.melee.ok) continue
+              if (parsed.mermaid.ok && !parsed.ondine.ok) continue
               const outcome = Oracle.decide(type, parsed)
               if (outcome.kind === 'differ')
                 failures.push({ differences: outcome.differences, source })

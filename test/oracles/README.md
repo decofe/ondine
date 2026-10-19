@@ -1,6 +1,6 @@
 # Oracles
 
-Melee's parsers are compared with Mermaid 12.1.0 itself on every diagram type. Each source must get the same accept or reject decision and the same detected type, and for 31 types the same model. A disagreement passes only when [`Divergences.ts`](Divergences.ts) records why.
+Ondine's parsers are compared with Mermaid 12.1.0 itself on every diagram type. Each source must get the same accept or reject decision and the same detected type, and for 31 types the same model. A disagreement passes only when [`Divergences.ts`](Divergences.ts) records why.
 
 ## Overview
 
@@ -11,16 +11,16 @@ The suites run with `pnpm test`, which builds the test-only `all,model` WebAssem
 FUZZ=5000 SEED=11 pnpm exec vp test test/oracles --run
 ```
 
-- **End to end:** [`Oracle.test.ts`](Oracle.test.ts) runs each source through Mermaid's own pipeline (preprocessing, detection, parsers, and databases) and through Melee's `model` export.
+- **End to end:** [`Oracle.test.ts`](Oracle.test.ts) runs each source through Mermaid's own pipeline (preprocessing, detection, parsers, and databases) and through Ondine's `model` export.
 - **Grammars:** [`Grammar.test.ts`](Grammar.test.ts) feeds sources that need no preprocessing straight to Mermaid's grammars, and checks that each vendored jison grammar decides as the parser bundled in `mermaid` does.
-- **Record:** [`Divergences.test.ts`](Divergences.test.ts) checks that every recorded divergence still holds, that it alone explains its examples, and that Pele decides them as Melee does when the record says so.
+- **Record:** [`Divergences.test.ts`](Divergences.test.ts) checks that every recorded divergence still holds, that it alone explains its examples, and that Pele decides them as Ondine does when the record says so.
 
 ## Modules
 
 - **`Mermaid.ts`:** parses with the `mermaid` package and keeps the database it filled. DOMPurify, which Mermaid's databases call on every label, needs a DOM, so the suites run in the jsdom environment. Nothing is drawn.
 - **`Grammar.ts`:** compiles the vendored grammars with `jison` and fills Mermaid's own databases with them, and parses Langium types with `@mermaid-js/parser`.
 - **`Model.ts`:** loads `model.generated.wasm`, which `scripts/build-wasm.ts` builds from the `wasm` crate's `model` feature. It is gitignored and never published.
-- **`Models.ts`:** projects Melee's model JSON and Mermaid's database getters onto one shape per type, following Pele's `tests/compat/<type>/adapter.ts`.
+- **`Models.ts`:** projects Ondine's model JSON and Mermaid's database getters onto one shape per type, following Pele's `tests/compat/<type>/adapter.ts`.
 - **`Corpus.ts`:** loads every input of `crates/compiler/tests/fixtures/<type>-parse.json` (the literals of Pele's ports of Mermaid's specs), Mermaid's documentation examples, the playground samples, and the layout cases. It mutates them with Pele's seeded mutator.
 - **`Oracle.ts`:** compares one source and applies the record.
 
@@ -54,7 +54,7 @@ Architecture, cynefin, eventmodeling, git, info, packet, pie, radar, railroad, t
 
 ## Counts
 
-Counts from one run of the suites with the defaults (100 mutations per type, seed 7) on October 19, 2026. A source counts for a type when Melee or Mermaid detects that type in it, so mutations that break the header are left out.
+Counts from one run of the suites with the defaults (100 mutations per type, seed 7) on October 19, 2026. A source counts for a type when Ondine or Mermaid detects that type in it, so mutations that break the header are left out.
 
 - **Corpus:** corpus sources compared end to end.
 - **Mutations:** mutated sources compared end to end, of 100.
@@ -99,13 +99,13 @@ Counts from one run of the suites with the defaults (100 mutations per type, see
 | xychart       |        279 |        73 |       216 |        1 |        328 |
 | **all**       | **10,742** | **2,318** | **8,402** |  **218** | **10,994** |
 
-Beyond the defaults, sweeps of 3000 mutations per type (seeds 101 and 202) compared 140,363 sources end to end. Sweeps of 1000 and 5000 per type (seeds 303 and 404) compared Melee's SVG with Pele's for 191,505 sources.
+Beyond the defaults, sweeps of 3000 mutations per type (seeds 101 and 202) compared 140,363 sources end to end. Sweeps of 1000 and 5000 per type (seeds 303 and 404) compared Ondine's SVG with Pele's for 191,505 sources.
 
 ## Findings
 
-No disagreement so far is Melee's alone. The sweeps found no source that Melee and Mermaid decide differently while Pele decides as Mermaid does, and every model difference is one Pele shares. No Rust parser needed a fix.
+No disagreement so far is Ondine's alone. The sweeps found no source that Ondine and Mermaid decide differently while Pele decides as Mermaid does, and every model difference is one Pele shares. No Rust parser needed a fix.
 
-Comparing Melee's SVG with Pele's on the mutated sources found one difference, in rendering rather than parsing. Pele wraps eventmodeling text inside a surrogate pair, writing half of an emoji on each line. Melee's UTF-8 output keeps the pair whole.
+Comparing Ondine's SVG with Pele's on the mutated sources found one difference, in rendering rather than parsing. Pele wraps eventmodeling text inside a surrogate pair, writing half of an emoji on each line. Ondine's UTF-8 output keeps the pair whole.
 
 Building the oracle surfaced Mermaid behaviors that a comparison must account for:
 
@@ -119,11 +119,11 @@ Building the oracle surfaced Mermaid behaviors that a comparison must account fo
 
 ## Divergences
 
-Every entry in [`Divergences.ts`](Divergences.ts) is shared with Pele, and [`Divergences.test.ts`](Divergences.test.ts) checks that Pele decides each example as Melee does. None was changed, since Melee keeps Pele's parsed models.
+Every entry in [`Divergences.ts`](Divergences.ts) is shared with Pele, and [`Divergences.test.ts`](Divergences.test.ts) checks that Pele decides each example as Ondine does. None was changed, since Ondine keeps Pele's parsed models.
 
 ### Mermaid Defects
 
-Mermaid behaves in these cases in ways its own renderer or documentation does not support, and Pele and Melee do not reproduce them.
+Mermaid behaves in these cases in ways its own renderer or documentation does not support, and Pele and Ondine do not reproduce them.
 
 | Entry                       | Types  | Mermaid's behavior                                                                       |
 | --------------------------- | ------ | ---------------------------------------------------------------------------------------- |
@@ -138,14 +138,14 @@ Mermaid behaves in these cases in ways its own renderer or documentation does no
 
 ### Where Pele Differs
 
-These are choices and gaps of Pele's parsers, which Melee keeps for parity.
+These are choices and gaps of Pele's parsers, which Ondine keeps for parity.
 
 | Entry                   | Types                          | Difference                                                                      |
 | ----------------------- | ------------------------------ | ------------------------------------------------------------------------------- |
 | `yaml-reader`           | every                          | Pele's YAML subset accepts or reads differently what js-yaml handles.           |
 | `yaml-unicode-space`    | every                          | Pele's YAML reader trims Unicode spaces that js-yaml keeps.                     |
 | `detect-comments`       | every                          | A malformed directive or a bare `%%` hides the diagram type.                    |
-| `theme-colors`          | every                          | Theme colors are not validated, since Melee ignores Mermaid's theme.            |
+| `theme-colors`          | every                          | Theme colors are not validated, since Ondine ignores Mermaid's theme.           |
 | `limits`                | every                          | Work limits, such as applied style declarations, report a limit error.          |
 | `init-config-section`   | every                          | An `init` directive's `config` object is not moved into the type's section.     |
 | `sanitized-text`        | every                          | Text is stored as written and escaped when drawn, not passed through DOMPurify. |

@@ -1,15 +1,15 @@
 import { Card, Cards } from 'vocs'
 
-# Melee
+# Ondine
 
 Monochrome Mermaid diagrams, compiled with Rust.
 
-Melee compiles Mermaid source to monochrome, monospace SVG ahead of time. Pages ship the SVG and a 210-byte runtime, and every diagram on this site was rendered by Melee when the site was built.
+Ondine compiles Mermaid source to monochrome, monospace SVG ahead of time. Pages ship the SVG and a 210-byte runtime, and every diagram on this site was rendered by Ondine when the site was built.
 
 ```mermaid
 flowchart LR
-  mmd[Mermaid source] --> melee[Melee compiler]
-  melee --> svg[Monochrome SVG]
+  mmd[Mermaid source] --> ondine[Ondine compiler]
+  ondine --> svg[Monochrome SVG]
   svg --> page[Page, README, or image]
 ```
 
@@ -18,12 +18,12 @@ flowchart LR
     title="Getting Started"
     icon="rocket"
     to="/introduction/getting-started"
-    description="Install Melee and compile a first diagram."
+    description="Install Ondine and compile a first diagram."
   />
   <Card
-    title="Why Melee"
+    title="Why Ondine"
     icon="lightbulb"
-    to="/introduction/why-melee"
+    to="/introduction/why-ondine"
     description="What compiling diagrams ahead of time changes."
   />
   <Card

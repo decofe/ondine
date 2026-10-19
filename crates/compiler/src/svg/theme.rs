@@ -1,7 +1,7 @@
 //! Theme variables, author styles, and class names. Port of Pele's `src/svg/theme.ts`.
 //!
-//! Melee's deliberate difference: public `--melee-*` variables replace Pele's `--pele-*` ones,
-//! with monochrome defaults, square corners, a monospace font, and a `--melee-stroke` width.
+//! Ondine's deliberate difference: public `--ondine-*` variables replace Pele's `--pele-*` ones,
+//! with monochrome defaults, square corners, a monospace font, and a `--ondine-stroke` width.
 
 use std::borrow::Cow;
 
@@ -10,25 +10,25 @@ use crate::text::label::trim;
 use crate::util::chars::is_space;
 use crate::yaml::push_number;
 
-/// Private aliases set once on the root element, so each use is short and the public `--melee-*`
+/// Private aliases set once on the root element, so each use is short and the public `--ondine-*`
 /// variables keep their defaults. Node fills default to the background, and lines, borders,
-/// and muted text to the foreground, so setting `--melee-bg` and `--melee-fg` themes a diagram.
+/// and muted text to the foreground, so setting `--ondine-bg` and `--ondine-fg` themes a diagram.
 /// The alternate surface is a light tint of the foreground, as diagrams draw grids, graticules,
 /// excluded ranges, and finished work in it, which would vanish into the background. The text color is set as
 /// well: an icon is drawn in `currentColor`, which would otherwise be whatever color the page
 /// gives the diagram's container. Shapes and edges inherit the stroke width, which defaults to the
 /// 2 pixels that the diagrams' fixed-width outlines already use.
-pub(crate) const ROOT_STYLE: &str = "--_bg:var(--melee-bg,#fff);--_fg:var(--melee-fg,#000);\
---_m:var(--melee-muted,var(--_fg));--_l:var(--melee-line,var(--_fg));--_s:var(--melee-surface,var(--_bg));\
---_a:var(--melee-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--melee-border,var(--_fg));--_c:var(--melee-accent,var(--_fg));\
---_sw:var(--melee-stroke,2px);stroke-width:var(--_sw);color:var(--_fg)";
+pub(crate) const ROOT_STYLE: &str = "--_bg:var(--ondine-bg,#fff);--_fg:var(--ondine-fg,#000);\
+--_m:var(--ondine-muted,var(--_fg));--_l:var(--ondine-line,var(--_fg));--_s:var(--ondine-surface,var(--_bg));\
+--_a:var(--ondine-surface-alt,color-mix(in srgb,var(--_fg) 20%,var(--_bg)));--_b:var(--ondine-border,var(--_fg));--_c:var(--ondine-accent,var(--_fg));\
+--_sw:var(--ondine-stroke,2px);stroke-width:var(--_sw);color:var(--_fg)";
 
 /// The monospace font, as set on the root.
 pub(crate) const FONT_MONO: &str = "var(--_fm)";
 /// Expands to the corner radius of rectangles, for constants built from it.
 macro_rules! radius {
     () => {
-        "var(--melee-radius,0)"
+        "var(--ondine-radius,0)"
     };
 }
 
@@ -39,25 +39,25 @@ pub(crate) const RADIUS: &str = radius!();
 pub(crate) const ROUNDED: &str = concat!(" rx=\"", radius!(), "\"");
 /// The color of what a diagram marks as critical. It is not one of the series colors, as a theme
 /// may put those in any order.
-pub(crate) const CRITICAL: &str = "var(--melee-critical,var(--_fg))";
+pub(crate) const CRITICAL: &str = "var(--ondine-critical,var(--_fg))";
 /// The stroke width of shapes and edges, as set on the root.
 pub(crate) const STROKE: &str = "var(--_sw)";
 
-/// The font stack labels are drawn in when the page sets no `--melee-font`.
+/// The font stack labels are drawn in when the page sets no `--ondine-font`.
 const FONT: &str = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', monospace";
 
-/// The root's font declarations at `size` pixels. Melee measures every font as monospace, so the
-/// font comes only from `--melee-font`, for both Pele's normal and monospace stacks. The rest of
+/// The root's font declarations at `size` pixels. Ondine measures every font as monospace, so the
+/// font comes only from `--ondine-font`, for both Pele's normal and monospace stacks. The rest of
 /// what text inherits is pinned, as none of it was measured. Kerning and ligatures are off and
 /// glyphs are placed at their exact size, so every character keeps the uniform advance that
 /// layout assumed.
 pub(crate) fn font_style(size: f64) -> String {
     let mut out = String::with_capacity(256);
-    out.push_str(";--_fm:var(--melee-font,");
+    out.push_str(";--_fm:var(--ondine-font,");
     out.push_str(FONT);
     out.push_str(");font:");
     push_number(&mut out, size);
-    out.push_str("px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--melee-font,");
+    out.push_str("px monospace;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;font-family:var(--ondine-font,");
     out.push_str(FONT);
     out.push_str(
         ");font-kerning:none;font-variant-ligatures:none;text-rendering:geometricPrecision",
@@ -371,7 +371,7 @@ const SERIES_SHADES: [&str; 8] = ["100", "57", "86", "50", "79", "64", "93", "71
 /// shade between the foreground and background, so charts stay monochrome and follow the scheme.
 pub(crate) fn series_color(index: i64) -> String {
     let k = index.rem_euclid(8);
-    let mut out = String::from("var(--melee-series-");
+    let mut out = String::from("var(--ondine-series-");
     out.push(char::from(b'1' + u8::try_from(k).unwrap_or(0)));
     out.push_str(",color-mix(in srgb,var(--_fg) ");
     out.push_str(
@@ -387,7 +387,7 @@ pub(crate) fn series_color(index: i64) -> String {
 #[cfg(test)]
 mod tests {
     //! Expectations come from Pele's `resolveStyle`, `classNames`, and `seriesColor`, with
-    //! `--pele-*` series colors replaced by Melee's monochrome ones.
+    //! `--pele-*` series colors replaced by Ondine's monochrome ones.
 
     use super::{class_names, resolve_style, series_color};
 
@@ -597,31 +597,31 @@ mod tests {
         for &(index, expected) in &[
             (
                 -9,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
+                "var(--ondine-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 -1,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
+                "var(--ondine-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 0,
-                "var(--melee-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
+                "var(--ondine-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
             ),
             (
                 1,
-                "var(--melee-series-2,color-mix(in srgb,var(--_fg) 57%,var(--_bg)))",
+                "var(--ondine-series-2,color-mix(in srgb,var(--_fg) 57%,var(--_bg)))",
             ),
             (
                 7,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
+                "var(--ondine-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
             (
                 8,
-                "var(--melee-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
+                "var(--ondine-series-1,color-mix(in srgb,var(--_fg) 100%,var(--_bg)))",
             ),
             (
                 15,
-                "var(--melee-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
+                "var(--ondine-series-8,color-mix(in srgb,var(--_fg) 71%,var(--_bg)))",
             ),
         ] {
             assert_eq!(series_color(index), expected);

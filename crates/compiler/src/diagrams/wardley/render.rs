@@ -282,7 +282,7 @@ fn draw(
         };
         previous = end;
         if index > 0 {
-            frame.push_str("<path class=\"melee-wardley-stage\" d=\"M");
+            frame.push_str("<path class=\"ondine-wardley-stage\" d=\"M");
             push_num(&mut frame, start * plot_w);
             frame.push_str(",0V");
             push_num(&mut frame, plot_h);
@@ -299,7 +299,7 @@ fn draw(
             f64::midpoint(start, end) * plot_w,
             plot_h + 8.0 + label.height / 2.0,
             &sized(
-                " class=\"melee-wardley-stage-label\"",
+                " class=\"ondine-wardley-stage-label\"",
                 small,
                 " fill=\"var(--_m)\"",
             ),
@@ -309,7 +309,7 @@ fn draw(
     if show_grid {
         for i in 1..4 {
             let i = f64::from(i);
-            frame.push_str("<path class=\"melee-wardley-grid\" d=\"M");
+            frame.push_str("<path class=\"ondine-wardley-grid\" d=\"M");
             push_num(&mut frame, (plot_w * i) / 4.0);
             frame.push_str(",0V");
             push_num(&mut frame, plot_h);
@@ -320,7 +320,7 @@ fn draw(
             frame.push_str("\" stroke=\"var(--_b)\" stroke-dasharray=\"2 6\"/>");
         }
     }
-    frame.push_str("<path class=\"melee-wardley-axis\" d=\"M0,0V");
+    frame.push_str("<path class=\"ondine-wardley-axis\" d=\"M0,0V");
     push_num(&mut frame, plot_h);
     frame.push('H');
     push_num(&mut frame, plot_w);
@@ -330,7 +330,7 @@ fn draw(
     let x_title = text("Evolution", small, wrap, 0);
     let y_title = text("Visibility", small, wrap, 0);
     let axis_attrs = sized(
-        " class=\"melee-wardley-axis-label\"",
+        " class=\"ondine-wardley-axis-label\"",
         small,
         " font-weight=\"var(--_hw)\"",
     );
@@ -385,7 +385,7 @@ fn draw(
             right + PIPELINE_PAD,
             top + 4.0 * R,
         );
-        pipelines.push_str("<g class=\"melee-wardley-pipeline\" data-id=\"");
+        pipelines.push_str("<g class=\"ondine-wardley-pipeline\" data-id=\"");
         pipelines.push_str(&esc_text(&pipeline.node_id));
         pipelines.push_str("\"><rect x=\"");
         push_num(&mut pipelines, left - PIPELINE_PAD);
@@ -502,15 +502,15 @@ fn draw(
                 f64::midpoint(fx, tx) + px * away,
                 f64::midpoint(fy, ty) + py * away,
                 &sized(
-                    " class=\"melee-edge-label\"",
+                    " class=\"ondine-edge-label\"",
                     tiny + 1.0,
                     " fill=\"var(--_m)\"",
                 ),
             );
         }
-        links.push_str("<g class=\"melee-edge");
+        links.push_str("<g class=\"ondine-edge");
         if link.dashed {
-            links.push_str(" melee-wardley-dashed");
+            links.push_str(" ondine-wardley-dashed");
         }
         links.push_str("\" data-id=\"");
         links.push_str(&esc_text(&link.source));
@@ -576,7 +576,7 @@ fn draw(
             arrow.push_str(&marker("arrow_point", ex, ey, ux, uy, ACCENT));
         }
         bounds.grow(tx - R, ty - R, tx + R, ty + R);
-        trends.push_str("<g class=\"melee-wardley-trend\" data-id=\"");
+        trends.push_str("<g class=\"ondine-wardley-trend\" data-id=\"");
         trends.push_str(&esc_text(&trend.node_id));
         trends.push_str("\">");
         trends.push_str(&arrow);
@@ -609,7 +609,7 @@ fn draw(
                 "build" => "var(--_s)",
                 _ => "var(--_bg)",
             };
-            shape.push_str("<circle class=\"melee-wardley-");
+            shape.push_str("<circle class=\"ondine-wardley-");
             shape.push_str(strategy);
             shape.push_str("\" cx=\"");
             push_num(&mut shape, x);
@@ -672,7 +672,7 @@ fn draw(
                 R
             }) + 10.0
                 + if strategy.is_some() { R + 4.0 } else { 0.0 };
-            shape.push_str("<rect class=\"melee-wardley-inertia\" x=\"");
+            shape.push_str("<rect class=\"ondine-wardley-inertia\" x=\"");
             push_num(&mut shape, x + offset);
             shape.push_str("\" y=\"");
             push_num(&mut shape, y - R);
@@ -696,14 +696,14 @@ fn draw(
                 x + ox.unwrap_or(0.0),
                 y + oy.unwrap_or(-3.0),
                 &sized(
-                    " class=\"melee-label\"",
+                    " class=\"ondine-label\"",
                     small,
                     " font-weight=\"var(--_hw)\"",
                 ),
             )
         } else {
             let label = text(&node.label, small, wrap, 0);
-            let attrs = sized(" class=\"melee-label\"", small, "");
+            let attrs = sized(" class=\"ondine-label\"", small, "");
             let lift = LABEL_OFFSET + if strategy.is_some() { 10.0 } else { 0.0 };
             if ox.is_some() || oy.is_some() {
                 bounds.starting(
@@ -741,7 +741,7 @@ fn draw(
             }
         };
         bounds.grow(x - 2.0 * R, y - 2.0 * R, x + 2.0 * R + 20.0, y + 2.0 * R);
-        drawn_nodes.push_str("<g class=\"melee-node melee-wardley-");
+        drawn_nodes.push_str("<g class=\"ondine-node ondine-wardley-");
         drawn_nodes.push_str(if anchor {
             "anchor"
         } else if node.is_pipeline_parent {
@@ -787,7 +787,7 @@ fn draw(
                 None,
             ));
         }
-        annotations.push_str("<g class=\"melee-wardley-annotation\" data-id=\"");
+        annotations.push_str("<g class=\"ondine-wardley-annotation\" data-id=\"");
         annotations.push_str(&esc_text(&number));
         annotations.push_str("\">");
         annotations.push_str(&marks);
@@ -851,7 +851,7 @@ fn draw(
             ));
             y += line.height;
         }
-        annotations.push_str("<g class=\"melee-wardley-annotations\"><rect x=\"");
+        annotations.push_str("<g class=\"ondine-wardley-annotations\"><rect x=\"");
         push_num(&mut annotations, bx);
         annotations.push_str("\" y=\"");
         push_num(&mut annotations, by);
@@ -868,7 +868,7 @@ fn draw(
 
     let mut notes = String::new();
     let note_attrs = sized(
-        " class=\"melee-wardley-note\"",
+        " class=\"ondine-wardley-note\"",
         small,
         " font-weight=\"var(--_hw)\"",
     );
@@ -892,7 +892,7 @@ fn draw(
             (x, x + FORCE_WIDTH, x + FORCE_HEAD)
         };
         bounds.grow(x, y - half - 8.0, x + FORCE_WIDTH, y + half + 8.0);
-        forces.push_str("<g class=\"melee-wardley-");
+        forces.push_str("<g class=\"ondine-wardley-");
         forces.push_str(if forward {
             "accelerator"
         } else {
@@ -957,26 +957,26 @@ fn draw(
         &title,
         tx + plot_w / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");
     push_num(&mut content, tx);
     content.push(',');
     push_num(&mut content, ty);
-    content.push_str(")\"><g class=\"melee-wardley-frame\" fill=\"none\">");
+    content.push_str(")\"><g class=\"ondine-wardley-frame\" fill=\"none\">");
     content.push_str(&frame);
     content.push_str("</g>");
     content.push_str(&stage_labels);
     content.push_str(&axis_labels);
     content.push_str(&pipelines);
     if !links.is_empty() {
-        content.push_str("<g class=\"melee-edges\" fill=\"none\">");
+        content.push_str("<g class=\"ondine-edges\" fill=\"none\">");
         content.push_str(&links);
         content.push_str("</g>");
     }
     if !trends.is_empty() {
-        content.push_str("<g class=\"melee-wardley-trends\" fill=\"none\">");
+        content.push_str("<g class=\"ondine-wardley-trends\" fill=\"none\">");
         content.push_str(&trends);
         content.push_str("</g>");
     }

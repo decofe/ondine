@@ -40,7 +40,7 @@ pub(crate) fn with_title(
         &label,
         full / 2.0,
         pad + label.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     out.push_str("<g transform=\"translate(");
@@ -85,7 +85,7 @@ mod tests {
                 50.5,
                 160.0,
                 87.0,
-                "<text class=\"melee-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"80\" y=\"25.6\">A diagram title</tspan></text><g transform=\"translate(30,36)\"><g id=\"c\"/></g>",
+                "<text class=\"ondine-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"80\" y=\"25.6\">A diagram title</tspan></text><g transform=\"translate(30,36)\"><g id=\"c\"/></g>",
             ),
             (
                 Some("Wide title that is much wider than the content"),
@@ -95,7 +95,7 @@ mod tests {
                 20.0,
                 521.0,
                 59.0,
-                "<text class=\"melee-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"260.5\" y=\"31.8\">Wide title that is much wider than the content</tspan></text><g transform=\"translate(240.5,39)\"><g id=\"c\"/></g>",
+                "<text class=\"ondine-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"260.5\" y=\"31.8\">Wide title that is much wider than the content</tspan></text><g transform=\"translate(240.5,39)\"><g id=\"c\"/></g>",
             ),
             (
                 Some("x &amp; y"),
@@ -105,7 +105,7 @@ mod tests {
                 10.0,
                 64.0,
                 46.0,
-                "<text class=\"melee-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"32\" y=\"25.6\">x &amp; y</tspan></text><g transform=\"translate(15.35,36)\"><g id=\"c\"/></g>",
+                "<text class=\"ondine-title\" font-weight=\"var(--_tw)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"32\" y=\"25.6\">x &amp; y</tspan></text><g transform=\"translate(15.35,36)\"><g id=\"c\"/></g>",
             ),
         ] {
             let titled = with_title(title, size, pad, width, height, "<g id=\"c\"/>".to_owned());

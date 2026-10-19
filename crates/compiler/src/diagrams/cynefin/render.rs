@@ -152,7 +152,7 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
         Some(Value::Bool(false))
     );
     let amplitude = setting(config, "boundaryAmplitude", 8.0, 0.0, 50.0);
-    // Pele seeds from its default prefix. Melee keeps that seed, so the default boundaries match.
+    // Pele seeds from its default prefix. Ondine keeps that seed, so the default boundaries match.
     let seed = resolve_seed(
         setting(config, "seed", 0.0, -1e15, 1e15),
         options.id_prefix.as_deref().unwrap_or("pele"),
@@ -361,7 +361,7 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
 
     let mut fills = String::new();
     for (name, _, _, color) in QUADRANTS {
-        fills.push_str("<path class=\"melee-cynefin-region\" data-id=\"");
+        fills.push_str("<path class=\"ondine-cynefin-region\" data-id=\"");
         fills.push_str(name);
         fills.push_str("\" d=\"");
         fills.push_str(&region(name));
@@ -370,14 +370,14 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
         fills.push_str("\" fill-opacity=\"0.14\"/>");
     }
     let mut boundaries = String::from(
-        "<g class=\"melee-cynefin-boundaries\" fill=\"none\" stroke=\"var(--_b)\" stroke-dasharray=\"6 3\">",
+        "<g class=\"ondine-cynefin-boundaries\" fill=\"none\" stroke=\"var(--_b)\" stroke-dasharray=\"6 3\">",
     );
     for curve in [&fold, &west, &east] {
         boundaries.push_str("<path d=\"");
         boundaries.push_str(&curve_path(curve));
         boundaries.push_str("\"/>");
     }
-    boundaries.push_str("<path class=\"melee-cynefin-cliff\" d=\"");
+    boundaries.push_str("<path class=\"ondine-cynefin-cliff\" d=\"");
     boundaries.push_str(&curve_path(&drop));
     boundaries.push_str(
         "\" stroke=\"var(--_l)\" stroke-width=\"2\" stroke-dasharray=\"none\" stroke-linecap=\"round\"/></g>",
@@ -386,7 +386,7 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
     let mut ellipse = String::from("<path d=\"");
     ellipse.push_str(&oval);
     ellipse.push_str(
-        "\" fill=\"var(--_bg)\"/><path class=\"melee-cynefin-region\" data-id=\"confusion\" d=\"",
+        "\" fill=\"var(--_bg)\"/><path class=\"ondine-cynefin-region\" data-id=\"confusion\" d=\"",
     );
     ellipse.push_str(&oval);
     ellipse.push_str("\" fill=\"");
@@ -399,11 +399,11 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
             &b.title,
             b.cx,
             y + b.title.height / 2.0,
-            " class=\"melee-label\" font-weight=\"var(--_hw)\"",
+            " class=\"ondine-label\" font-weight=\"var(--_hw)\"",
             None,
         );
         y += b.title.height;
-        let mut attrs = String::from(" class=\"melee-cynefin-subtitle\" font-size=\"");
+        let mut attrs = String::from(" class=\"ondine-cynefin-subtitle\" font-size=\"");
         push_number(&mut attrs, small);
         attrs.push_str("\" font-style=\"italic\" fill=\"var(--_m)\"");
         for s in &b.subtitles {
@@ -413,9 +413,9 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
         y += HEAD_GAP - ITEM_GAP;
         for item in &b.badges {
             y += ITEM_GAP;
-            out.push_str("<g class=\"melee-node");
+            out.push_str("<g class=\"ondine-node");
             if item.overflow {
-                out.push_str(" melee-cynefin-overflow\"");
+                out.push_str(" ondine-cynefin-overflow\"");
             } else {
                 out.push_str("\" data-id=\"");
                 out.push_str(&esc_text(&item.text));
@@ -436,7 +436,7 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
                 out.push_str(" stroke-dasharray=\"3 2\"");
             }
             out.push_str("/>");
-            let mut attrs = String::from(" class=\"melee-label\" font-size=\"");
+            let mut attrs = String::from(" class=\"ondine-label\" font-size=\"");
             push_number(&mut attrs, item_size);
             attrs.push('"');
             if item.overflow {
@@ -452,7 +452,7 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
             out.push_str("</g>");
             y += item.h;
         }
-        let mut group = String::from("<g class=\"melee-cynefin-domain\" data-id=\"");
+        let mut group = String::from("<g class=\"ondine-cynefin-domain\" data-id=\"");
         group.push_str(b.name);
         group.push_str("\">");
         group.push_str(&out);
@@ -596,12 +596,12 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
             let tx = (lx + nx * away)
                 .max(x0 + half)
                 .min((right - half).max(x0 + half));
-            let mut attrs = String::from(" class=\"melee-edge-label\" font-size=\"");
+            let mut attrs = String::from(" class=\"ondine-edge-label\" font-size=\"");
             push_number(&mut attrs, small);
             attrs.push('"');
             text = label_svg(&label, tx, ly + ny * away, &attrs, None);
         }
-        edges.push_str("<g class=\"melee-edge\" data-id=\"");
+        edges.push_str("<g class=\"ondine-edge\" data-id=\"");
         edges.push_str(transition.from);
         edges.push('-');
         edges.push_str(transition.to);
@@ -623,17 +623,17 @@ pub(crate) fn render(model: &CynefinModel, config: &Value, options: &RenderOptio
         &title,
         x0 + width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
-    content.push_str("<g class=\"melee-cynefin-regions\">");
+    content.push_str("<g class=\"ondine-cynefin-regions\">");
     content.push_str(&fills);
     content.push_str("</g>");
     content.push_str(&boundaries);
     content.push_str(&ellipse);
     content.push_str(&domains);
     if !edges.is_empty() {
-        content.push_str("<g class=\"melee-edges\">");
+        content.push_str("<g class=\"ondine-edges\">");
         content.push_str(&edges);
         content.push_str("</g>");
     }

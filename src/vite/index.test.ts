@@ -3,13 +3,13 @@ import * as Fs from 'node:fs'
 import * as Os from 'node:os'
 import * as Path from 'node:path'
 import { build } from 'vite'
-import { melee } from 'melee/vite'
+import { ondine } from 'ondine/vite'
 
-describe('melee', () => {
+describe('ondine', () => {
   let root: string
 
   beforeEach(() => {
-    root = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'melee-vite-'))
+    root = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'ondine-vite-'))
   })
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe('melee', () => {
         write: false,
       },
       logLevel: 'silent',
-      plugins: [melee()],
+      plugins: [ondine()],
       root,
     })
     const code = (Array.isArray(output) ? output : [output])
@@ -38,7 +38,7 @@ describe('melee', () => {
       .map((chunk) => ('code' in chunk ? chunk.code : ''))
       .join('')
 
-    expect(code).toContain('class=\\"melee melee-flowchart\\"')
+    expect(code).toContain('class=\\"ondine ondine-flowchart\\"')
     expect(code).toMatch(/"?type"?: ?"flowchart"/)
     expect(code).not.toContain('WebAssembly')
   })
@@ -54,7 +54,7 @@ describe('melee', () => {
       build({
         build: { lib: { entry: Path.join(root, 'main.js'), formats: ['es'] }, write: false },
         logLevel: 'silent',
-        plugins: [melee()],
+        plugins: [ondine()],
         root,
       }),
     ).rejects.toThrow(/Parse error on line 4/)

@@ -38,7 +38,7 @@ pub(crate) fn er_marker(r#type: &str, x: f64, y: f64, dx: f64, dy: f64) -> Strin
         at(out, 0.0, FOOT);
     };
     let ring = |out: &mut String, back: f64| {
-        out.push_str("<circle class=\"melee-marker\" cx=\"");
+        out.push_str("<circle class=\"ondine-marker\" cx=\"");
         push_num(out, x - dx * back);
         out.push_str("\" cy=\"");
         push_num(out, y - dy * back);
@@ -48,31 +48,31 @@ pub(crate) fn er_marker(r#type: &str, x: f64, y: f64, dx: f64, dy: f64) -> Strin
     let mut out = String::new();
     match r#type {
         "only_one" => {
-            out.push_str("<path class=\"melee-marker\" d=\"");
+            out.push_str("<path class=\"ondine-marker\" d=\"");
             bar(&mut out, 6.0);
             bar(&mut out, 10.0);
             out.push_str("\"/>");
         }
         "zero_or_one" => {
-            out.push_str("<path class=\"melee-marker\" d=\"");
+            out.push_str("<path class=\"ondine-marker\" d=\"");
             bar(&mut out, 6.0);
             out.push_str("\"/>");
             ring(&mut out, 13.5);
         }
         "one_or_more" => {
-            out.push_str("<path class=\"melee-marker\" d=\"");
+            out.push_str("<path class=\"ondine-marker\" d=\"");
             foot(&mut out);
             bar(&mut out, FOOT_LENGTH + 3.5);
             out.push_str("\"/>");
         }
         "zero_or_more" => {
-            out.push_str("<path class=\"melee-marker\" d=\"");
+            out.push_str("<path class=\"ondine-marker\" d=\"");
             foot(&mut out);
             out.push_str("\"/>");
             ring(&mut out, FOOT_LENGTH + RING + 0.5);
         }
         "md_parent" => {
-            out.push_str("<path class=\"melee-marker\" d=\"M");
+            out.push_str("<path class=\"ondine-marker\" d=\"M");
             at(&mut out, 0.0, 0.0);
             out.push('L');
             at(&mut out, 6.0, 4.0);

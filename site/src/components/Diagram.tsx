@@ -1,4 +1,4 @@
-/** Shows Mermaid source above the SVG Melee rendered from it at build time. @module */
+/** Shows Mermaid source above the SVG Ondine rendered from it at build time. @module */
 import { Children, type ReactNode } from 'react'
 import { style } from '../zyzz.config.js'
 
@@ -16,7 +16,7 @@ export function Diagram(props: Diagram.Props) {
 export declare namespace Diagram {
   /** Diagram props, as the `remarkVocsMermaid` plugin passes them. */
   type Props = {
-    /** The highlighted Mermaid source, then the diagram `melee/remark` rendered from it. */
+    /** The highlighted Mermaid source, then the diagram `ondine/remark` rendered from it. */
     readonly children?: ReactNode | undefined
   }
 }
@@ -31,8 +31,8 @@ namespace styles {
 
   export const canvas = style({
     // Node fills match the code block surface, so diagrams sit on the same panel in both schemes.
-    '--melee-bg': 'var(--vocs-background-color-code-block) !custom',
-    '--melee-fg': 'light-dark(#000000, #ffffff) !custom',
+    '--ondine-bg': 'var(--vocs-background-color-code-block) !custom',
+    '--ondine-fg': 'light-dark(#000000, #ffffff) !custom',
     '& svg': { display: 'block', height: 'auto !custom', maxWidth: '100% !custom' },
     backgroundColor: 'surface',
     borderColor: 'line',

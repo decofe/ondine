@@ -1,19 +1,19 @@
 import { Card, Cards } from 'vocs'
 
-# Why Melee
+# Why Ondine
 
 Mermaid source, compiled once into SVG that pages display without a renderer.
 
 ## Overview
 
-A Mermaid diagram usually renders in the browser: the page downloads a parser and layout engine, measures text with the DOM, and draws after the page loads. Melee moves all of that to build time.
+A Mermaid diagram usually renders in the browser: the page downloads a parser and layout engine, measures text with the DOM, and draws after the page loads. Ondine moves all of that to build time.
 
-The page then receives finished SVG. Mounting it inserts markup, which the `melee` runtime does in 210 bytes gzip.
+The page then receives finished SVG. Mounting it inserts markup, which the `ondine` runtime does in 210 bytes gzip.
 
 ```mermaid
 flowchart LR
   subgraph build[Build time]
-    mmd[flow.mmd] --> compile[melee/compiler]
+    mmd[flow.mmd] --> compile[ondine/compiler]
   end
   subgraph runtime[Runtime]
     mount[mount] --> dom[DOM]
@@ -38,12 +38,12 @@ sequenceDiagram
   participant Page
   participant CSS
   Page->>CSS: prefers-color-scheme: dark
-  CSS-->>Page: --melee-bg and --melee-fg change
+  CSS-->>Page: --ondine-bg and --ondine-fg change
 ```
 
 ## Mermaid Syntax
 
-Melee targets the complete syntax of Mermaid 12.1.0. Each diagram type accepts and rejects the same input as Mermaid and builds the same model. Layout and appearance differ by design.
+Ondine targets the complete syntax of Mermaid 12.1.0. Each diagram type accepts and rejects the same input as Mermaid and builds the same model. Layout and appearance differ by design.
 
 [Compatibility](/introduction/compatibility) lists every diagram type and its status.
 
@@ -54,7 +54,7 @@ Melee targets the complete syntax of Mermaid 12.1.0. Each diagram type accepts a
     title="Getting Started"
     icon="rocket"
     to="/introduction/getting-started"
-    description="Install Melee and compile a first diagram."
+    description="Install Ondine and compile a first diagram."
   />
   <Card
     title="Concepts & Principles"

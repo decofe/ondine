@@ -57,14 +57,14 @@ impl K {
     /// The classes of the drawn element, or `None` for kinds that draw no element of their own.
     fn classes(self) -> Option<&'static str> {
         match self {
-            Self::State | Self::Described => Some("melee-node melee-state"),
-            Self::Start => Some("melee-node melee-state-start"),
-            Self::End => Some("melee-node melee-state-end"),
-            Self::Choice => Some("melee-node melee-state-choice"),
-            Self::Fork => Some("melee-node melee-state-fork"),
-            Self::Join => Some("melee-node melee-state-join"),
-            Self::Note => Some("melee-note"),
-            Self::Composite => Some("melee-cluster melee-state-composite"),
+            Self::State | Self::Described => Some("ondine-node ondine-state"),
+            Self::Start => Some("ondine-node ondine-state-start"),
+            Self::End => Some("ondine-node ondine-state-end"),
+            Self::Choice => Some("ondine-node ondine-state-choice"),
+            Self::Fork => Some("ondine-node ondine-state-fork"),
+            Self::Join => Some("ondine-node ondine-state-join"),
+            Self::Note => Some("ondine-note"),
+            Self::Composite => Some("ondine-cluster ondine-state-composite"),
             Self::Region | Self::Hidden => None,
         }
     }
@@ -825,7 +825,7 @@ fn draw(
         let x = c.x + pad;
         let y = c.y + pad;
         let (w, h) = (view.w, view.h);
-        let mut label_attrs = String::from(" class=\"melee-label\"");
+        let mut label_attrs = String::from(" class=\"ondine-label\"");
         label_attrs.push_str(&style.text);
         let mut small_attrs = String::from(" font-size=\"");
         push_num(&mut small_attrs, small);
@@ -852,7 +852,7 @@ fn draw(
                     body.push_str(RULE);
                     body.push_str(&style.line);
                     body.push_str("/>");
-                    let mut attrs = String::from(" class=\"melee-cluster-label\"");
+                    let mut attrs = String::from(" class=\"ondine-cluster-label\"");
                     attrs.push_str(&style.text);
                     body.push_str(&label_svg(
                         &view.label,
@@ -936,7 +936,7 @@ fn draw(
                 ] {
                     body.push_str(part);
                 }
-                let mut attrs = String::from(" class=\"melee-label\"");
+                let mut attrs = String::from(" class=\"ondine-label\"");
                 attrs.push_str(&small_attrs);
                 attrs.push_str(" fill=\"var(--_m)\"");
                 body.push_str(&label_svg(&view.label, 0.0, 0.0, &attrs, None));
@@ -970,7 +970,7 @@ fn draw(
                         None,
                     ));
                     at += 14.0;
-                    let mut attrs = String::from(" class=\"melee-state-description\"");
+                    let mut attrs = String::from(" class=\"ondine-state-description\"");
                     attrs.push_str(&small_attrs);
                     attrs.push_str(&style.text);
                     for line in &view.lines {
@@ -1177,9 +1177,9 @@ fn draw(
         };
 
         edges_out.push_str(if note {
-            "<g class=\"melee-edge melee-note-edge\" stroke=\"var(--_b)\" stroke-dasharray=\"3 4\" data-id=\""
+            "<g class=\"ondine-edge ondine-note-edge\" stroke=\"var(--_b)\" stroke-dasharray=\"3 4\" data-id=\""
         } else {
-            "<g class=\"melee-edge melee-transition\" data-id=\""
+            "<g class=\"ondine-edge ondine-transition\" data-id=\""
         });
         edges_out.push_str(&esc_text(&edge.id));
         edges_out.push_str("\"><path d=\"");
@@ -1210,12 +1210,12 @@ fn draw(
 
     let mut content = String::new();
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !dividers.is_empty() {
-        content.push_str("<g class=\"melee-dividers\" stroke-dasharray=\"4 4\"");
+        content.push_str("<g class=\"ondine-dividers\" stroke-dasharray=\"4 4\"");
         content.push_str(RULE);
         content.push('>');
         content.push_str(&dividers);
@@ -1223,19 +1223,19 @@ fn draw(
     }
     if !edges_out.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_num(&mut content, small);
         content.push_str("\">");
         content.push_str(&labels_out);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes_out);
     content.push_str(&notes_out);
     content.push_str("</g>");
@@ -1332,7 +1332,7 @@ impl Frame<'_> {
             }
             for (&a, &b) in pairs() {
                 let at = num(hi(a, x).midpoint(lo(b, x)) + self.pad);
-                out.push_str("<path class=\"melee-divider\" d=\"M");
+                out.push_str("<path class=\"ondine-divider\" d=\"M");
                 if x {
                     out.push_str(&at);
                     out.push(',');
@@ -1358,7 +1358,7 @@ impl Frame<'_> {
                     c.y - c.h / 2.0 + self.pad,
                     c.w,
                     c.h,
-                    " class=\"melee-divider\" rx=\"10\"",
+                    " class=\"ondine-divider\" rx=\"10\"",
                 ));
             }
         }

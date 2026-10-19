@@ -209,7 +209,7 @@ fn draw(
         };
         let cx = u.x * at + away(u.x, label.width);
         let cy = u.y * at + away(u.y, label.height);
-        labels.push_str("<g class=\"melee-axis-label\" data-id=\"");
+        labels.push_str("<g class=\"ondine-axis-label\" data-id=\"");
         labels.push_str(&esc_text(&axis.name));
         labels.push_str("\">");
         labels.push_str(&label_svg(&label, cx, cy, "", None));
@@ -240,7 +240,7 @@ fn draw(
             })
             .collect();
         let color = series_color(i64::try_from(index).unwrap_or(0));
-        let mut attrs = String::from(" class=\"melee-curve\" data-id=\"");
+        let mut attrs = String::from(" class=\"ondine-curve\" data-id=\"");
         attrs.push_str(&esc_text(&curve.name));
         attrs.push_str("\" fill=\"");
         attrs.push_str(&color);
@@ -299,7 +299,7 @@ fn draw(
         #[expect(clippy::cast_precision_loss, reason = "curve counts are small")]
         let y = legend_top + index as f64 * ROW + ROW / 2.0;
         let color = series_color(i64::try_from(index).unwrap_or(0));
-        legend_out.push_str("<g class=\"melee-legend-item\" data-id=\"");
+        legend_out.push_str("<g class=\"ondine-legend-item\" data-id=\"");
         legend_out.push_str(&esc_text(&curve.name));
         legend_out.push_str("\"><rect x=\"");
         push_num(&mut legend_out, legend_x);
@@ -341,7 +341,7 @@ fn draw(
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");
@@ -352,31 +352,31 @@ fn draw(
     );
     content.push_str(")\">");
     if !grid.is_empty() {
-        content.push_str("<g class=\"melee-graticule\" fill=\"none\" stroke=\"var(--_a)\">");
+        content.push_str("<g class=\"ondine-graticule\" fill=\"none\" stroke=\"var(--_a)\">");
         content.push_str(&grid);
         content.push_str("</g>");
     }
     if !spokes.is_empty() {
-        content.push_str("<path class=\"melee-axes\" d=\"");
+        content.push_str("<path class=\"ondine-axes\" d=\"");
         content.push_str(&spokes);
         content.push_str("\" fill=\"none\" stroke=\"var(--_b)\"/>");
     }
     if !shapes.is_empty() {
         content.push_str(
-            "<g class=\"melee-curves\" fill-opacity=\"0.2\" stroke-width=\"1.5\" stroke-linejoin=\"round\">",
+            "<g class=\"ondine-curves\" fill-opacity=\"0.2\" stroke-width=\"1.5\" stroke-linejoin=\"round\">",
         );
         content.push_str(&shapes);
         content.push_str("</g>");
     }
     if !labels.is_empty() {
-        content.push_str("<g class=\"melee-axis-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-axis-labels\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\">");
         content.push_str(&labels);
         content.push_str("</g>");
     }
     if !legend_out.is_empty() {
-        content.push_str("<g class=\"melee-legend\" font-size=\"");
+        content.push_str("<g class=\"ondine-legend\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\">");
         content.push_str(&legend_out);

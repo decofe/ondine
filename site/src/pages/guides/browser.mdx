@@ -6,18 +6,18 @@ Compile Mermaid in the browser or an edge runtime when the source is only known 
 
 ## Overview
 
-Most pages compile diagrams at build time. Editors, previews, and user-supplied diagrams need the compiler at runtime instead. `melee/compiler/wasm` provides it, with the WebAssembly module supplied by the caller.
+Most pages compile diagrams at build time. Editors, previews, and user-supplied diagrams need the compiler at runtime instead. `ondine/compiler/wasm` provides it, with the WebAssembly module supplied by the caller.
 
 ```ts title="preview.ts"
-import { create } from 'melee/compiler/wasm'
-import { wasm as all } from 'melee/compiler/wasm/all'
+import { create } from 'ondine/compiler/wasm'
+import { wasm as all } from 'ondine/compiler/wasm/all'
 
 // Compiles in the browser with the size-optimized module
 const renderer = create({ modules: { all } })
 const { svg } = renderer.render('flowchart LR\n  A --> B')
 ```
 
-The glue in `melee/compiler/wasm` is about 1 kB gzip. `melee/compiler/wasm/all` inlines every diagram type as base64, about 715 kB gzip, as [Benchmarks](/introduction/benchmarks) records.
+The glue in `ondine/compiler/wasm` is about 1 kB gzip. `ondine/compiler/wasm/all` inlines every diagram type as base64, about 715 kB gzip, as [Benchmarks](/introduction/benchmarks) records.
 
 ## Walkthrough
 
@@ -25,13 +25,13 @@ The steps below build a live preview that redraws as source changes.
 
 ### Load the Module
 
-Import `melee/compiler/wasm/all` with a dynamic import, so the module downloads only when the preview opens.
+Import `ondine/compiler/wasm/all` with a dynamic import, so the module downloads only when the preview opens.
 
 ```ts title="preview.ts"
-import { create } from 'melee/compiler/wasm'
+import { create } from 'ondine/compiler/wasm'
 
 // Splits the compiler module into its own chunk
-const { wasm } = await import('melee/compiler/wasm/all')
+const { wasm } = await import('ondine/compiler/wasm/all')
 const renderer = create({ modules: { all: wasm } })
 ```
 
@@ -40,7 +40,7 @@ const renderer = create({ modules: { all: wasm } })
 Each call compiles synchronously. A renderer keeps its module instance, so create it once.
 
 ```ts title="preview.ts"
-import { RenderError } from 'melee/compiler/wasm'
+import { RenderError } from 'ondine/compiler/wasm'
 
 const input = document.querySelector('textarea')!
 const output = document.getElementById('preview')!
@@ -75,8 +75,8 @@ stateDiagram-v2
 Cloudflare Workers refuse to compile WebAssembly at runtime. Import a `.wasm` file so the bundler compiles it ahead of time, then pass the `WebAssembly.Module`.
 
 ```ts title="worker.ts"
-import { create } from 'melee/compiler/wasm'
-import all from 'melee/compiler/wasm/all.wasm'
+import { create } from 'ondine/compiler/wasm'
+import all from 'ondine/compiler/wasm/all.wasm'
 
 // The module arrives precompiled, so no runtime compilation happens
 const renderer = create({ modules: { all } })
@@ -84,11 +84,11 @@ const renderer = create({ modules: { all } })
 
 ### Load One Type
 
-A page that compiles only one diagram type imports that type's module from `melee/compiler/wasm/<type>`, which is much smaller than `all`. [Diagram Modules](/api/compiler-wasm/types) lists every type.
+A page that compiles only one diagram type imports that type's module from `ondine/compiler/wasm/<type>`, which is much smaller than `all`. [Diagram Modules](/api/compiler-wasm/types) lists every type.
 
 ```ts title="preview.ts"
-import { create } from 'melee/compiler/wasm'
-import { wasm as flowchart } from 'melee/compiler/wasm/flowchart'
+import { create } from 'ondine/compiler/wasm'
+import { wasm as flowchart } from 'ondine/compiler/wasm/flowchart'
 
 // Renders flowcharts and throws RenderError for other types
 const renderer = create({ modules: { flowchart } })
@@ -99,8 +99,8 @@ const renderer = create({ modules: { flowchart } })
 Large diagrams can take milliseconds. Move the renderer into a Web Worker and post SVG back to the page.
 
 ```ts title="compile.worker.ts"
-import { create } from 'melee/compiler/wasm'
-import { wasm as all } from 'melee/compiler/wasm/all'
+import { create } from 'ondine/compiler/wasm'
+import { wasm as all } from 'ondine/compiler/wasm/all'
 
 const renderer = create({ modules: { all } })
 
@@ -114,7 +114,7 @@ self.onmessage = (event: MessageEvent<string>) => {
 
 <Cards>
   <Card
-    title="melee/compiler/wasm"
+    title="ondine/compiler/wasm"
     icon="cpu"
     to="/api/compiler-wasm"
     description="Reference for the in-browser entrypoints."

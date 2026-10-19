@@ -28,7 +28,7 @@ export const initial = `flowchart TD
   B -- Yes --> C[Parse]
   B -- No --> H[Fall back]
 
-  subgraph Melee
+  subgraph Ondine
     C --> D[Layout]
     D --> E[Render]
   end

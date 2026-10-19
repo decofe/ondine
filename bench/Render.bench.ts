@@ -1,7 +1,7 @@
 /** @module Compares warm render time with Pele over each ported type's vectors. */
 import * as Pele from 'pele'
 import { bench, describe } from 'vite-plus/test'
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 import * as Vectors from '../test/Vectors.js'
 
 const types = Vectors.types()
@@ -20,7 +20,7 @@ for (const type of types) {
     })
 
   describe(`${type} (${sources.length} vectors)`, () => {
-    bench('melee', () => {
+    bench('ondine', () => {
       for (const source of sources) render(source)
     })
 

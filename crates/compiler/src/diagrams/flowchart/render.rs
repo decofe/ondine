@@ -439,7 +439,8 @@ fn draw(
         if c.is_group {
             let title_x = cluster_title_x(c, view.label.width, &crossings, group_pad);
             let title_y = c.y - c.h / 2.0 + 8.0 + view.label.height / 2.0;
-            let mut title_attrs = String::from(" class=\"melee-cluster-label\" fill=\"var(--_m)\"");
+            let mut title_attrs =
+                String::from(" class=\"ondine-cluster-label\" fill=\"var(--_m)\"");
             title_attrs.push_str(&view.style.text);
             let struck = title_crossed(c, view.label.width, title_x, &crossings);
             if struck {
@@ -455,7 +456,7 @@ fn draw(
                 ));
             }
 
-            clusters.push_str("<g class=\"melee-cluster");
+            clusters.push_str("<g class=\"ondine-cluster");
             clusters.push_str(&classes);
             clusters.push_str("\" data-id=\"");
             clusters.push_str(&id);
@@ -498,7 +499,7 @@ fn draw(
             draw_shape(view.shape, w, h, &shape_attrs, &line_attrs)
         };
 
-        let mut label_attrs = String::from(" class=\"melee-label\"");
+        let mut label_attrs = String::from(" class=\"ondine-label\"");
         label_attrs.push_str(&view.style.text);
         let mut text = label_svg(&view.label, 0.0, view.dy, &label_attrs, None);
 
@@ -562,7 +563,7 @@ fn draw(
             body = url::linked(&body, link, &node.id, &mut links, url, &attrs);
         }
 
-        nodes_out.push_str("<g class=\"melee-node melee-shape-");
+        nodes_out.push_str("<g class=\"ondine-node ondine-shape-");
         nodes_out.push_str(view.shape);
         nodes_out.push_str(&classes);
         nodes_out.push_str("\" data-id=\"");
@@ -689,7 +690,7 @@ fn draw(
             };
             let classes = class_names(&strip_edge_classes(edge.classes));
 
-            edges_out.push_str("<g class=\"melee-edge");
+            edges_out.push_str("<g class=\"ondine-edge");
             edges_out.push_str(&classes);
             edges_out.push_str("\" data-id=\"");
             edges_out.push_str(&esc_text(&edge.id));
@@ -725,34 +726,34 @@ fn draw(
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !edges_out.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !struck_titles.is_empty() {
-        content.push_str("<g class=\"melee-cluster-titles\">");
+        content.push_str("<g class=\"ondine-cluster-titles\">");
         content.push_str(&struck_titles);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_num(&mut content, edge_size);
         content.push_str("\">");
         content.push_str(&labels_out);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes_out);
     content.push_str("</g>");
 
@@ -901,7 +902,7 @@ fn icon_svg(node: &GraphNode, view: &NodeView<'_>, icon: &str) -> String {
     }
 
     let glyph = side * 0.6;
-    out.push_str("<svg class=\"melee-icon\" data-icon=\"");
+    out.push_str("<svg class=\"ondine-icon\" data-icon=\"");
     out.push_str(&esc_text(icon));
     out.push_str("\" x=\"");
     push_num(&mut out, -glyph / 2.0);

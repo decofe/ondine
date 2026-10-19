@@ -2,11 +2,11 @@ import { Card, Cards } from 'vocs'
 
 # GitHub Images
 
-Embed Melee diagrams in READMEs and other Markdown that cannot run scripts or load styles.
+Embed Ondine diagrams in READMEs and other Markdown that cannot run scripts or load styles.
 
 ## Overview
 
-GitHub draws ` ```mermaid ` fences with its own renderer. To show a Melee diagram, a README links an image from the image Worker, which compiles the diagram encoded in the URL on request.
+GitHub draws ` ```mermaid ` fences with its own renderer. To show a Ondine diagram, a README links an image from the image Worker, which compiles the diagram encoded in the URL on request.
 
 ```mermaid
 sequenceDiagram
@@ -70,8 +70,8 @@ The [CLI](/guides/cli#render-markdown) rewrites every ` ```mermaid ` fence in a 
 
 ```sh
 # Rewrites the fences in README.md, then fails CI when it goes stale
-npx melee README.md
-npx melee README.md --check
+npx ondine README.md
+npx ondine README.md --check
 ```
 
 `--worker` links another deployment, and `--svg` commits SVG files instead of linking the Worker.

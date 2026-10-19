@@ -164,10 +164,10 @@ fn specification_rows(given: &[String], when: &[String], then: &[String]) -> Vec
 
 /// The `class` and `data-id` of a box's group, and its opening tag.
 fn push_box_open(out: &mut String, item: &EmBox) {
-    out.push_str("<g class=\"melee-node melee-em-");
+    out.push_str("<g class=\"ondine-node ondine-em-");
     out.push_str(item.kind.as_str());
     if item.reset {
-        out.push_str(" melee-em-reset");
+        out.push_str(" ondine-em-reset");
     }
     out.push_str("\" data-id=\"");
     out.push_str(&esc_text(&item.id));
@@ -211,7 +211,7 @@ fn push_edge(
     head: &str,
 ) {
     let id = |index: usize| model.boxes.get(index).map_or("", |item| item.id.as_str());
-    out.push_str("<g class=\"melee-edge\" data-id=\"");
+    out.push_str("<g class=\"ondine-edge\" data-id=\"");
     out.push_str(&esc_text(id(relation.0)));
     out.push('-');
     out.push_str(&esc_text(id(relation.1)));
@@ -389,13 +389,13 @@ fn horizontal(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
 
     let mut y = top;
     let mut lanes = String::new();
-    let mut attrs = String::from(" class=\"melee-cluster-label\"");
+    let mut attrs = String::from(" class=\"ondine-cluster-label\"");
     attrs.push_str(&font_size(small));
     attrs.push_str(" font-weight=\"var(--_hw)\" fill=\"var(--_m)\"");
     for (band, lane) in bands.iter_mut().zip(&model.lanes) {
         band.y = y;
         band.h += 2.0 * LANE_PAD;
-        lanes.push_str("<g class=\"melee-cluster melee-em-lane\" data-id=\"");
+        lanes.push_str("<g class=\"ondine-cluster ondine-em-lane\" data-id=\"");
         lanes.push_str(&esc_text(&lane.label));
         lanes.push_str("\"><rect x=\"");
         push_num(&mut lanes, left);
@@ -421,10 +421,10 @@ fn horizontal(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
     let mut bottom = if bands.is_empty() { top } else { y - LANE_GAP };
 
     let mut nodes = String::new();
-    let mut name_attrs = String::from(" class=\"melee-label\"");
+    let mut name_attrs = String::from(" class=\"ondine-label\"");
     name_attrs.push_str(&font_size(name_size));
     name_attrs.push_str(" font-weight=\"var(--_hw)\"");
-    let mut data_attrs = String::from(" class=\"melee-em-data\" font-family=\"");
+    let mut data_attrs = String::from(" class=\"ondine-em-data\" font-family=\"");
     data_attrs.push_str(FONT_MONO);
     data_attrs.push('"');
     data_attrs.push_str(&font_size(mono));
@@ -564,7 +564,7 @@ fn horizontal(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
             } else {
                 CARD_GAP
             };
-        cards.push_str("<g class=\"melee-em-");
+        cards.push_str("<g class=\"ondine-em-");
         cards.push_str(kind);
         cards.push_str("\" data-id=\"");
         cards.push_str(&esc_text(frame));
@@ -622,7 +622,7 @@ fn horizontal(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&lanes);
@@ -717,13 +717,13 @@ fn vertical(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
     let text =
         |raw: &str, size: f64, style: u8| literal_label(&decode(raw), size, text_room, style);
 
-    let mut lane_attrs = String::from(" class=\"melee-cluster-label\"");
+    let mut lane_attrs = String::from(" class=\"ondine-cluster-label\"");
     lane_attrs.push_str(&font_size(small));
     lane_attrs.push_str(" font-weight=\"var(--_hw)\" fill=\"var(--_m)\"");
-    let mut name_attrs = String::from(" class=\"melee-label\"");
+    let mut name_attrs = String::from(" class=\"ondine-label\"");
     name_attrs.push_str(&font_size(small));
     name_attrs.push_str(" font-weight=\"var(--_hw)\"");
-    let mut data_attrs = String::from(" class=\"melee-em-data\" font-family=\"");
+    let mut data_attrs = String::from(" class=\"ondine-em-data\" font-family=\"");
     data_attrs.push_str(FONT_MONO);
     data_attrs.push('"');
     data_attrs.push_str(&font_size(mono));
@@ -755,7 +755,7 @@ fn vertical(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
         let h = 2.0 * BOX_PAD_Y + name.height + data.as_ref().map_or(0.0, |data| data.height + 6.0);
         let cy = y + head_h;
         let frame = frame_attrs(pad, cy, w, h);
-        nodes.push_str("<g class=\"melee-cluster melee-em-lane\" data-id=\"");
+        nodes.push_str("<g class=\"ondine-cluster ondine-em-lane\" data-id=\"");
         nodes.push_str(&esc_text(lane_label));
         nodes.push_str("\">");
         nodes.push_str(&left_label_svg(&lane, pad + BOX_PAD_X, y, &lane_attrs));
@@ -773,7 +773,7 @@ fn vertical(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
             &name_attrs,
             None,
         ));
-        nodes.push_str("<text class=\"melee-em-frame\" x=\"");
+        nodes.push_str("<text class=\"ondine-em-frame\" x=\"");
         push_num(&mut nodes, pad + w - BOX_PAD_X);
         nodes.push_str("\" y=\"");
         push_num(&mut nodes, cy + BOX_PAD_Y + small);
@@ -869,7 +869,7 @@ fn vertical(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
             .max(head.width + 2.0 * BOX_PAD_X)
             .max(body.width + 2.0 * BOX_PAD_X);
         let h = 2.0 * BOX_PAD_Y + head.height + body.height;
-        cards.push_str("<g class=\"melee-em-");
+        cards.push_str("<g class=\"ondine-em-");
         cards.push_str(kind);
         cards.push_str("\" data-id=\"");
         cards.push_str(&esc_text(frame));
@@ -921,7 +921,7 @@ fn vertical(model: &EventModelingModel, options: &RenderOptions) -> Rendered {
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&edges);

@@ -1,13 +1,13 @@
 import { Card, Cards } from 'vocs'
 
-# melee/compiler
+# ondine/compiler
 
 Render Mermaid to SVG in Node, build tools, and servers.
 
-`melee/compiler` loads the speed-optimized compiler module for every diagram type from the package's files. It needs Node's filesystem, so browsers and Workers use [`melee/compiler/wasm`](/api/compiler-wasm) instead.
+`ondine/compiler` loads the speed-optimized compiler module for every diagram type from the package's files. It needs Node's filesystem, so browsers and Workers use [`ondine/compiler/wasm`](/api/compiler-wasm) instead.
 
 ```ts title="build.ts"
-import { render } from 'melee/compiler'
+import { render } from 'ondine/compiler'
 
 // Compiles synchronously
 const { svg } = render('flowchart LR\n  A --> B')
@@ -48,7 +48,7 @@ const { svg } = render('flowchart LR\n  A --> B')
 | `Render` | The types behind `render` and `create`: `render.Options`, `render.ReturnType`, `create.Options`, `create.ReturnType`, and `RenderError.Code`. |
 
 ```ts
-import type { Render } from 'melee/compiler'
+import type { Render } from 'ondine/compiler'
 
 // Types a helper's options like render's
 const options: Render.render.Options = { maxWidth: 640 }

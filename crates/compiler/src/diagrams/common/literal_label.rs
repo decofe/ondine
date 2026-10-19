@@ -271,7 +271,7 @@ mod tests {
     //! Checks against Pele (`obsidianmd/pele` at `458322a`). Every expected value comes from
     //! running Pele's `literalLabel`, `breakLabel` (of a markdown `layoutLabel` with a host that
     //! has one icon), and `leftLabelSvg` with `bun` and the monospace branch of its
-    //! `metricsMeasurer`, never from this port. Pele's `pele-` class prefix reads as `melee-`.
+    //! `metricsMeasurer`, never from this port. Pele's `pele-` class prefix reads as `ondine-`.
     //! Results compare FNV-1a hashes of the same serialization on both sides.
 
     use super::*;

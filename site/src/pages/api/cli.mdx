@@ -2,18 +2,18 @@
 
 Render Mermaid files or standard input to SVG, and Mermaid fences in Markdown to images, from the command line.
 
-The `melee` binary ships with the package and compiles with the same module as `melee/compiler`. The [CLI](/guides/cli) guide covers common tasks.
+The `ondine` binary ships with the package and compiles with the same module as `ondine/compiler`. The [CLI](/guides/cli) guide covers common tasks.
 
 ```sh
 # Writes flow.svg next to flow.mmd
-npx melee flow.mmd
+npx ondine flow.mmd
 ```
 
 ## Usage
 
 ```sh
 # Renders files, or standard input when no files are given
-melee [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--check]
+ondine [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--check]
 ```
 
 ## Arguments
@@ -26,20 +26,20 @@ Mermaid files to render. Each writes an `.svg` file whose name drops a `.mmd` or
 
 ```sh
 # Writes a.svg and b.svg
-melee a.mmd b.mermaid
+ondine a.mmd b.mermaid
 ```
 
 With no files, the command reads Mermaid from standard input and writes SVG to standard output.
 
 ```sh
 # Pipes Mermaid in and SVG out
-melee < flow.mmd > flow.svg
+ondine < flow.mmd > flow.svg
 ```
 
 Files ending in `.md` or `.markdown` are rewritten in place. Each ` ```mermaid ` fence, at any indentation, becomes a block that a later run recognizes and re-renders:
 
 ```html title="README.md"
-<!-- melee:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
+<!-- ondine:eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu -->
 <picture>
   <source
     media="(prefers-color-scheme: dark)"
@@ -52,10 +52,10 @@ Files ending in `.md` or `.markdown` are rewritten in place. Each ` ```mermaid `
     src="https://melee.broken-thunder-fb8b.workers.dev/eNpLy8kvT85ILCpR8AniUlBwVNDVtVNwAgBUvQYu.svg?scheme=light"
   />
 </picture>
-<!-- /melee -->
+<!-- /ondine -->
 ```
 
-The payload is the source as UTF-8, zlib deflate, then base64url. The image's `alt` is the diagram's `accTitle`, or its type. Fences in other languages are skipped whole, and fences inside blockquotes are not rewritten. MDX files are not rewritten, since MDX rejects HTML comments. Use [`melee/remark`](/api/remark) for them.
+The payload is the source as UTF-8, zlib deflate, then base64url. The image's `alt` is the diagram's `accTitle`, or its type. Fences in other languages are skipped whole, and fences inside blockquotes are not rewritten. MDX files are not rewritten, since MDX rejects HTML comments. Use [`ondine/remark`](/api/remark) for them.
 
 ## Options
 
@@ -68,7 +68,7 @@ The directory for rendered files, created when missing.
 
 ```sh
 # Writes public/flow.svg
-melee flow.mmd -o public
+ondine flow.mmd -o public
 ```
 
 ### --svg
@@ -77,7 +77,7 @@ Links SVG files from Markdown instead of the Worker. Each diagram writes `<name>
 
 ```sh
 # Writes guide-1.light.svg and guide-1.dark.svg beside guide.md
-melee guide.md --svg
+ondine guide.md --svg
 ```
 
 ### --worker
@@ -89,7 +89,7 @@ The image Worker origin that Markdown images link. A diagram whose request path 
 
 ```sh
 # Links a self-hosted Worker
-melee README.md --worker https://diagrams.example.com
+ondine README.md --worker https://diagrams.example.com
 ```
 
 ### --restore
@@ -98,7 +98,7 @@ Turns each block a previous run wrote back into a ` ```mermaid ` fence, and remo
 
 ```sh
 # Brings back the editable fences
-melee README.md --restore
+ondine README.md --restore
 ```
 
 ### --check
@@ -107,7 +107,7 @@ Writes and removes nothing. Each file that a run would change is reported as `fi
 
 ```sh
 # Fails CI when diagrams are stale
-melee README.md --svg --check
+ondine README.md --svg --check
 ```
 
 ### --help
@@ -118,7 +118,7 @@ Prints usage and exits with code 0.
 
 ```sh
 # Shows the usage text
-melee --help
+ondine --help
 ```
 
 ## Output

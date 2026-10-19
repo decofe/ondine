@@ -5,10 +5,10 @@ import * as Url from 'node:url'
 import mdx from '@mdx-js/rollup'
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { remarkMelee } from 'melee/remark'
+import { remarkOndine } from 'ondine/remark'
 import { build } from 'vite'
 
-describe('remarkMelee', () => {
+describe('remarkOndine', () => {
   let root: string
 
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('remarkMelee', () => {
   })
 
   /** Builds `entry` as an ES library with React external, then loads and renders its default export. */
-  async function compile(entry: string, options: remarkMelee.Options = {}) {
+  async function compile(entry: string, options: remarkOndine.Options = {}) {
     await build({
       build: {
         emptyOutDir: true,
@@ -32,7 +32,7 @@ describe('remarkMelee', () => {
       },
       configFile: false,
       logLevel: 'silent',
-      plugins: [mdx({ remarkPlugins: [[remarkMelee, options]] })],
+      plugins: [mdx({ remarkPlugins: [[remarkOndine, options]] })],
       root,
     })
 
@@ -53,10 +53,10 @@ describe('remarkMelee', () => {
     expect(code).not.toContain('flowchart LR')
     expect(
       html.startsWith(
-        '<h1>Flow</h1>\n<div class="melee-diagram" data-melee-diagram="flowchart"><svg xmlns="http://www.w3.org/2000/svg" class="melee melee-flowchart"',
+        '<h1>Flow</h1>\n<div class="ondine-diagram" data-ondine-diagram="flowchart"><svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart"',
       ),
     ).toBe(true)
-    expect(html).toContain('style="max-width:100%;height:auto;--_bg:var(--melee-bg,#fff);')
+    expect(html).toContain('style="max-width:100%;height:auto;--_bg:var(--ondine-bg,#fff);')
     expect(html.endsWith('</svg></div>\n<p>After</p>')).toBe(true)
   })
 
@@ -68,7 +68,7 @@ describe('remarkMelee', () => {
 
     const { html } = await compile('page.md')
 
-    expect(html).toContain('<div class="melee-diagram" data-melee-diagram="sequence"><svg')
+    expect(html).toContain('<div class="ondine-diagram" data-ondine-diagram="sequence"><svg')
     expect(html).toContain('hi &amp; bye')
     expect(html).toContain(
       '<pre><code class="language-md">~~~mermaid\nflowchart LR\n~~~\n</code></pre>',
@@ -93,7 +93,9 @@ describe('remarkMelee', () => {
 
     const { html } = await compile('page.mdx', { responsive: false })
 
-    expect(html).toContain('<svg xmlns="http://www.w3.org/2000/svg" class="melee melee-flowchart"')
+    expect(html).toContain(
+      '<svg xmlns="http://www.w3.org/2000/svg" class="ondine ondine-flowchart"',
+    )
     expect(html).not.toContain('max-width:100%')
   })
 

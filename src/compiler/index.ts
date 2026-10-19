@@ -14,7 +14,7 @@ let renderer: Render.create.ReturnType | undefined
  *
  * @example
  * ```ts
- * import { render } from 'melee/compiler'
+ * import { render } from 'ondine/compiler'
  *
  * const { svg } = render('flowchart LR\n  A --> B')
  * ```

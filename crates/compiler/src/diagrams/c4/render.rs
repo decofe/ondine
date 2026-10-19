@@ -285,7 +285,7 @@ fn draw(
         if end_arrow && careful {
             taken.extend([r.ex - ARROW, r.ey - ARROW, r.ex + ARROW, r.ey + ARROW]);
         }
-        edges_out.push_str("<g class=\"melee-edge\" data-id=\"");
+        edges_out.push_str("<g class=\"ondine-edge\" data-id=\"");
         edges_out.push_str(&esc_text(&[rel.from.as_str(), "-", &rel.to].concat()));
         edges_out.push('"');
         edges_out.push_str(&style.line);
@@ -430,7 +430,7 @@ fn draw(
         }
         grow(cx - lw / 2.0, top, cx + lw / 2.0, top + lh);
 
-        labels_out.push_str("<g class=\"melee-edge-label\" data-id=\"");
+        labels_out.push_str("<g class=\"ondine-edge-label\" data-id=\"");
         labels_out.push_str(&esc_text(&id));
         labels_out.push_str("\">");
         if let Some(descr) = rel.descr.as_deref().filter(|descr| !descr.is_empty()) {
@@ -448,7 +448,7 @@ fn draw(
         push_num(&mut labels_out, lh);
         labels_out.push_str("\" rx=\"3\" fill=\"var(--_bg)\"/>");
         let mut body = label_svg(&label, cx, top + label.height / 2.0, &style.text, None);
-        let mut techn_attrs = String::from(" class=\"melee-c4-techn\" fill=\"var(--_m)\"");
+        let mut techn_attrs = String::from(" class=\"ondine-c4-techn\" fill=\"var(--_m)\"");
         techn_attrs.push_str(&style.text);
         body.push_str(&label_svg(
             &techn,
@@ -491,7 +491,7 @@ fn draw(
                 x,
                 y,
                 &[
-                    " class=\"melee-cluster-label\" font-weight=\"var(--_hw)\"",
+                    " class=\"ondine-cluster-label\" font-weight=\"var(--_hw)\"",
                     &style.text,
                 ]
                 .concat(),
@@ -502,7 +502,7 @@ fn draw(
                 x,
                 y,
                 &[
-                    " class=\"melee-c4-type\" font-size=\"",
+                    " class=\"ondine-c4-type\" font-size=\"",
                     &small_text,
                     "\" fill=\"var(--_m)\"",
                     &style.text,
@@ -515,7 +515,7 @@ fn draw(
                 x,
                 y,
                 &[
-                    " class=\"melee-c4-descr\" font-size=\"",
+                    " class=\"ondine-c4-descr\" font-size=\"",
                     &small_text,
                     "\" fill=\"var(--_m)\"",
                     &style.text,
@@ -523,7 +523,7 @@ fn draw(
                 .concat(),
             ));
             let deployment = boundary.node_type.as_deref().is_some_and(|t| !t.is_empty());
-            clusters.push_str("<g class=\"melee-cluster melee-c4-");
+            clusters.push_str("<g class=\"ondine-cluster ondine-c4-");
             clusters.push_str(if deployment { "node" } else { "boundary" });
             clusters.push_str("\" data-id=\"");
             clusters.push_str(&esc_text(&boundary.alias));
@@ -579,7 +579,7 @@ fn draw(
                 dx,
                 y + labels[0].height / 2.0,
                 &[
-                    " class=\"melee-c4-type\" font-size=\"",
+                    " class=\"ondine-c4-type\" font-size=\"",
                     &smaller_text,
                     "\"",
                     &muted,
@@ -593,7 +593,7 @@ fn draw(
                 dx,
                 y + labels[1].height / 2.0,
                 &[
-                    " class=\"melee-label\" font-weight=\"var(--_hw)\"",
+                    " class=\"ondine-label\" font-weight=\"var(--_hw)\"",
                     &style.text,
                 ]
                 .concat(),
@@ -605,7 +605,7 @@ fn draw(
                 dx,
                 y + labels[2].height / 2.0,
                 &[
-                    " class=\"melee-c4-techn\" font-size=\"",
+                    " class=\"ondine-c4-techn\" font-size=\"",
                     &small_text,
                     "\"",
                     &muted,
@@ -619,7 +619,7 @@ fn draw(
                 dx,
                 y + labels[3].height / 2.0,
                 &[
-                    " class=\"melee-c4-descr\" font-size=\"",
+                    " class=\"ondine-c4-descr\" font-size=\"",
                     &small_text,
                     "\"",
                     &style.text,
@@ -627,12 +627,12 @@ fn draw(
                 .concat(),
                 None,
             ));
-            nodes_out.push_str("<g class=\"melee-node melee-shape-");
+            nodes_out.push_str("<g class=\"ondine-node ondine-shape-");
             nodes_out.push_str(form.name());
-            nodes_out.push_str(" melee-c4-");
+            nodes_out.push_str(" ondine-c4-");
             nodes_out.push_str(&shape.kind);
             if external {
-                nodes_out.push_str(" melee-c4-external");
+                nodes_out.push_str(" ondine-c4-external");
             }
             nodes_out.push_str("\" data-id=\"");
             nodes_out.push_str(&esc_text(&shape.alias));
@@ -685,7 +685,7 @@ fn draw(
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");
@@ -694,24 +694,24 @@ fn draw(
     push_num(&mut content, oy);
     content.push_str(")\">");
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !edges_out.is_empty() {
         content.push_str(
-            "<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
+            "<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\">",
         );
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !nodes_out.is_empty() {
-        content.push_str("<g class=\"melee-nodes\">");
+        content.push_str("<g class=\"ondine-nodes\">");
         content.push_str(&nodes_out);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         content.push_str(&small_text);
         content.push_str("\">");
         content.push_str(&labels_out);

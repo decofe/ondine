@@ -2,7 +2,7 @@
 //! ECMAScript specification, and V8's `Date` string parser, which `new Date(text)` runs.
 //!
 //! Pele reads and writes dates in the host's local time zone. The compiler reads no environment,
-//! so local time here is UTC, and Melee matches Pele running with `TZ=UTC`.
+//! so local time here is UTC, and Ondine matches Pele running with `TZ=UTC`.
 
 use crate::util::chars::is_space;
 

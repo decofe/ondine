@@ -845,7 +845,7 @@ fn draw(
                 c.x
             };
             let title_y = y - h / 2.0 + 8.0 + view.label.height / 2.0;
-            let title_attrs = " class=\"melee-cluster-label\" fill=\"var(--_m)\"";
+            let title_attrs = " class=\"ondine-cluster-label\" fill=\"var(--_m)\"";
             let struck = c.is_group && title_crossed(c, view.label.width, title_x, &crossings);
             if struck {
                 struck_titles.push_str(&struck_title(
@@ -859,7 +859,7 @@ fn draw(
                     None,
                 ));
             }
-            clusters.push_str("<g class=\"melee-cluster melee-namespace\" data-id=\"");
+            clusters.push_str("<g class=\"ondine-cluster ondine-namespace\" data-id=\"");
             clusters.push_str(&id);
             clusters.push_str("\"><rect x=\"");
             push_num(&mut clusters, x - w / 2.0);
@@ -900,7 +900,7 @@ fn draw(
         } else if node.shape == NodeShape::Note {
             let r = w / 2.0;
             let t = -h / 2.0;
-            nodes_out.push_str("<g class=\"melee-node melee-note\" data-id=\"");
+            nodes_out.push_str("<g class=\"ondine-node ondine-note\" data-id=\"");
             nodes_out.push_str(&id);
             nodes_out.push('"');
             nodes_out.push_str(&at);
@@ -932,7 +932,7 @@ fn draw(
             nodes_out.push_str(&label_svg(&view.label, 0.0, 0.0, &label_attrs(small), None));
             nodes_out.push_str("</g>");
         } else {
-            nodes_out.push_str("<g class=\"melee-node melee-interface\" data-id=\"");
+            nodes_out.push_str("<g class=\"ondine-node ondine-interface\" data-id=\"");
             nodes_out.push_str(&id);
             nodes_out.push('"');
             nodes_out.push_str(&at);
@@ -1009,11 +1009,11 @@ fn draw(
         } else {
             ""
         };
-        edges_out.push_str("<g class=\"melee-edge");
+        edges_out.push_str("<g class=\"ondine-edge");
         edges_out.push_str(if edge.dotted {
-            " melee-note-edge"
+            " ondine-note-edge"
         } else {
-            " melee-relation"
+            " ondine-relation"
         });
         edges_out.push_str("\" data-id=\"");
         edges_out.push_str(&esc_text(&edge.id));
@@ -1043,7 +1043,7 @@ fn draw(
 
     let mut cards_out = String::new();
     for item in &cards {
-        cards_out.push_str("<text class=\"melee-cardinality\" x=\"");
+        cards_out.push_str("<text class=\"ondine-cardinality\" x=\"");
         push_num(&mut cards_out, item.x + ox);
         cards_out.push_str("\" y=\"");
         push_num(&mut cards_out, item.y + oy + tiny * 0.35);
@@ -1054,37 +1054,37 @@ fn draw(
 
     let mut content = String::new();
     if !clusters.is_empty() {
-        content.push_str("<g class=\"melee-clusters\">");
+        content.push_str("<g class=\"ondine-clusters\">");
         content.push_str(&clusters);
         content.push_str("</g>");
     }
     if !edges_out.is_empty() {
-        content.push_str("<g class=\"melee-edges\" fill=\"none\" stroke=\"");
+        content.push_str("<g class=\"ondine-edges\" fill=\"none\" stroke=\"");
         content.push_str(LINE);
         content.push_str("\" stroke-linecap=\"round\">");
         content.push_str(&edges_out);
         content.push_str("</g>");
     }
     if !struck_titles.is_empty() {
-        content.push_str("<g class=\"melee-cluster-titles\">");
+        content.push_str("<g class=\"ondine-cluster-titles\">");
         content.push_str(&struck_titles);
         content.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        content.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        content.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_num(&mut content, small);
         content.push_str("\">");
         content.push_str(&labels_out);
         content.push_str("</g>");
     }
     if !cards_out.is_empty() {
-        content.push_str("<g class=\"melee-cardinalities\" font-size=\"");
+        content.push_str("<g class=\"ondine-cardinalities\" font-size=\"");
         push_num(&mut content, tiny);
         content.push_str("\" fill=\"var(--_m)\">");
         content.push_str(&cards_out);
         content.push_str("</g>");
     }
-    content.push_str("<g class=\"melee-nodes\">");
+    content.push_str("<g class=\"ondine-nodes\">");
     content.push_str(&nodes_out);
     content.push_str("</g>");
 
@@ -1113,7 +1113,7 @@ fn draw(
 
 /// The attributes of a note's or an interface's label.
 fn label_attrs(small: f64) -> String {
-    let mut attrs = String::from(" class=\"melee-label\" font-size=\"");
+    let mut attrs = String::from(" class=\"ondine-label\" font-size=\"");
     push_num(&mut attrs, small);
     attrs.push('"');
     attrs
@@ -1251,7 +1251,7 @@ fn class_svg(
     let first = top + view.title_h;
     let second = first + view.attributes_h;
     if h > view.title_h {
-        body.push_str("<path class=\"melee-divider\" d=\"M");
+        body.push_str("<path class=\"ondine-divider\" d=\"M");
         push_num(&mut body, left);
         body.push(',');
         push_num(&mut body, first);
@@ -1274,7 +1274,7 @@ fn class_svg(
 
     let mut y = top + TITLE_PAD;
     for annotation in &view.annotations {
-        body.push_str("<text class=\"melee-annotation\" x=\"0\" y=\"");
+        body.push_str("<text class=\"ondine-annotation\" x=\"0\" y=\"");
         push_num(&mut body, y + sizes.tiny_height / 2.0 + sizes.tiny * 0.35);
         body.push_str("\" text-anchor=\"middle\" font-size=\"");
         push_num(&mut body, sizes.tiny);
@@ -1284,7 +1284,7 @@ fn class_svg(
         y += sizes.tiny_height;
     }
 
-    let mut title_attrs = String::from(" class=\"melee-label\"");
+    let mut title_attrs = String::from(" class=\"ondine-label\"");
     if view.font_size != sizes.size {
         title_attrs.push_str(" font-size=\"");
         push_num(&mut title_attrs, view.font_size);
@@ -1304,11 +1304,11 @@ fn class_svg(
         let mut out = String::new();
         let mut baseline = from + SECTION_PAD + line_height / 2.0 + member_size * 0.35;
         for line in list {
-            out.push_str("<text class=\"melee-member melee-");
+            out.push_str("<text class=\"ondine-member ondine-");
             out.push_str(kind);
             match line.classifier.as_str() {
                 "$" => {
-                    out.push_str(" melee-static\"");
+                    out.push_str(" ondine-static\"");
                     if style.text.is_empty() {
                         out.push_str(" style=\"text-decoration:underline\"");
                     } else {
@@ -1319,7 +1319,7 @@ fn class_svg(
                     }
                 }
                 "*" => {
-                    out.push_str(" melee-abstract\" font-style=\"italic\"");
+                    out.push_str(" ondine-abstract\" font-style=\"italic\"");
                     out.push_str(&style.text);
                 }
                 _ => {
@@ -1339,7 +1339,7 @@ fn class_svg(
         out
     };
     if !view.attributes.is_empty() || !view.methods.is_empty() {
-        body.push_str("<g class=\"melee-members\" font-size=\"");
+        body.push_str("<g class=\"ondine-members\" font-size=\"");
         push_num(&mut body, member_size);
         body.push_str("\">");
         body.push_str(&lines(&view.attributes, "attribute", first));
@@ -1368,7 +1368,7 @@ fn class_svg(
         body = linked(&body, link, &cls.id, links, url, &attrs);
     }
 
-    let mut out = String::from("<g class=\"melee-node melee-class");
+    let mut out = String::from("<g class=\"ondine-node ondine-class");
     out.push_str(&class_names(strip_default(&cls.css_classes)));
     out.push_str("\" data-id=\"");
     out.push_str(id);

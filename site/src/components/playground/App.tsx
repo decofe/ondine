@@ -9,10 +9,10 @@ import * as Share from './Share.js'
 import { style } from './zyzz.config.js'
 
 /** The views the preview offers. */
-type View = 'compare' | 'melee' | 'mermaid' | 'svg'
+type View = 'compare' | 'ondine' | 'mermaid' | 'svg'
 
 const views: readonly { readonly label: string; readonly value: View }[] = [
-  { label: 'Melee', value: 'melee' },
+  { label: 'Ondine', value: 'ondine' },
   { label: 'Mermaid', value: 'mermaid' },
   { label: 'SVG', value: 'svg' },
   { label: 'Compare', value: 'compare' },
@@ -21,7 +21,7 @@ const views: readonly { readonly label: string; readonly value: View }[] = [
 /** Lays out the editor and preview, and owns their shared state. */
 export function App() {
   const [source, setSource] = useState(() => Share.read() ?? Samples.initial)
-  const [view, setView] = useState<View>('melee')
+  const [view, setView] = useState<View>('ondine')
   const [wrap, setWrap] = useState(true)
   const [searching, setSearching] = useState(false)
   const [outcome, setOutcome] = useState<Outcome | undefined>()
@@ -50,7 +50,7 @@ export function App() {
     <div {...styles.page()}>
       <header {...styles.header()}>
         <h1 {...styles.title()}>
-          <strong>Melee</strong> Playground
+          <strong>Ondine</strong> Playground
         </h1>
         <nav {...styles.actions()}>
           <Menu
@@ -119,8 +119,8 @@ export function App() {
             </div>
           </div>
 
-          {view === 'melee' ? (
-            <Diagram engine="melee" onOutcome={onOutcome} source={source} />
+          {view === 'ondine' ? (
+            <Diagram engine="ondine" onOutcome={onOutcome} source={source} />
           ) : null}
           {view === 'mermaid' ? <Diagram engine="mermaid" source={source} /> : null}
           {view === 'svg' ? (
@@ -128,21 +128,23 @@ export function App() {
           ) : null}
           {view === 'compare' ? (
             <div {...styles.compare()}>
-              {(['melee', 'pele', 'mermaid'] as const satisfies readonly Engine[]).map((engine) => (
-                <div {...styles.cell()} key={engine}>
-                  <span {...styles.label()}>{engine}</span>
-                  <Diagram
-                    engine={engine}
-                    onOutcome={engine === 'melee' ? onOutcome : undefined}
-                    source={source}
-                  />
-                </div>
-              ))}
+              {(['ondine', 'pele', 'mermaid'] as const satisfies readonly Engine[]).map(
+                (engine) => (
+                  <div {...styles.cell()} key={engine}>
+                    <span {...styles.label()}>{engine}</span>
+                    <Diagram
+                      engine={engine}
+                      onOutcome={engine === 'ondine' ? onOutcome : undefined}
+                      source={source}
+                    />
+                  </div>
+                ),
+              )}
             </div>
           ) : null}
 
           <footer {...styles.status()}>
-            {outcome?.ok ? `Melee ${outcome.ms.toFixed(2)} ms` : ' '}
+            {outcome?.ok ? `Ondine ${outcome.ms.toFixed(2)} ms` : ' '}
           </footer>
         </section>
       </main>

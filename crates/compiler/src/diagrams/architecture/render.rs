@@ -67,7 +67,7 @@ fn rank_of(ranks: &[i64], value: i64) -> Option<usize> {
 }
 
 fn icon_slot(out: &mut String, name: &str, x: f64, y: f64, side: f64) {
-    out.push_str("<svg class=\"melee-icon\" data-icon=\"");
+    out.push_str("<svg class=\"ondine-icon\" data-icon=\"");
     out.push_str(&esc_text(name));
     out.push_str("\" x=\"");
     push_num(out, x);
@@ -80,7 +80,7 @@ fn icon_slot(out: &mut String, name: &str, x: f64, y: f64, side: f64) {
     out.push_str(
         "\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">",
     );
-    // Icons need a host resolver, which Melee does not take yet, so only built-ins draw.
+    // Icons need a host resolver, which Ondine does not take yet, so only built-ins draw.
     out.push_str(&builtin_icon(name));
     out.push_str("</svg>");
 }
@@ -727,7 +727,7 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
         let mut id = edge.lhs_id.clone();
         id.push('-');
         id.push_str(&edge.rhs_id);
-        edges_out.push_str("<g class=\"melee-edge\" data-id=\"");
+        edges_out.push_str("<g class=\"ondine-edge\" data-id=\"");
         edges_out.push_str(&esc_text(&id));
         edges_out.push_str("\"><path d=\"");
         let start_trim = if edge.lhs_into && !s.wire {
@@ -887,11 +887,11 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
                 &label,
                 text_x + label.width / 2.0,
                 cy,
-                " class=\"melee-cluster-label\" fill=\"var(--_m)\"",
+                " class=\"ondine-cluster-label\" fill=\"var(--_m)\"",
                 None,
             ));
         }
-        clusters.push_str("<g class=\"melee-cluster\" data-id=\"");
+        clusters.push_str("<g class=\"ondine-cluster\" data-id=\"");
         clusters.push_str(&esc_text(&group.id));
         clusters.push_str("\"><rect x=\"");
         push_num(&mut clusters, x);
@@ -918,7 +918,7 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
         push_point(&mut at_attrs, center_x(i), row_y(i));
         at_attrs.push_str(")\"");
         if node.kind == NodeKind::Junction {
-            nodes_out.push_str("<g class=\"melee-node melee-junction\" ");
+            nodes_out.push_str("<g class=\"ondine-node ondine-junction\" ");
             nodes_out.push_str(&at_attrs);
             nodes_out.push_str("><circle cy=\"");
             push_num(&mut nodes_out, half);
@@ -949,13 +949,13 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
                 reason = "a small positive line count"
             )]
             let lines = 1.max(((icon_size - 4.0) / line_height).floor() as usize);
-            let mut attrs = String::from(" class=\"melee-icon-text\" font-size=\"");
+            let mut attrs = String::from(" class=\"ondine-icon-text\" font-size=\"");
             push_number(&mut attrs, text_size);
             attrs.push('"');
             inner = label_svg(&fit(text, icon_size - 8.0, lines), 0.0, half, &attrs, None);
         }
         let label = labels.get(i).cloned().unwrap_or_default();
-        nodes_out.push_str("<g class=\"melee-node melee-service\" ");
+        nodes_out.push_str("<g class=\"ondine-node ondine-service\" ");
         nodes_out.push_str(&at_attrs);
         nodes_out.push_str("><rect x=\"");
         push_num(&mut nodes_out, -half);
@@ -971,7 +971,7 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
             &label,
             0.0,
             icon_size + LABEL_GAP + label.height / 2.0,
-            " class=\"melee-label\"",
+            " class=\"ondine-label\"",
             None,
         ));
         nodes_out.push_str("</g>");
@@ -991,24 +991,24 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
 
     let mut body = String::new();
     if !clusters.is_empty() {
-        body.push_str("<g class=\"melee-clusters\">");
+        body.push_str("<g class=\"ondine-clusters\">");
         body.push_str(&clusters);
         body.push_str("</g>");
     }
     if !edges_out.is_empty() {
-        body.push_str("<g class=\"melee-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\" stroke-linejoin=\"round\">");
+        body.push_str("<g class=\"ondine-edges\" fill=\"none\" stroke=\"var(--_l)\" stroke-linecap=\"round\" stroke-linejoin=\"round\">");
         body.push_str(&edges_out);
         body.push_str("</g>");
     }
     if !labels_out.is_empty() {
-        body.push_str("<g class=\"melee-edge-labels\" font-size=\"");
+        body.push_str("<g class=\"ondine-edge-labels\" font-size=\"");
         push_number(&mut body, small);
         body.push_str("\">");
         body.push_str(&labels_out);
         body.push_str("</g>");
     }
     if !nodes_out.is_empty() {
-        body.push_str("<g class=\"melee-nodes\">");
+        body.push_str("<g class=\"ondine-nodes\">");
         body.push_str(&nodes_out);
         body.push_str("</g>");
     }
@@ -1017,7 +1017,7 @@ fn draw(model: &ArchitectureDb, config: &Value, options: &RenderOptions, tight: 
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     if !body.is_empty() {

@@ -1,5 +1,5 @@
 /**
- * @module Inputs for the oracle suites: every source Melee's parity fixtures and vectors hold for a
+ * @module Inputs for the oracle suites: every source Ondine's parity fixtures and vectors hold for a
  * diagram type, and seeded mutations of them. The mutator and generator follow Pele's
  * `tests/support/corpus.ts`.
  */

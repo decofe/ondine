@@ -1,5 +1,5 @@
-/** @module Chrome lane for Melee: compiles the served WebAssembly module and renders through `melee/compiler/wasm`. */
-import { create } from 'melee/compiler/wasm'
+/** @module Chrome lane for Ondine: compiles the served WebAssembly module and renders through `ondine/compiler/wasm`. */
+import { create } from 'ondine/compiler/wasm'
 import * as Page from './Page.js'
 
 let renderer: create.ReturnType | undefined
@@ -12,7 +12,7 @@ Page.start({
     })
   },
   render(source) {
-    if (!renderer) throw new Error('The Melee lane renders only after `prepare`.')
+    if (!renderer) throw new Error('The Ondine lane renders only after `prepare`.')
     return renderer.render(source)
   },
 })

@@ -6,7 +6,7 @@ resolver = "3"
 edition = "2024"
 license = "MIT"
 publish = false
-repository = "https://github.com/wevm/melee"
+repository = "https://github.com/wevm/ondine"
 rust-version = "1.97.0"
 version = "0.0.0"
 

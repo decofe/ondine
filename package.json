@@ -41,19 +41,19 @@
   },
   "packageManager": "pnpm@11.25.0",
   "[!start-pkg]": "",
-  "name": "melee",
+  "name": "ondine",
   "description": "Monochrome Mermaid diagrams, compiled with Rust.",
   "type": "module",
   "version": "0.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wevm/melee.git"
+    "url": "git+https://github.com/wevm/ondine.git"
   },
   "sideEffects": false,
   "bin": {
-    "melee": "./dist/cli/bin.js",
-    "melee.src": "./src/cli/bin.ts"
+    "ondine": "./dist/cli/bin.js",
+    "ondine.src": "./src/cli/bin.ts"
   },
   "main": "./dist/index.js",
   "exports": {

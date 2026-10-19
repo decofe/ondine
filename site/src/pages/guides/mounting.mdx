@@ -2,14 +2,14 @@ import { Card, Cards, Tab, Tabs } from 'vocs'
 
 # Mounting
 
-Insert compiled diagrams into a page with the 210-byte `melee` runtime.
+Insert compiled diagrams into a page with the 210-byte `ondine` runtime.
 
 ## Overview
 
-`mount` from `melee` places precompiled SVG inside an element, replacing what the element held. It imports nothing from the compiler, so a page that mounts diagrams downloads no parser or layout code.
+`mount` from `ondine` places precompiled SVG inside an element, replacing what the element held. It imports nothing from the compiler, so a page that mounts diagrams downloads no parser or layout code.
 
 ```ts title="main.ts"
-import { mount } from 'melee'
+import { mount } from 'ondine'
 import flow from './flow.mmd'
 
 // Replaces the element's contents with the diagram
@@ -88,7 +88,7 @@ import flow from './flow.mmd'
   <Card
     title="mount"
     icon="code"
-    to="/api/melee/mount"
+    to="/api/ondine/mount"
     description="Reference for mount and its result."
   />
   <Card

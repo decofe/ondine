@@ -1,5 +1,5 @@
 /**
- * Compares Melee with Pele and Mermaid on the vector corpus: bundle sizes for browsers, and cold
+ * Compares Ondine with Pele and Mermaid on the vector corpus: bundle sizes for browsers, and cold
  * and warm render times in Node and headless Chrome. Every library first renders every vector,
  * and each type is timed only over the vectors that every library supporting it accepts.
  * Rejections are reported per library. Writes `bench/results/comparison.json` and
@@ -47,7 +47,7 @@ const timing = {
   warmup: 3,
 }
 
-/** Melee's per-type module names, where they differ from Pele's type names. */
+/** Ondine's per-type module names, where they differ from Pele's type names. */
 const modules: Readonly<Record<string, string>> = {
   gitGraph: 'git',
   quadrantChart: 'quadrant',
@@ -101,10 +101,10 @@ console.log(markdown)
 
 /** Bundles every lane: Chrome lanes in memory, Node lanes to `bench/results/.build/node`. */
 async function bundle() {
-  const alias = { 'melee/compiler/wasm': Path.join(root, 'src/compiler/wasm.ts') }
+  const alias = { 'ondine/compiler/wasm': Path.join(root, 'src/compiler/wasm.ts') }
   const files = new Map<string, Uint8Array>()
 
-  for (const name of ['melee', 'mermaid', 'pele']) {
+  for (const name of ['ondine', 'mermaid', 'pele']) {
     const result = await Esbuild.build({
       alias,
       bundle: true,
@@ -125,7 +125,7 @@ async function bundle() {
   await Esbuild.build({
     alias,
     bundle: true,
-    entryPoints: ['main', 'melee', 'pele'].map((name) => Path.join(root, `bench/node/${name}.ts`)),
+    entryPoints: ['main', 'ondine', 'pele'].map((name) => Path.join(root, `bench/node/${name}.ts`)),
     format: 'esm',
     logLevel: 'error',
     minify: true,
@@ -137,11 +137,11 @@ async function bundle() {
   return files
 }
 
-/** Sizes of each library's browser bundle with every diagram type. Melee ships its runtime only. */
+/** Sizes of each library's browser bundle with every diagram type. Ondine ships its runtime only. */
 async function size() {
   const entries = [
     {
-      name: 'melee (mount precompiled SVG)',
+      name: 'ondine (mount precompiled SVG)',
       source: `export { mount } from ${JSON.stringify(Path.join(root, 'src/index.ts'))}`,
     },
     { name: 'pele', source: `export { render } from 'pele'` },
@@ -177,9 +177,9 @@ async function size() {
   return rows
 }
 
-/** Cold and warm times for Melee and Pele, each lane in fresh Node processes. */
+/** Cold and warm times for Ondine and Pele, each lane in fresh Node processes. */
 async function node() {
-  const lanes = ['melee', 'pele']
+  const lanes = ['ondine', 'pele']
   const rows: Row[] = []
 
   const run = (lane: string, config: Harness.Config) => {
@@ -213,7 +213,7 @@ async function chrome() {
   const browser = await Playwright.chromium.launch()
   report.environment.chrome = browser.version()
 
-  const lanes = ['melee', 'melee-fast', 'pele', 'mermaid']
+  const lanes = ['ondine', 'ondine-fast', 'pele', 'mermaid']
   const rows: Row[] = []
 
   try {
@@ -221,7 +221,7 @@ async function chrome() {
       progress(`chrome ${type}`)
 
       const wasm = (lane: string) =>
-        lane === 'melee-fast'
+        lane === 'ondine-fast'
           ? 'all.fast.generated.wasm'
           : `${modules[type] ?? type}.generated.wasm`
       rows.push(
@@ -229,7 +229,7 @@ async function chrome() {
           const context = await browser.newContext()
           const page = await context.newPage()
           const settings = { config, wasm: `/wasm/${wasm(lane)}` }
-          const bundle = lane === 'melee-fast' ? 'melee' : lane
+          const bundle = lane === 'ondine-fast' ? 'ondine' : lane
           // Inline JSON must not close the script element.
           const html = `<!doctype html><meta charset="utf-8"><body><script>globalThis.bench = ${JSON.stringify(settings).replaceAll('<', '\\u003c')}; globalThis.bench.start = performance.now()</script><script type="module" src="/${bundle}/entry.js"></script>`
 
@@ -327,7 +327,7 @@ async function compare(
 
 /** The Markdown report. */
 function render() {
-  const lines = ['# Melee, Pele, and Mermaid', '']
+  const lines = ['# Ondine, Pele, and Mermaid', '']
 
   for (const [key, value] of Object.entries(report.environment))
     lines.push(`- **${key}:** ${value}`)
@@ -340,7 +340,7 @@ function render() {
     lines.push(
       '## Size',
       '',
-      'Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Melee compiles diagrams ahead of time, so its row is the runtime that mounts them, without the compiler.',
+      'Minified esbuild bundles for browsers with every diagram type. Lazy libraries count the entry and every chunk. Ondine compiles diagrams ahead of time, so its row is the runtime that mounts them, without the compiler.',
       '',
       '| Bundle | Files | Entry gzip | Raw | Gzip | Brotli |',
       '| --- | --: | --: | --: | --: | --: |',
@@ -356,18 +356,18 @@ function render() {
     lines.push(
       '## Node',
       '',
-      'Melee loads the speed-optimized module for every type, as `melee/compiler` does. Pele loads its eager entrypoint.',
+      'Ondine loads the speed-optimized module for every type, as `ondine/compiler` does. Pele loads its eager entrypoint.',
       '',
-      ...tables(report.node, ['melee', 'pele'], 'melee'),
+      ...tables(report.node, ['ondine', 'pele'], 'ondine'),
     )
 
   if (report.chrome)
     lines.push(
       '## Chrome',
       '',
-      'Melee loads the size-optimized module for the diagram type, as browsers do, and `melee-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks.',
+      'Ondine loads the size-optimized module for the diagram type, as browsers do, and `ondine-fast` the speed-optimized module for every type. Pele loads through `pele/lazy`, and Mermaid splits diagram types into chunks.',
       '',
-      ...tables(report.chrome, ['melee', 'melee-fast', 'pele', 'mermaid'], 'melee'),
+      ...tables(report.chrome, ['ondine', 'ondine-fast', 'pele', 'mermaid'], 'ondine'),
     )
 
   return `${lines.join('\n')}\n`

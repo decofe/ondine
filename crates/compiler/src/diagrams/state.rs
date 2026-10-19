@@ -561,7 +561,7 @@ mod tests {
         for case in differing.iter().take(20) {
             write!(
                 report,
-                "\n{}\n  input: {:?}\n  pele:  {:?}\n  melee: {:?}",
+                "\n{}\n  input: {:?}\n  pele:  {:?}\n  ondine: {:?}",
                 case.str("origin").unwrap_or("?"),
                 case.str("input").unwrap(),
                 expected(case),

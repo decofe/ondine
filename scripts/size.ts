@@ -14,9 +14,9 @@ const root = Path.resolve(import.meta.dirname, '..')
 // The all-types module is reported without a budget. Per-type module budgets follow the size
 // measurements in bench/size.md.
 const budgets: readonly { entry: string; gzip: number | undefined; name: string }[] = [
-  { entry: 'src/index.ts', gzip: 20_000, name: 'melee' },
-  { entry: 'src/compiler/wasm.ts', gzip: 20_000, name: 'melee/compiler/wasm' },
-  { entry: 'src/compiler/all.ts', gzip: undefined, name: 'melee/compiler/wasm/all' },
+  { entry: 'src/index.ts', gzip: 20_000, name: 'ondine' },
+  { entry: 'src/compiler/wasm.ts', gzip: 20_000, name: 'ondine/compiler/wasm' },
+  { entry: 'src/compiler/all.ts', gzip: undefined, name: 'ondine/compiler/wasm/all' },
 ]
 
 let failed = false

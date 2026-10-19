@@ -356,12 +356,12 @@ pub(crate) fn render(
                 title,
                 COLUMN_PAD + 4.0,
                 COLUMN_PAD,
-                " class=\"melee-cluster-label\" font-weight=\"var(--_hw)\"",
+                " class=\"ondine-cluster-label\" font-weight=\"var(--_hw)\"",
                 icons,
                 false,
             ));
         }
-        body.push_str("<text class=\"melee-count\" x=\"");
+        body.push_str("<text class=\"ondine-count\" x=\"");
         push_number(&mut body, edge);
         body.push_str("\" y=\"");
         push_num(&mut body, COLUMN_PAD + line / 2.0 + small * 0.35);
@@ -395,7 +395,7 @@ pub(crate) fn render(
             inner.push_str(ROUNDED);
             inner.push_str(" fill=\"var(--_bg)\" stroke=\"var(--_b)\"/>");
             if let Some(color) = &color {
-                inner.push_str("<path class=\"melee-priority\" d=\"M2.5,5V");
+                inner.push_str("<path class=\"ondine-priority\" d=\"M2.5,5V");
                 push_num(&mut inner, card.height - 5.0);
                 inner.push_str("\" fill=\"none\" ");
                 inner.push_str(color);
@@ -405,7 +405,7 @@ pub(crate) fn render(
                 &card.label,
                 CARD_PAD,
                 CARD_PAD,
-                " class=\"melee-label\"",
+                " class=\"ondine-label\"",
                 icons,
                 false,
             ));
@@ -455,7 +455,7 @@ pub(crate) fn render(
                         &card.ticket,
                         CARD_PAD,
                         top,
-                        " class=\"melee-ticket\" fill=\"var(--_c)\"",
+                        " class=\"ondine-ticket\" fill=\"var(--_c)\"",
                         icons,
                         false,
                     ));
@@ -470,7 +470,7 @@ pub(crate) fn render(
                         &card.ticket,
                         CARD_PAD,
                         top,
-                        " class=\"melee-ticket\" fill=\"var(--_m)\"",
+                        " class=\"ondine-ticket\" fill=\"var(--_m)\"",
                         icons,
                         false,
                     ));
@@ -485,14 +485,14 @@ pub(crate) fn render(
                     &card.assigned,
                     card_width - CARD_PAD,
                     bottom - card.assigned.height,
-                    " class=\"melee-assigned\" fill=\"var(--_m)\"",
+                    " class=\"ondine-assigned\" fill=\"var(--_m)\"",
                     icons,
                     true,
                 ));
             }
-            body.push_str("<g class=\"melee-node melee-card");
+            body.push_str("<g class=\"ondine-node ondine-card");
             if color.is_some() {
-                body.push_str(" melee-priority-");
+                body.push_str(" ondine-priority-");
                 // `replace(' ', '-')` replaces the first space only.
                 body.push_str(&priority.replacen(' ', "-", 1));
             }
@@ -511,7 +511,7 @@ pub(crate) fn render(
             y += card.height + CARD_GAP;
         }
 
-        out.push_str("<g class=\"melee-cluster melee-column");
+        out.push_str("<g class=\"ondine-cluster ondine-column");
         out.push_str(&class_names(
             section.node.css_classes.as_deref().unwrap_or(""),
         ));
@@ -538,7 +538,7 @@ pub(crate) fn render(
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str(&out);

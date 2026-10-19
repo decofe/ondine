@@ -169,7 +169,7 @@ pub(crate) fn label_svg(
             for span in line {
                 if let Some(icon) = &span.icon {
                     let side = label.size * 1.1;
-                    extra.push_str("<svg class=\"melee-icon\" data-icon=\"");
+                    extra.push_str("<svg class=\"ondine-icon\" data-icon=\"");
                     extra.push_str(&esc_text(icon));
                     extra.push_str("\" x=\"");
                     push_num(&mut extra, x);

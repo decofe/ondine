@@ -1,14 +1,14 @@
 /**
- * Serves Melee diagrams as SVG images for Markdown hosts such as GitHub.
+ * Serves Ondine diagrams as SVG images for Markdown hosts such as GitHub.
  *
  * `GET /<payload>.svg` renders the Mermaid source in `payload`, encoded as Kroki does: UTF-8, zlib
  * deflate, then base64url. One adaptive SVG follows the embedder's color scheme. `?scheme=light` or
  * `?scheme=dark` pins one scheme for `<picture>` sources.
  * @module
  */
-import { Render, RenderError } from 'melee/compiler/wasm'
+import { Render, RenderError } from 'ondine/compiler/wasm'
 // Every diagram type, optimized for speed. Workers download nothing per request.
-import module from 'melee/compiler/wasm/all.fast.wasm'
+import module from 'ondine/compiler/wasm/all.fast.wasm'
 
 /** Thrown when a request path does not hold a decodable payload. */
 export class PayloadError extends Error {
@@ -23,8 +23,8 @@ const maxSource = 64 * 1024
 const renderer = Render.create({ modules: { all: module } })
 
 const schemes = {
-  dark: '--melee-bg:#000;--melee-fg:#fff;--melee-line:#fff',
-  light: '--melee-bg:#fff;--melee-fg:#000;--melee-line:#000',
+  dark: '--ondine-bg:#000;--ondine-fg:#fff;--ondine-line:#fff',
+  light: '--ondine-bg:#fff;--ondine-fg:#000;--ondine-line:#000',
 } as const
 
 export default {
@@ -97,7 +97,7 @@ async function inflate(payload: string): Promise<string> {
   }
 }
 
-/** Sets the `--melee-*` defaults right after the root element opens, since images cannot inherit page styles. */
+/** Sets the `--ondine-*` defaults right after the root element opens, since images cannot inherit page styles. */
 function theme(svg: string, style: string): string {
   const at = svg.indexOf('>', svg.indexOf('<svg')) + 1
   return `${svg.slice(0, at)}<style>${style}</style>${svg.slice(at)}`
@@ -105,7 +105,7 @@ function theme(svg: string, style: string): string {
 
 /** Draws an error message as a monospace SVG, so a broken diagram explains itself in place. */
 function card(message: string): string {
-  const lines = ['Melee could not render this diagram.', ...message.split('\n')]
+  const lines = ['Ondine could not render this diagram.', ...message.split('\n')]
   const fontSize = 14
   const lineHeight = 20
   const padding = 12
@@ -120,7 +120,7 @@ function card(message: string): string {
     )
     .join('')
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="var(--melee-bg)" stroke="var(--melee-line)" stroke-width="2"/><text font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="${fontSize}" fill="var(--melee-fg)" xml:space="preserve">${text}</text></svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="var(--ondine-bg)" stroke="var(--ondine-line)" stroke-width="2"/><text font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="${fontSize}" fill="var(--ondine-fg)" xml:space="preserve">${text}</text></svg>`
 }
 
 function escape(text: string): string {

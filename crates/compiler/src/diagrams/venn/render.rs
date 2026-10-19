@@ -287,7 +287,7 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
             .get([c.id.clone()].as_slice())
             .and_then(|&at| regions.get(at))
             .map_or("", |region| region.style.shape.as_str());
-        sets.push_str("<circle class=\"melee-venn-set\" data-id=\"");
+        sets.push_str("<circle class=\"ondine-venn-set\" data-id=\"");
         sets.push_str(&esc_text(&c.id));
         sets.push_str("\" cx=\"");
         push_num(&mut sets, c.x);
@@ -318,7 +318,7 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
                 .collect();
             let d = region_path(&shared);
             if !d.is_empty() {
-                overlaps.push_str("<path class=\"melee-venn-overlap\" data-id=\"");
+                overlaps.push_str("<path class=\"ondine-venn-overlap\" data-id=\"");
                 overlaps.push_str(&id);
                 overlaps.push_str("\" d=\"");
                 overlaps.push_str(&d);
@@ -341,7 +341,7 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
             let mut attrs = String::new();
             match &line.id {
                 None => {
-                    attrs.push_str(" class=\"melee-label\"");
+                    attrs.push_str(" class=\"ondine-label\"");
                     if line.size != size {
                         attrs.push_str(" font-size=\"");
                         push_number(&mut attrs, line.size);
@@ -350,7 +350,7 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
                     attrs.push_str(&region.style.text);
                 }
                 Some(id) => {
-                    attrs.push_str(" class=\"melee-venn-text\" data-id=\"");
+                    attrs.push_str(" class=\"ondine-venn-text\" data-id=\"");
                     attrs.push_str(&esc_text(id));
                     attrs.push_str("\" font-size=\"");
                     push_number(&mut attrs, tiny);
@@ -367,7 +367,7 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
             ));
             y += line.label.height;
         }
-        labels.push_str("<g class=\"melee-venn-region\" data-id=\"");
+        labels.push_str("<g class=\"ondine-venn-region\" data-id=\"");
         labels.push_str(&id);
         labels.push_str("\">");
         labels.push_str(&content);
@@ -378,19 +378,19 @@ pub(crate) fn render(model: &VennDb, options: &RenderOptions) -> Rendered {
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
-    content.push_str("<g class=\"melee-venn-sets\">");
+    content.push_str("<g class=\"ondine-venn-sets\">");
     content.push_str(&sets);
     content.push_str("</g>");
     if !overlaps.is_empty() {
-        content.push_str("<g class=\"melee-venn-overlaps\">");
+        content.push_str("<g class=\"ondine-venn-overlaps\">");
         content.push_str(&overlaps);
         content.push_str("</g>");
     }
     if !labels.is_empty() {
-        content.push_str("<g class=\"melee-venn-labels\">");
+        content.push_str("<g class=\"ondine-venn-labels\">");
         content.push_str(&labels);
         content.push_str("</g>");
     }

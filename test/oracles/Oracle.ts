@@ -1,5 +1,5 @@
 /**
- * @module Compares Melee's parse of one source with Mermaid 12.1.0's: the same accept or reject
+ * @module Compares Ondine's parse of one source with Mermaid 12.1.0's: the same accept or reject
  * decision and detected type, and for the types in `Models.projections`, the same model. A
  * disagreement passes only when a recorded divergence explains it.
  */
@@ -20,7 +20,7 @@ export function compare(
 ): Outcome {
   const entry: Divergences.Case = { ...parsed, type }
   const decided = decide(type, parsed, divergences)
-  if (decided.kind !== 'agree' || !entry.melee.ok || !entry.mermaid.ok) return decided
+  if (decided.kind !== 'agree' || !entry.ondine.ok || !entry.mermaid.ok) return decided
 
   const found = models(entry, divergences)
   if (found === undefined) return { kind: 'agree', modeled: false }
@@ -29,33 +29,37 @@ export function compare(
   return { kind: models(entry, [])?.length === 0 ? 'agree' : 'diverge', modeled: true }
 }
 
-/** Creates a comparer that owns one instance of Melee's model module. */
+/** Creates a comparer that owns one instance of Ondine's model module. */
 export function create(): create.ReturnType {
-  const melee = Model.create()
+  const ondine = Model.create()
 
   return {
-    melee(source) {
-      return melee.parse(source, options())
+    ondine(source) {
+      return ondine.parse(source, options())
     },
     mutations(type, count, seed) {
       const seeds = Corpus.load(type).filter(
-        (source) => source.isWellFormed() && melee.parse(source).type === Corpus.types[type],
+        (source) => source.isWellFormed() && ondine.parse(source).type === Corpus.types[type],
       )
       const next = Corpus.mutator(seeds, Corpus.fragments(seeds), Corpus.random(seed))
       return Array.from({ length: count }, () => next())
     },
     async parse(source) {
-      return { melee: melee.parse(source, options()), mermaid: await Mermaid.parse(source), source }
+      return {
+        ondine: ondine.parse(source, options()),
+        mermaid: await Mermaid.parse(source),
+        source,
+      }
     },
   }
 }
 
 export declare namespace create {
   type ReturnType = {
-    /** Parses `source` with Melee alone. */
-    readonly melee: (source: string) => Model.Result
+    /** Parses `source` with Ondine alone. */
+    readonly ondine: (source: string) => Model.Result
     /**
-     * `count` mutations, from `seed`, of the corpus sources Melee detects as diagram type `type`.
+     * `count` mutations, from `seed`, of the corpus sources Ondine detects as diagram type `type`.
      */
     readonly mutations: (type: Corpus.Type, count: number, seed: number) => readonly string[]
     /**
@@ -77,10 +81,13 @@ export function decide(
 ): Outcome {
   const entry: Divergences.Case = { ...parsed, type }
   const name = Corpus.types[type]
-  if (entry.melee.type !== name && entry.mermaid.type !== name) return { kind: 'foreign' }
+  if (entry.ondine.type !== name && entry.mermaid.type !== name) return { kind: 'foreign' }
 
-  const accepted = entry.melee.ok && entry.mermaid.ok
-  if (entry.melee.ok === entry.mermaid.ok && (!accepted || entry.melee.type === entry.mermaid.type))
+  const accepted = entry.ondine.ok && entry.mermaid.ok
+  if (
+    entry.ondine.ok === entry.mermaid.ok &&
+    (!accepted || entry.ondine.type === entry.mermaid.type)
+  )
     return { kind: 'agree', modeled: false }
 
   if (divergences.some((divergence) => divergence.verdict?.(entry) === true))
@@ -97,17 +104,17 @@ export function models(
   divergences: readonly Divergences.Divergence[],
 ): readonly string[] | undefined {
   const projection = Models.projections[entry.type]
-  if (projection === undefined || !entry.melee.ok || !entry.mermaid.ok) return undefined
+  if (projection === undefined || !entry.ondine.ok || !entry.mermaid.ok) return undefined
 
   if (divergences.some((divergence) => divergence.models?.(entry) === true)) return []
 
-  const model = entry.melee.model as Models.Json
+  const model = entry.ondine.model as Models.Json
   const theirs = read(entry.mermaid, projection, entry.source)
 
   let ours: unknown = {
     accDescr: theirs.accDescr === undefined ? undefined : (model.accDescr ?? ''),
     accTitle: theirs.accTitle === undefined ? undefined : (model.accTitle ?? ''),
-    model: projection.melee(model),
+    model: projection.ondine(model),
     title:
       theirs.title === undefined ? undefined : (projection.title?.(model) ?? model.title ?? ''),
   }
@@ -121,7 +128,7 @@ export function models(
       }
 
   for (const divergence of divergences) {
-    if (divergence.melee !== undefined) ours = divergence.melee(ours, entry)
+    if (divergence.ondine !== undefined) ours = divergence.ondine(ours, entry)
     if (divergence.mermaid !== undefined) mermaid = divergence.mermaid(mermaid, entry)
   }
 
@@ -159,7 +166,7 @@ export function recorded(type: Corpus.Type): readonly Divergences.Divergence[] {
 }
 
 /**
- * Options Melee parses with: Mermaid's default edge limit, and the current time, which Mermaid
+ * Options Ondine parses with: Mermaid's default edge limit, and the current time, which Mermaid
  * schedules gantt tasks against.
  */
 const options = () => ({ maxEdges: 500, now: Date.now() })
@@ -212,11 +219,11 @@ function read(
 
 /** Describes an acceptance disagreement. */
 function verdict(entry: Divergences.Case): string {
-  const melee = entry.melee.ok
-    ? `Melee accepts it as ${entry.melee.type}`
-    : `Melee rejects it (${entry.melee.code}: ${entry.melee.message.split('\n')[0]})`
+  const ondine = entry.ondine.ok
+    ? `Ondine accepts it as ${entry.ondine.type}`
+    : `Ondine rejects it (${entry.ondine.code}: ${entry.ondine.message.split('\n')[0]})`
   const mermaid = entry.mermaid.ok
     ? `Mermaid accepts it as ${entry.mermaid.type}`
     : `Mermaid rejects it (${entry.mermaid.stage}: ${entry.mermaid.message.split('\n')[0]})`
-  return `${melee}. ${mermaid}.`
+  return `${ondine}. ${mermaid}.`
 }

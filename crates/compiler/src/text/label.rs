@@ -5233,7 +5233,7 @@ mod tests {
             0,
             true,
             "|0|fa:fa-car|20; Car|0||38.4#58.4#58.4#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"41.3\" y=\"-14.65\" text-anchor=\"start\"> Car</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"41.3\" y=\"-14.65\" text-anchor=\"start\"> Car</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fa:fa-car Car"),
@@ -5253,7 +5253,7 @@ mod tests {
             1,
             true,
             "|1|fa:fa-car|20; Car|1||38.4#58.4#58.4#24#16#24",
-            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"41.3\" y=\"-14.65\" text-anchor=\"start\"> Car</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"41.3\" y=\"-14.65\" text-anchor=\"start\"> Car</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fab:fa-github"),
@@ -5263,7 +5263,7 @@ mod tests {
             0,
             true,
             "|0|fab:fa-github|20#20#20#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"></text><svg class=\"melee-icon\" data-icon=\"fab:fa-github\" x=\"40.5\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"></text><svg class=\"ondine-icon\" data-icon=\"fab:fa-github\" x=\"40.5\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fab:fa-github"),
@@ -5283,7 +5283,7 @@ mod tests {
             1,
             true,
             "|1|fab:fa-github|20#20#20#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"></text><svg class=\"melee-icon\" data-icon=\"fab:fa-github\" x=\"40.5\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"></text><svg class=\"ondine-icon\" data-icon=\"fab:fa-github\" x=\"40.5\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fa:fa-missing text"),
@@ -5353,7 +5353,7 @@ mod tests {
             0,
             true,
             "x |0||19.2;|0|fa:fa-car|20; |0||9.6;|0|fa:fa-car|20; y|0||19.2#88#88#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"6.5\" y=\"-14.65\" text-anchor=\"start\">x </tspan><tspan x=\"45.7\" y=\"-14.65\" text-anchor=\"start\"> </tspan><tspan x=\"75.3\" y=\"-14.65\" text-anchor=\"start\"> y</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"25.7\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"55.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"6.5\" y=\"-14.65\" text-anchor=\"start\">x </tspan><tspan x=\"45.7\" y=\"-14.65\" text-anchor=\"start\"> </tspan><tspan x=\"75.3\" y=\"-14.65\" text-anchor=\"start\"> y</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"25.7\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"55.3\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("x fa:fa-car fa:fa-car y"),
@@ -5373,7 +5373,7 @@ mod tests {
             1,
             true,
             "x |1||19.2;|1|fa:fa-car|20;|1||0/|1|fa:fa-car|20; y|1||19.2#39.2,39.2#39.2#48#16#24",
-            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-26.65\" text-anchor=\"start\">x </tspan><tspan x=\"50.9\" y=\"-2.65\" text-anchor=\"start\"> y</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-41.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"30.9\" y=\"-17.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-26.65\" text-anchor=\"start\">x </tspan><tspan x=\"50.9\" y=\"-2.65\" text-anchor=\"start\"> y</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-41.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"30.9\" y=\"-17.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("sofa:fa-car"),
@@ -5383,7 +5383,7 @@ mod tests {
             0,
             true,
             "so|0||19.2;|0|fa:fa-car|20#39.2#39.2#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-14.65\" text-anchor=\"start\">so</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-14.65\" text-anchor=\"start\">so</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("sofa:fa-car"),
@@ -5403,7 +5403,7 @@ mod tests {
             1,
             true,
             "so|1||19.2;|1|fa:fa-car|20#39.2#39.2#24#16#24",
-            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-14.65\" text-anchor=\"start\">so</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"30.9\" y=\"-14.65\" text-anchor=\"start\">so</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"50.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fak:fa-x"),
@@ -5773,7 +5773,7 @@ mod tests {
             0,
             true,
             "|0|fa:fa-car|20; with a long text that should wrap around icons |0||460.8;|0|fa:fa-car|20; end|0||38.4#539.2#539.2#24#16#24",
-            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-199.1\" y=\"-14.65\" text-anchor=\"start\"> with a long text that should wrap around icons </tspan><tspan x=\"281.7\" y=\"-14.65\" text-anchor=\"start\"> end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"-219.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"261.7\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-199.1\" y=\"-14.65\" text-anchor=\"start\"> with a long text that should wrap around icons </tspan><tspan x=\"281.7\" y=\"-14.65\" text-anchor=\"start\"> end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"-219.1\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"261.7\" y=\"-29.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("fa:fa-car with a long text that should wrap around icons fa:fa-car end"),
@@ -5793,7 +5793,7 @@ mod tests {
             1,
             true,
             "|1|fa:fa-car|20/with a|1||57.6/long|1||38.4/text|1||38.4/that|1||38.4/should|1||57.6/wrap|1||38.4/around|1||57.6/icons|1||48/|1|fa:fa-car|20; end|1||38.4#20,57.6,38.4,38.4,38.4,57.6,38.4,57.6,48,58.4#58.4#240#16#24",
-            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-98.65\">with a</tspan><tspan x=\"50.5\" y=\"-74.65\">long</tspan><tspan x=\"50.5\" y=\"-50.65\">text</tspan><tspan x=\"50.5\" y=\"-26.65\">that</tspan><tspan x=\"50.5\" y=\"-2.65\">should</tspan><tspan x=\"50.5\" y=\"21.35\">wrap</tspan><tspan x=\"50.5\" y=\"45.35\">around</tspan><tspan x=\"50.5\" y=\"69.35\">icons</tspan><tspan x=\"41.3\" y=\"93.35\" text-anchor=\"start\"> end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"40.5\" y=\"-137.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"78.95\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-weight=\"var(--_w)\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-98.65\">with a</tspan><tspan x=\"50.5\" y=\"-74.65\">long</tspan><tspan x=\"50.5\" y=\"-50.65\">text</tspan><tspan x=\"50.5\" y=\"-26.65\">that</tspan><tspan x=\"50.5\" y=\"-2.65\">should</tspan><tspan x=\"50.5\" y=\"21.35\">wrap</tspan><tspan x=\"50.5\" y=\"45.35\">around</tspan><tspan x=\"50.5\" y=\"69.35\">icons</tspan><tspan x=\"41.3\" y=\"93.35\" text-anchor=\"start\"> end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"40.5\" y=\"-137.05\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"21.3\" y=\"78.95\" width=\"17.6\" height=\"17.6\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),
@@ -6013,7 +6013,7 @@ mod tests {
             2,
             true,
             "|2|fa:fa-car|16.25/with|2||31.2/a|2||7.8/long|2||31.2/text|2||31.2/that|2||31.2/should|2||46.8/wrap|2||31.2/around|2||46.8/icons|2||39/|2|fa:fa-car|16.25/end|2||23.4#16.25,31.2,7.8,31.2,31.2,31.2,46.8,31.2,46.8,39,16.25,23.4#46.8#240#13#20",
-            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-105.7\">with</tspan><tspan x=\"50.5\" y=\"-85.7\">a</tspan><tspan x=\"50.5\" y=\"-65.7\">long</tspan><tspan x=\"50.5\" y=\"-45.7\">text</tspan><tspan x=\"50.5\" y=\"-25.7\">that</tspan><tspan x=\"50.5\" y=\"-5.7\">should</tspan><tspan x=\"50.5\" y=\"14.3\">wrap</tspan><tspan x=\"50.5\" y=\"34.3\">around</tspan><tspan x=\"50.5\" y=\"54.3\">icons</tspan><tspan x=\"50.5\" y=\"94.3\">end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"-137.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"62.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-105.7\">with</tspan><tspan x=\"50.5\" y=\"-85.7\">a</tspan><tspan x=\"50.5\" y=\"-65.7\">long</tspan><tspan x=\"50.5\" y=\"-45.7\">text</tspan><tspan x=\"50.5\" y=\"-25.7\">that</tspan><tspan x=\"50.5\" y=\"-5.7\">should</tspan><tspan x=\"50.5\" y=\"14.3\">wrap</tspan><tspan x=\"50.5\" y=\"34.3\">around</tspan><tspan x=\"50.5\" y=\"54.3\">icons</tspan><tspan x=\"50.5\" y=\"94.3\">end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"-137.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"62.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),
@@ -6133,7 +6133,7 @@ mod tests {
             2,
             true,
             "|2|fa:fa-car|16.25/with a|2||46.8/long|2||31.2/text|2||31.2/that|2||31.2/should|2||46.8/wrap|2||31.2/around|2||46.8/icons|2||39/|2|fa:fa-car|16.25; end|2||31.2#16.25,46.8,31.2,31.2,31.2,46.8,31.2,46.8,39,47.45#47.45#200#13#20",
-            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-85.7\">with a</tspan><tspan x=\"50.5\" y=\"-65.7\">long</tspan><tspan x=\"50.5\" y=\"-45.7\">text</tspan><tspan x=\"50.5\" y=\"-25.7\">that</tspan><tspan x=\"50.5\" y=\"-5.7\">should</tspan><tspan x=\"50.5\" y=\"14.3\">wrap</tspan><tspan x=\"50.5\" y=\"34.3\">around</tspan><tspan x=\"50.5\" y=\"54.3\">icons</tspan><tspan x=\"43.03\" y=\"74.3\" text-anchor=\"start\"> end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"-117.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"26.78\" y=\"62.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"50.5\" y=\"-85.7\">with a</tspan><tspan x=\"50.5\" y=\"-65.7\">long</tspan><tspan x=\"50.5\" y=\"-45.7\">text</tspan><tspan x=\"50.5\" y=\"-25.7\">that</tspan><tspan x=\"50.5\" y=\"-5.7\">should</tspan><tspan x=\"50.5\" y=\"14.3\">wrap</tspan><tspan x=\"50.5\" y=\"34.3\">around</tspan><tspan x=\"50.5\" y=\"54.3\">icons</tspan><tspan x=\"43.03\" y=\"74.3\" text-anchor=\"start\"> end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"42.38\" y=\"-117.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"26.78\" y=\"62.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),
@@ -6253,7 +6253,7 @@ mod tests {
             2,
             true,
             "|2|fa:fa-car|16.25; with a|2||54.6/long text|2||70.2/that should|2||85.8/wrap around|2||85.8/icons |2||46.8;|2|fa:fa-car|16.25/end|2||23.4#70.85,70.2,85.8,85.8,63.05,23.4#85.8#120#13#20",
-            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"31.32\" y=\"-65.7\" text-anchor=\"start\"> with a</tspan><tspan x=\"50.5\" y=\"-45.7\">long text</tspan><tspan x=\"50.5\" y=\"-25.7\">that should</tspan><tspan x=\"50.5\" y=\"-5.7\">wrap around</tspan><tspan x=\"18.98\" y=\"14.3\" text-anchor=\"start\">icons </tspan><tspan x=\"50.5\" y=\"34.3\">end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"15.07\" y=\"-77.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"65.78\" y=\"2.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"31.32\" y=\"-65.7\" text-anchor=\"start\"> with a</tspan><tspan x=\"50.5\" y=\"-45.7\">long text</tspan><tspan x=\"50.5\" y=\"-25.7\">that should</tspan><tspan x=\"50.5\" y=\"-5.7\">wrap around</tspan><tspan x=\"18.98\" y=\"14.3\" text-anchor=\"start\">icons </tspan><tspan x=\"50.5\" y=\"34.3\">end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"15.07\" y=\"-77.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"65.78\" y=\"2.6\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),
@@ -6373,7 +6373,7 @@ mod tests {
             2,
             true,
             "|2|fa:fa-car|16.25; with a long text|2||132.6/that should wrap|2||124.8/around icons |2||101.4;|2|fa:fa-car|16.25; end|2||31.2#148.85,124.8,148.85#148.85#60#13#20",
-            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-7.67\" y=\"-35.7\" text-anchor=\"start\"> with a long text</tspan><tspan x=\"50.5\" y=\"-15.7\">that should wrap</tspan><tspan x=\"-23.92\" y=\"4.3\" text-anchor=\"start\">around icons </tspan><tspan x=\"93.73\" y=\"4.3\" text-anchor=\"start\"> end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"-23.92\" y=\"-47.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"77.48\" y=\"-7.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-7.67\" y=\"-35.7\" text-anchor=\"start\"> with a long text</tspan><tspan x=\"50.5\" y=\"-15.7\">that should wrap</tspan><tspan x=\"-23.92\" y=\"4.3\" text-anchor=\"start\">around icons </tspan><tspan x=\"93.73\" y=\"4.3\" text-anchor=\"start\"> end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"-23.92\" y=\"-47.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"77.48\" y=\"-7.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),
@@ -6493,7 +6493,7 @@ mod tests {
             2,
             true,
             "|2|fa:fa-car|16.25; with a long text that|2||171.6/should wrap around icons |2||195;|2|fa:fa-car|16.25/end|2||23.4#187.85,211.25,23.4#211.25#60#13#20",
-            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-27.17\" y=\"-35.7\" text-anchor=\"start\"> with a long text that</tspan><tspan x=\"-55.12\" y=\"-15.7\" text-anchor=\"start\">should wrap around icons </tspan><tspan x=\"50.5\" y=\"4.3\">end</tspan></text><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"-43.42\" y=\"-47.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"melee-icon\" data-icon=\"fa:fa-car\" x=\"139.88\" y=\"-27.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
+            "<text class=\"l\" font-style=\"italic\" text-anchor=\"middle\" xml:space=\"preserve\"><tspan x=\"-27.17\" y=\"-35.7\" text-anchor=\"start\"> with a long text that</tspan><tspan x=\"-55.12\" y=\"-15.7\" text-anchor=\"start\">should wrap around icons </tspan><tspan x=\"50.5\" y=\"4.3\">end</tspan></text><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"-43.42\" y=\"-47.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg><svg class=\"ondine-icon\" data-icon=\"fa:fa-car\" x=\"139.88\" y=\"-27.4\" width=\"14.3\" height=\"14.3\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 1\"/></svg>",
         ),
         (
             Some("**a** *b* <i>c</i> d e f g h i j k l m n o p"),

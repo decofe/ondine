@@ -184,7 +184,7 @@ fn draw(model: &SankeyDb, conf: &Value, options: &RenderOptions, chart_width: f6
     for (i, node) in nodes.iter().enumerate() {
         let id = model.nodes.get(i).map_or("", |node| node.id.as_str());
         let height = node.height.max(1.0);
-        nodes_out.push_str("<rect class=\"melee-sankey-node\" data-id=\"");
+        nodes_out.push_str("<rect class=\"ondine-sankey-node\" data-id=\"");
         nodes_out.push_str(&esc_text(id));
         nodes_out.push_str("\" x=\"");
         push_num(&mut nodes_out, node.x);
@@ -242,7 +242,7 @@ fn draw(model: &SankeyDb, conf: &Value, options: &RenderOptions, chart_width: f6
         position.push_str(if after { "start" } else { "end" });
         position.push('"');
 
-        labels_out.push_str("<g class=\"melee-label\" data-id=\"");
+        labels_out.push_str("<g class=\"ondine-label\" data-id=\"");
         labels_out.push_str(&esc_text(id));
         labels_out.push_str("\">");
         if outlined {
@@ -263,7 +263,7 @@ fn draw(model: &SankeyDb, conf: &Value, options: &RenderOptions, chart_width: f6
         labels_out.push('>');
         labels_out.push_str(&esc(id));
         if !value.is_empty() {
-            labels_out.push_str(" <tspan class=\"melee-sankey-value\" fill=\"var(--_m)\">");
+            labels_out.push_str(" <tspan class=\"ondine-sankey-value\" fill=\"var(--_m)\">");
             labels_out.push_str(&esc(&value));
             labels_out.push_str("</tspan>");
         }
@@ -307,7 +307,7 @@ fn draw(model: &SankeyDb, conf: &Value, options: &RenderOptions, chart_width: f6
         );
 
         let out = &mut links_out;
-        out.push_str("<path class=\"melee-sankey-link\" data-id=\"");
+        out.push_str("<path class=\"ondine-sankey-link\" data-id=\"");
         out.push_str(&from);
         out.push_str("-&gt;");
         out.push_str(&to);
@@ -385,18 +385,18 @@ fn draw(model: &SankeyDb, conf: &Value, options: &RenderOptions, chart_width: f6
         &title,
         width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
     content.push_str("<g transform=\"translate(");
     push_num(&mut content, ox);
     content.push(',');
     push_num(&mut content, oy);
-    content.push_str(")\"><g class=\"melee-sankey-links\" fill-opacity=\"0.4\">");
+    content.push_str(")\"><g class=\"ondine-sankey-links\" fill-opacity=\"0.4\">");
     content.push_str(&links_out);
-    content.push_str("</g><g class=\"melee-sankey-nodes\">");
+    content.push_str("</g><g class=\"ondine-sankey-nodes\">");
     content.push_str(&nodes_out);
-    content.push_str("</g><g class=\"melee-labels\" font-size=\"");
+    content.push_str("</g><g class=\"ondine-labels\" font-size=\"");
     push_number(&mut content, small);
     content.push_str("\">");
     content.push_str(&labels_out);

@@ -280,7 +280,7 @@ fn draw(
             continue;
         }
         let end = angle + share * PI * 2.0;
-        slices.push_str("<path class=\"melee-slice\" data-id=\"");
+        slices.push_str("<path class=\"ondine-slice\" data-id=\"");
         slices.push_str(&esc_text(label));
         slices.push_str("\" d=\"");
         slices.push_str(&slice(angle, end, radius, inner));
@@ -322,7 +322,7 @@ fn draw(
         angle = end;
     }
     if slices.is_empty() {
-        slices.push_str("<circle class=\"melee-slice\" r=\"");
+        slices.push_str("<circle class=\"ondine-slice\" r=\"");
         push_number(&mut slices, radius);
         slices.push_str("\" fill=\"none\" stroke=\"var(--_b)\"/>");
     }
@@ -347,7 +347,7 @@ fn draw(
     for (index, (label, (name, _))) in legend.iter().zip(entries).enumerate() {
         #[expect(clippy::cast_precision_loss, reason = "slice counts are small")]
         let y = ly + index as f64 * ROW + ROW / 2.0;
-        legend_out.push_str("<g class=\"melee-legend-item\" data-id=\"");
+        legend_out.push_str("<g class=\"ondine-legend-item\" data-id=\"");
         legend_out.push_str(&esc_text(name));
         legend_out.push_str("\"><rect x=\"");
         push_num(&mut legend_out, lx);
@@ -378,16 +378,16 @@ fn draw(
         &title,
         total_width / 2.0,
         pad + title.height / 2.0,
-        " class=\"melee-title\" font-weight=\"var(--_tw)\"",
+        " class=\"ondine-title\" font-weight=\"var(--_tw)\"",
         None,
     );
-    content.push_str("<g class=\"melee-slices\"");
+    content.push_str("<g class=\"ondine-slices\"");
     content.push_str(&translate);
     content.push_str(" stroke=\"var(--_bg)\" stroke-width=\"1\" stroke-linejoin=\"round\">");
     content.push_str(&slices);
     content.push_str("</g>");
     if !labels.is_empty() {
-        content.push_str("<g class=\"melee-slice-labels\"");
+        content.push_str("<g class=\"ondine-slice-labels\"");
         content.push_str(&translate);
         content.push_str(" font-size=\"");
         push_number(&mut content, small);
@@ -396,7 +396,7 @@ fn draw(
         content.push_str("</g>");
     }
     if !outside.is_empty() {
-        content.push_str("<g class=\"melee-slice-labels\"");
+        content.push_str("<g class=\"ondine-slice-labels\"");
         content.push_str(&translate);
         content.push_str(" font-size=\"");
         push_number(&mut content, small);
@@ -405,7 +405,7 @@ fn draw(
         content.push_str("</g>");
     }
     if !legend_out.is_empty() {
-        content.push_str("<g class=\"melee-legend\" font-size=\"");
+        content.push_str("<g class=\"ondine-legend\" font-size=\"");
         push_number(&mut content, small);
         content.push_str("\">");
         content.push_str(&legend_out);

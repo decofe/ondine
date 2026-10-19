@@ -1,6 +1,6 @@
 # Test vectors
 
-Inputs that every Melee diagram type is tested against. Each file is copied unchanged from [Pele](https://github.com/obsidianmd/pele) at `458322a5b8abb1ae57ddf127c32017ab9fb14a92` (October 17, 2026).
+Inputs that every Ondine diagram type is tested against. Each file is copied unchanged from [Pele](https://github.com/obsidianmd/pele) at `458322a5b8abb1ae57ddf127c32017ab9fb14a92` (October 17, 2026).
 
 | File | Source | Contents |
 | --- | --- | --- |

@@ -214,7 +214,7 @@ pub(crate) fn draw_actor(
     label: &Label,
 ) {
     let ActorSize { h, w } = size;
-    let text = " class=\"melee-label\"";
+    let text = " class=\"ondine-label\"";
     if is_figure(kind) {
         figure(out, kind, cx, top);
         out.push_str(&label_svg(

@@ -1,24 +1,24 @@
 /**
- * Remark plugin that renders ` ```mermaid ` fences with `melee/remark` at build time.
+ * Remark plugin that renders ` ```mermaid ` fences with `ondine/remark` at build time.
  *
  * Vocs turns each fence into a `data-v-mermaid-chart` placeholder that Mermaid draws in the
  * browser. This plugin runs after Vocs's own and replaces every placeholder with a `<Diagram>`
- * holding the highlighted source and the inline SVG `melee/remark` renders from it, so pages ship
+ * holding the highlighted source and the inline SVG `ondine/remark` renders from it, so pages ship
  * no diagram renderer.
  * @module
  */
 import * as Path from 'node:path'
-import { remarkMelee } from 'melee/remark'
+import { remarkOndine } from 'ondine/remark'
 
 const component = Path.resolve(import.meta.dirname, 'components/Diagram.tsx')
 
-type Node = remarkMelee.Node
+type Node = remarkOndine.Node
 
-/** Replaces Vocs's Mermaid placeholders with diagrams rendered by Melee. */
+/** Replaces Vocs's Mermaid placeholders with diagrams rendered by Ondine. */
 export function remarkVocsMermaid() {
-  const render = remarkMelee()
+  const render = remarkOndine()
 
-  return (tree: Node, file: remarkMelee.File) => {
+  return (tree: Node, file: remarkOndine.File) => {
     const placeholders: { children: Node[]; index: number; source: string }[] = []
 
     const visit = (node: Node) => {
@@ -36,7 +36,7 @@ export function remarkVocsMermaid() {
     visit(tree)
     if (placeholders.length === 0) return
 
-    // One tree holds every diagram, so `melee/remark` numbers their element IDs apart.
+    // One tree holds every diagram, so `ondine/remark` numbers their element IDs apart.
     const diagrams: Node = {
       children: placeholders.map((entry) => code(entry.source)),
       type: 'root',
