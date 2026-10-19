@@ -365,8 +365,8 @@ fn directives(text: &str, config: &mut Config) -> String {
 /// ignored instead of overflowing the stack.
 const MAX_JSON_DEPTH: usize = 1000;
 
-// `JSON.parse`, or `None` where it throws.
-fn json(text: &str) -> Option<Value> {
+/// `JSON.parse`, or `None` where it throws.
+pub(crate) fn json(text: &str) -> Option<Value> {
     let mut parser = Json { pos: 0, text };
     let value = parser.value(0)?;
     parser.skip();
