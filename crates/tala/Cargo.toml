@@ -1,0 +1,15 @@
+[package]
+name = "tala"
+description = "Rust port of TALA, D2's orthogonal autolayout and edge-routing engine."
+edition.workspace = true
+# TALA is MPL-2.0. The port keeps its license; see PORTING.md.
+license = "MPL-2.0"
+publish.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[dev-dependencies]
+
+[lints]
+workspace = true
