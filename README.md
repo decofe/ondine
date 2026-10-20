@@ -58,12 +58,7 @@ Read github.com/wevm/ondine and help me render my Mermaid diagrams with Ondine.
 
 ## Documentation
 
-Head to the [documentation](site/src/content/docs/introduction/getting-started.mdx) to get started and learn more about Ondine. Every [diagram type](site/src/content/docs/diagrams/flowchart.mdx) has a page with its syntax and rendered examples.
-
-## Benchmarks
-
-See [Benchmarks](site/src/content/docs/introduction/benchmarks.mdx) for measured module sizes and render times.
-
+Head to the [documentation](https://ondine.sh) to get started and learn more about Ondine.
 ## License
 
 [MIT](LICENSE)
