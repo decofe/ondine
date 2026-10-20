@@ -13,7 +13,7 @@ npx ondine flow.mmd
 
 ```sh
 # Renders the files, or standard input if there are no files
-ondine [files...] [--out-dir <dir>] [--svg] [--worker <url>] [--restore] [--check]
+ondine [files...] [--out-dir <dir>] [--ascii] [--print] [--svg] [--worker <url>] [--restore] [--check]
 ```
 
 ## Arguments
@@ -113,6 +113,27 @@ Writes and removes nothing. If a run would change a file, the command reports `f
 ```sh
 # Fails CI if a diagram is out of date
 ondine README.md --svg --check
+```
+
+### --ascii
+
+- **Alias:** `-a`
+
+Prints each Mermaid file, or standard input, as ASCII text and writes no files. Each character cell is 0.6 em wide and 1 em high, so labels keep their measured columns.
+
+| SVG                     | Text                         |
+| ----------------------- | ---------------------------- |
+| Strokes                 | `-`, `\|`, `+`, `/`, and `\` |
+| Arrowheads              | `>`, `<`, `^`, and `v`       |
+| Small circles and marks | `o` and `#`                  |
+| Circles and ellipses    | `(` and `)` sides            |
+| Background fills        | Hide what they cover         |
+
+Labels are the authored text, with Unicode characters unchanged. Rotated labels, such as axis titles, are left out.
+
+```sh
+# Prints the diagram as text
+ondine flow.mmd --ascii
 ```
 
 ### --print

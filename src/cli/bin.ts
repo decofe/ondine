@@ -5,6 +5,7 @@ import * as Path from 'node:path'
 import * as Util from 'node:util'
 import * as Compiler from '../compiler/index.js'
 import * as Render from '../Render.js'
+import * as Ascii from './Ascii.js'
 import * as Markdown from './Markdown.js'
 import * as Terminal from './Terminal.js'
 
@@ -19,6 +20,8 @@ beside the Markdown (or in --out-dir) with --svg. The source is kept in the bloc
 so later runs re-render their own output and --restore turns it back into a fence.
 
 Options:
+  -a, --ascii           Print Mermaid files and standard input as ASCII text
+                        instead of writing SVG
   -o, --out-dir <dir>   Directory for rendered files
   -p, --print           Print Mermaid files and standard input in the terminal
                         instead of writing SVG (requires @resvg/resvg-wasm)
@@ -32,6 +35,7 @@ Options:
 const { positionals, values } = Util.parseArgs({
   allowPositionals: true,
   options: {
+    ascii: { short: 'a', type: 'boolean' },
     check: { type: 'boolean' },
     help: { short: 'h', type: 'boolean' },
     'out-dir': { short: 'o', type: 'string' },
@@ -50,7 +54,7 @@ if (values.help) {
 if (positionals.length === 0) {
   const source = Fs.readFileSync(0, 'utf8')
   const svg = render(source, '<stdin>')
-  if (svg !== undefined) process.stdout.write(values.print ? await print(svg) : svg)
+  if (svg !== undefined) process.stdout.write(await display(svg))
   process.exit(process.exitCode ?? 0)
 }
 
@@ -63,8 +67,8 @@ for (const file of positionals) {
   const svg = render(Fs.readFileSync(file, 'utf8'), file)
   if (svg === undefined) continue
 
-  if (values.print) {
-    process.stdout.write(await print(svg))
+  if (values.ascii || values.print) {
+    process.stdout.write(await display(svg))
     continue
   }
 
@@ -73,8 +77,12 @@ for (const file of positionals) {
   write(file, output, svg)
 }
 
-/** Prints `svg` in the terminal, or reports why it cannot and exits with 1. */
-async function print(svg: string): Promise<string> {
+/** Returns the standard output for `svg`: ASCII text, a terminal image, or the SVG itself. */
+async function display(svg: string): Promise<string> {
+  if (values.ascii) return Ascii.fromSvg(svg)
+  if (!values.print) return svg
+
+  // A terminal image needs resvg and a font. Without them, the command reports why and exits with 1.
   try {
     return await Terminal.print(svg, {
       columns: process.stdout.columns ?? 80,

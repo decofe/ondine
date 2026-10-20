@@ -97,6 +97,71 @@ describe('ondine', () => {
     expect(result.stdout.split('\n').length > 3).toMatchInlineSnapshot(`true`)
   })
 
+  test('prints a diagram as ASCII text', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '--ascii'], {
+      encoding: 'utf8',
+      input: 'flowchart TD\n  A[Start] --> B{Ready?}\n  B -->|Yes| C[Ship]\n  B -->|No| D[Wait]\n',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "      +--------+
+            |        |
+            | Start  |
+            +---+----+
+                |
+                |
+                v
+             /     \\
+          +   Ready?   +
+            \\        /
+              \\   /
+            +---+---+
+          +-+       +-+
+         Yes          No
+          |           |
+      +---v---+   +---v---+
+      |       |   |       |
+      |  Ship |   |  Wait |
+      +-------+   +-------+
+      "
+    `)
+  })
+
+  test('prints Mermaid files as ASCII text and writes no files', () => {
+    Fs.writeFileSync(
+      Path.join(root, 'sequence.mmd'),
+      'sequenceDiagram\n  Alice->>Bob: Hello\n  Bob-->>Alice: Hi\n',
+    )
+
+    const result = ChildProcess.spawnSync('node', [bin, Path.join(root, 'sequence.mmd'), '-a'], {
+      encoding: 'utf8',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "+--------+   +------+
+      |  Alice |   | Bob  |
+      |        |   |      |
+      +----+---+   +--+---+
+           |          |
+           +--Hello--->
+           |          |
+           |    Hi    |
+           <----------+
+      +--------+   +------+
+      |  Alice |   | Bob  |
+      |        |   |      |
+      +--------+   +------+
+      "
+    `)
+    expect(Fs.readdirSync(root)).toMatchInlineSnapshot(`
+      [
+        "sequence.mmd",
+      ]
+    `)
+  })
+
   test('renders files into an output directory', () => {
     Fs.writeFileSync(Path.join(root, 'flow.mmd'), 'flowchart LR\n  A --> B\n')
     const out = Path.join(root, 'out')

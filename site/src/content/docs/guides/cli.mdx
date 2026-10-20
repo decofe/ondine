@@ -73,6 +73,33 @@ echo 'flowchart LR
   A --> B' | ondine --print
 ```
 
+### Print as ASCII
+
+The `--ascii` option prints a diagram as ASCII text and writes no files. It needs no peer dependency or font, so the output also works in logs, commit messages, and code comments.
+
+```sh
+# Prints the diagram as text
+echo 'sequenceDiagram
+  Alice->>Bob: Hello
+  Bob-->>Alice: Hi' | ondine --ascii
+```
+
+```txt
++--------+   +------+
+|  Alice |   | Bob  |
+|        |   |      |
++----+---+   +--+---+
+     |          |
+     +--Hello--->
+     |          |
+     |    Hi    |
+     <----------+
++--------+   +------+
+|  Alice |   | Bob  |
+|        |   |      |
++--------+   +------+
+```
+
 ### Fail on Errors
 
 The command reports each invalid diagram as `file:line:column: message`. It renders the remaining files and then exits with code 1.
