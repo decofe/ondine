@@ -406,7 +406,9 @@
     "!src/**/*.test.ts",
     "!src/internal/*.generated.*"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "incur": "catalog:"
+  },
   "peerDependencies": {
     "@resvg/resvg-wasm": "catalog:",
     "vite": "catalog:"

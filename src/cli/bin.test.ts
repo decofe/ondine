@@ -196,6 +196,81 @@ describe('ondine', () => {
       Expecting 'NODE_STRING', got 'EOF'
       "
     `)
+    expect(result.stdout).toMatchInlineSnapshot(`
+      "Error (RENDER_FAILED): 1 diagram failed to render
+      "
+    `)
+  })
+
+  test('accepts a short flag as the first argument', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '-ap'], {
+      encoding: 'utf8',
+      env: { ...process.env, ONDINE_TERMINAL: 'text' },
+      input: 'flowchart LR\n  A --> B\n',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(result.stdout.startsWith('+')).toMatchInlineSnapshot(`true`)
+  })
+
+  test('returns output and errors as JSON with --json', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '--ascii', '--json'], {
+      encoding: 'utf8',
+      input: 'flowchart LR\n  A --> B\n',
+    })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(JSON.parse(result.stdout)).toMatchInlineSnapshot(`
+      [
+        "+----+    +----+
+      |    |    |    |
+      |  A |---->  B |
+      +----+    +----+
+      ",
+      ]
+    `)
+
+    const failed = ChildProcess.spawnSync('node', [bin, '--json'], {
+      encoding: 'utf8',
+      input: 'flowchart LR\n  A -->\n',
+    })
+
+    expect(failed.status).toMatchInlineSnapshot(`1`)
+    expect(JSON.parse(failed.stdout)).toMatchInlineSnapshot(`
+      {
+        "code": "RENDER_FAILED",
+        "message": "1 diagram failed to render",
+      }
+    `)
+  })
+
+  test('describes the command in --help', () => {
+    const result = ChildProcess.spawnSync('node', [bin, '--help'], { encoding: 'utf8' })
+
+    expect(result.status).toMatchInlineSnapshot(`0`)
+    expect(result.stdout.split('\n\nIntegrations:')[0]).toMatchInlineSnapshot(`
+      "ondine — Renders Mermaid files to SVG beside them, or standard input to standard output. Rewrites Mermaid fences in Markdown to images.
+
+      Usage: ondine [files...] [options]
+
+      Arguments:
+        files  Mermaid (.mmd, .mermaid) and Markdown (.md, .markdown) files
+
+      Options:
+        --ascii, -a             Print Mermaid files and standard input as ASCII text instead of writing SVG
+        --check                 Write nothing, and exit with 1 when a file is out of date
+        --out-dir, -o <string>  Directory for rendered files
+        --print, -p             Print Mermaid files and standard input in the terminal instead of writing SVG (requires @resvg/resvg-wasm)
+        --restore               Turn Markdown images back into \`\`\`mermaid fences
+        --svg                   Link SVG files from Markdown instead of the Worker
+        --worker <string>       Worker origin for Markdown images (default: https://ondine.sh)
+
+      Examples:
+        ondine flow.mmd   # Write flow.svg beside flow.mmd
+        ondine README.md  # Rewrite Mermaid fences in README.md to images
+
+      Each \`\`\`mermaid fence becomes a <picture> with light and dark images. The block keeps its source, so later runs re-render their own output, and --restore turns it back into a fence."
+    `)
   })
   describe('markdown', () => {
     const readme = [
@@ -307,6 +382,10 @@ describe('ondine', () => {
       expect(result.status).toBe(1)
       expect(result.stderr).toMatchInlineSnapshot(`
         "README.md is out of date
+        "
+      `)
+      expect(result.stdout).toMatchInlineSnapshot(`
+        "Error (OUT_OF_DATE): 1 file is out of date
         "
       `)
       expect(Fs.readFileSync(Path.join(root, 'README.md'), 'utf8')).toBe(readme)
