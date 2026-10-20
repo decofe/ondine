@@ -75,6 +75,9 @@ catalogs:
     esbuild:
       specifier: 0.28.2
       version: 0.28.2
+    incur:
+      specifier: 0.7.1
+      version: 0.7.1
     jison:
       specifier: 0.4.18
       version: 0.4.18
@@ -145,6 +148,10 @@ patchedDependencies:
 importers:
 
   .:
+    dependencies:
+      incur:
+        specifier: 'catalog:'
+        version: 0.7.1
     devDependencies:
       '@changesets/cli':
         specifier: 'catalog:'
@@ -4088,6 +4095,11 @@ packages:
 
   incur@0.5.1:
     resolution: {integrity: sha512-gEwPg0Rwf+Oi8pwySLumYgWk//Xiv2wRJhwsOwVskt7ZHrfwFTR7oQmANnyDqudRYhqK3I5/dp489kPehPjIww==}
+    engines: {node: '>=22'}
+    hasBin: true
+
+  incur@0.7.1:
+    resolution: {integrity: sha512-tXEStxASXtVWOjY7wNBBMy03+3HPpiLPkrEaqNb5iYerRNRWqTYqwdAEgLfU6Ga2OUrz9LpRuMWFvdj5kIaUlg==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -9109,6 +9121,16 @@ snapshots:
   import-meta-resolve@4.2.0: {}
 
   incur@0.5.1:
+    dependencies:
+      '@cfworker/json-schema': 4.1.1
+      '@modelcontextprotocol/server': 2.0.0-alpha.4
+      '@scalar/openapi-types': 0.8.0
+      '@toon-format/toon': 2.3.1
+      tokenx: 1.6.0
+      yaml: 2.9.1
+      zod: 4.6.7
+
+  incur@0.7.1:
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@modelcontextprotocol/server': 2.0.0-alpha.4

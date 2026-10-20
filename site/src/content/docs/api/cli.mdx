@@ -157,12 +157,29 @@ ondine flow.mmd --print
 
 - **Alias:** `-h`
 
-Prints the usage text and exits with code 0.
+Prints the usage text and exits with code 0. The text lists the arguments, options, and global options.
 
 ```sh
 # Shows the usage text
 ondine --help
 ```
+
+## Agents
+
+The command also serves coding agents. Each item below runs instead of a render:
+
+- **`--llms-full`:** Prints a Markdown manifest of the arguments and options.
+- **`--schema`:** Prints the JSON Schema of the arguments and options. Add `--format json` for JSON.
+- **`--mcp`:** Starts a Model Context Protocol server on standard input and output.
+- **`mcp add`:** Registers the MCP server with the installed agents.
+- **`skills add`:** Installs a skill file that documents the command.
+
+```sh
+# Registers ondine as an MCP server for the installed agents
+ondine mcp add
+```
+
+The names `completions`, `mcp`, and `skills` select these commands. If the first file has a similar name, such as `mcp.md`, give it a path such as `./mcp.md`.
 
 ## Output
 
@@ -176,6 +193,18 @@ The command writes each report on standard error:
 ```txt
 flow.mmd -> flow.svg
 bad.mmd:3:1: Parse error on line 3:
+```
+
+If an input fails to render or a file is out of date, the command writes one summary line on standard output after the reports. With `--json`, the summary is a JSON object with `code` and `message`.
+
+| Code                | Meaning                                               |
+| ------------------- | ----------------------------------------------------- |
+| `RENDER_FAILED`     | At least one diagram failed to render.                |
+| `OUT_OF_DATE`       | With `--check`, at least one file is out of date.     |
+| `PRINT_UNAVAILABLE` | With `--print`, resvg or a monospace font is missing. |
+
+```txt
+Error (RENDER_FAILED): 1 diagram failed to render
 ```
 
 ## Exit Codes
