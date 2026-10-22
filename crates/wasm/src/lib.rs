@@ -95,12 +95,10 @@ mod arena {
             at as *mut u8
         }
 
-        unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-            // The most recent allocation is returned to the arena, which makes push-and-pop
-            // patterns free.
-            if ptr as usize + layout.size() == self.next.get() {
-                self.next.set(ptr as usize);
-            }
+        unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {
+            // `reset` reclaims everything, so freeing does nothing. An empty `dealloc` lets LLVM
+            // remove drop code throughout the compiler, which removes 33 kB gzip from the
+            // all-types module and raises peak render memory from 2.8 MB to 3.1 MB.
         }
 
         unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
